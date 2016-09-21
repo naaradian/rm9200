@@ -1152,6 +1152,10 @@ if(GetTestMode() == 0x5D)
    SetTestMode(1l);
   } 
   
+if(GetTestMode() == 0x22)
+  {
+   SetTestMode(1l);
+  } 
   
   
   
@@ -1203,11 +1207,6 @@ if(GetTestMode() == 0x5A)
   {
    SetTestMode(1l);
   } 
-if(GetTestMode() == 0x22)
-  {
-   SetTestMode(1l);
-  } 
-  
   /*
 if(GetTestMode() == 0xAA)
   {
