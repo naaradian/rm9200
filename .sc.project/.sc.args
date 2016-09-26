@@ -1,0 +1,7 @@
+-toggle=include_local_symbols=1
+-profile
+-target=ARM7
+-DLL
+-hard
+-io=ether,192.168.0.1
+-startup_mode=0x13
