@@ -65,7 +65,7 @@
 
 
 //#define PROG_BUKC			 //need recompile mib buk - registers
-//#define PROG_PUM			//= BUK
+#define PROG_PUM			//= BUK
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>263 need : 
 
 //#define PROG_PU_M		   //pu_m.cpp
@@ -160,7 +160,7 @@
 //#define	PROG_PRM_PCH_DEM_XIL_CHN_DMU4  //prm_pch_dem_chn_dmu4.cpp
 //#define	PROG_PRM_PCH_DEM_XIL_CHN_DMU5  //prm_pch_dem_chn_dmu5.cpp  dmu + 10G
 
-#define	PROG_DMU6  //  dmu5.1 dmu6.cpp + dmu6plus.cpp ( provingent + demodulator)	 + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
+//#define	PROG_DMU6  //  dmu5.1 dmu6.cpp + dmu6plus.cpp ( provingent + demodulator)	 + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 
 //#define PROG_PROV  //prov.cpp PVG610_API.c  hostDriverForPc.cpp	utils.c	  endian.c	basic.cpp
 //262 : remove 10 symbols in parse rs232
@@ -182,8 +182,9 @@
 
 //#define UPDOWN_NOT_CLEAN
 
-
-//#define UDP_DEBUG
+#define NO_USE_WD
+#define UDP_DEBUG
+#define USE_SOCKETSD	 //dgram
 
 // #define MAKET_STEND //temporary!!!!!! send modem channel to eth_transit
 

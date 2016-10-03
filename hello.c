@@ -2894,13 +2894,13 @@ raddrd.sin_family = AF_INET;
 raddrd.sin_addr.s_addr = GetIPRemUDP();
 
 #else
-//raddrd.sin_addr.s_addr = 0x9B9B9BE6;    //ip remote 230 : ok
+raddrd.sin_addr.s_addr = 0x9B9B9BE6;    //ip remote 230 : ok
 //raddrd.sin_addr.s_addr = 0x9B9B9B4E;    //ip remote 78 : ok
-raddrd.sin_addr.s_addr = 0x9B9B9B02;    //ip 02
+//raddrd.sin_addr.s_addr = 0x9B9B9B02;    //ip 02
 
 #endif
 
-printfpd("\n\rGetIPRemUDP()> 0x%08X",GetIPRemUDP());
+//printfpd("\n\rGetIPRemUDP()> 0x%08X",GetIPRemUDP());
 
 
 

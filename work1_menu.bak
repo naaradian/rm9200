@@ -13105,9 +13105,8 @@ case 351:
 			printfpd("\n\r >%08X ", (unsigned long)IPAddressUDP.Value);
 			printfpd("cv : %08X ", (unsigned long)IPAddressUDP.ChangingValue);
 
-#ifndef PROG_PUM	
+
 			SetNeedWriteDevId();
-#endif
 
 
 			break;
