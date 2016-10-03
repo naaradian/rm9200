@@ -65,7 +65,7 @@
 
 
 //#define PROG_BUKC			 //need recompile mib buk - registers
-#define PROG_PUM			//= BUK
+//#define PROG_PUM			//= BUK
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>263 need : 
 
 //#define PROG_PU_M		   //pu_m.cpp
@@ -160,18 +160,18 @@
 //#define	PROG_PRM_PCH_DEM_XIL_CHN_DMU4  //prm_pch_dem_chn_dmu4.cpp
 //#define	PROG_PRM_PCH_DEM_XIL_CHN_DMU5  //prm_pch_dem_chn_dmu5.cpp  dmu + 10G
 
-//#define	PROG_DMU6  //  dmu5.1 dmu6.cpp + dmu6plus.cpp ( provingent + demodulator)	 + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
+#define	PROG_DMU6  //  dmu5.1 dmu6.cpp + dmu6plus.cpp ( provingent + demodulator)	 + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 
 //#define PROG_PROV  //prov.cpp PVG610_API.c  hostDriverForPc.cpp	utils.c	  endian.c	basic.cpp
 //262 : remove 10 symbols in parse rs232
 
 //#define SOFT_VER (0x509)
-#define SOFT_VER (0x1075)
+#define SOFT_VER (0x1076)
 #ifndef PROG_PU_MSAT
 //#define SOFT_VER_STRING    "   14.12.01.1-800 ADESTO"//263 : maked init counter and data for write_buffer_char1()
 //#ifndef PROG_PUPM3_1_ADESTO	
 //#ifndef PROG_PU_MSAT1
-#define SOFT_VER_STRING      "      16.09.21.1-1075    "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING      "      16.10.03.1-1076    "//263 : maked init counter and data for write_buffer_char1()
 #else
 //#define SOFT_VER_STRING "Radian Ver. 01.00        "//263 : maked init counter and data for write_buffer_char1()
 #define SOFT_VER_STRING   "Radian v.922.50925       "//263 : maked init counter and data for write_buffer_char1()
@@ -8145,7 +8145,10 @@ extern "C" unsigned char SetSelectorToDMU(void);
 #ifndef PROG_DMU6
 #define MODUL_PORT  (0x7)
 #else
-#define MODUL_PORT  (0x8)
+#define MODUL_PORT    (0x8)
+#define MODUL_PORT_T  (0x88)
+
+
 #endif
 
 

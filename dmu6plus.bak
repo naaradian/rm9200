@@ -4414,9 +4414,6 @@ extern "C" void LoadModul(void)
 	   
 
 				   	  outportb(MODUL_PORT, modulsk);
-					    outportb(MODUL_PORT_T, modulsk);
-
-
 }
 
 
@@ -4437,8 +4434,6 @@ extern "C" void LoadModulSKB(unsigned char chn)
 					  { 
 					  modulsk = GetModulSK();
 					  outportb(MODUL_PORT, modulsk);
-					     outportb(MODUL_PORT_T, modulsk);
-
 					  }
 					  break;
 
@@ -4449,8 +4444,6 @@ extern "C" void LoadModulSKB(unsigned char chn)
 					  { 
 					  modulsk = GetModulSK2();
                       outportb(MODUL_PORT, modulsk);
-					     outportb(MODUL_PORT_T, modulsk);
-
 				  	  }
 					  break;
 					   /*
