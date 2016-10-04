@@ -48,7 +48,7 @@
 //#define PROG_ODU	   //not used !!! odu.cpp +  + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 						//pvg810_api.c pvg810_api_calibration.c pvg810_api_DataConfig.c
 						//pvg810_api_utilc.c pvg810_api_Application.c pvg810_protocol_MsgUtils.c
-//#define PROG_ODU1	   // = rmb _vithout pvg810_ odu2.cpp +  + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
+#define PROG_ODU1	   // = rmb _vithout pvg810_ odu2.cpp +  + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 
 //#define PROG_ODU4	   // = rmba  maked from pu_m_v_b.cpp	 
 
@@ -160,7 +160,7 @@
 //#define	PROG_PRM_PCH_DEM_XIL_CHN_DMU4  //prm_pch_dem_chn_dmu4.cpp
 //#define	PROG_PRM_PCH_DEM_XIL_CHN_DMU5  //prm_pch_dem_chn_dmu5.cpp  dmu + 10G
 
-#define	PROG_DMU6  //  dmu5.1 dmu6.cpp + dmu6plus.cpp ( provingent + demodulator)	 + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
+//#define	PROG_DMU6  //  dmu5.1 dmu6.cpp + dmu6plus.cpp ( provingent + demodulator)	 + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 
 //#define PROG_PROV  //prov.cpp PVG610_API.c  hostDriverForPc.cpp	utils.c	  endian.c	basic.cpp
 //262 : remove 10 symbols in parse rs232
@@ -171,7 +171,7 @@
 //#define SOFT_VER_STRING    "   14.12.01.1-800 ADESTO"//263 : maked init counter and data for write_buffer_char1()
 //#ifndef PROG_PUPM3_1_ADESTO	
 //#ifndef PROG_PU_MSAT1
-#define SOFT_VER_STRING      "      16.10.03.1-1076    "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING      "      16.10.04.1-1076    "//263 : maked init counter and data for write_buffer_char1()
 #else
 //#define SOFT_VER_STRING "Radian Ver. 01.00        "//263 : maked init counter and data for write_buffer_char1()
 #define SOFT_VER_STRING   "Radian v.922.50925       "//263 : maked init counter and data for write_buffer_char1()
@@ -182,9 +182,9 @@
 
 //#define UPDOWN_NOT_CLEAN
 
-#define NO_USE_WD
-#define UDP_DEBUG
-#define USE_SOCKETSD	 //dgram
+//#define NO_USE_WD
+//#define UDP_DEBUG
+//#define USE_SOCKETSD	 //dgram
 
 // #define MAKET_STEND //temporary!!!!!! send modem channel to eth_transit
 

@@ -4622,7 +4622,7 @@ char ProtocolFromModACT155()
 	while(embSerialACT155.UsedMod(i))
 	{
 
-	  if(!(rate_cnt--)) break; 
+	  if(!(rate_cnt--) break; 
 
 			westByte = embSerialACT155.GetMod(i);
 
