@@ -166,17 +166,19 @@
 //262 : remove 10 symbols in parse rs232
 
 //#define SOFT_VER (0x509)
-#define SOFT_VER (0x1076)
+#define SOFT_VER (0x1077)
 #ifndef PROG_PU_MSAT
 //#define SOFT_VER_STRING    "   14.12.01.1-800 ADESTO"//263 : maked init counter and data for write_buffer_char1()
 //#ifndef PROG_PUPM3_1_ADESTO	
 //#ifndef PROG_PU_MSAT1
-#define SOFT_VER_STRING      "      16.10.04.1-1076    "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING      "      16.10.05.2-1077    "//263 : maked init counter and data for write_buffer_char1()
 #else
 //#define SOFT_VER_STRING "Radian Ver. 01.00        "//263 : maked init counter and data for write_buffer_char1()
 #define SOFT_VER_STRING   "Radian v.922.50925       "//263 : maked init counter and data for write_buffer_char1()
 #endif
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+//#define DEBUG_LOOP
 
 //moved  #define IGNORE_AA_IN_5
 
@@ -4392,8 +4394,9 @@ extern "C" void test_PU37_transit();
 
 #define USE_SOCKETSD   //need for have ipaddrudp - used as macaddr of remote modem	
 
-#define DEBUG_ETH_TRANZIT
-#define DEBUG_TRANZIT
+//#define DEBUG_ETH_TRANZIT
+//#define DEBUG_TRANZIT
+
 #define START_PRINT
 #define PRINT_START
 #define TEST_PROT
@@ -6632,6 +6635,7 @@ extern "C" void TrzBuffs_Init(void);
 //extern char * pntdst;
 //extern "C" void RDN_Start_Transmit(void);
 extern "C" void RDN_Start_Transmit(char *, char*);
+extern "C" void RDN_Start_Transmit1(char *, char*);
 
 //extern "C" void RDN_Init(void); 
 //extern boolean RDN_transmit( IP_IF_PTR , char* , char * );

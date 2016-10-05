@@ -2546,8 +2546,7 @@ if(flagRequest) //embMsgRequest->IsEnd())
             
 //#ifdef RS485E_ENABLED
 #ifndef USE_SOCKETSD_485
- /* test161006
- 
+
 				embRS485.TransE(0x55);	  //EC - RDN!!! in all
 			  	embRS485.TransE(0xAA);
 				for(i=0; i<embMsgA.FullSize(); i++) 
@@ -2595,7 +2594,7 @@ if(flagRequest) //embMsgRequest->IsEnd())
                         
                         
                         
- */                       
+                        
                         
 #else
 					buff_udpt_485[l_udpt_inc_485()] =	0x55;

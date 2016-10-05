@@ -337,7 +337,7 @@ void RDN_Start_Transmit( char * pBuffT, char * pDest)
     RDN_transmit(ihandle0,  pBuffT, pDest);
 //100811 _int_enable();    
 }
-     /*
+
 void RDN_Start_Transmit1( char * pBuffT, char * pDest)
 {
    //t RDN_transmit(ihandle0,  pRDN_BufferT, pntdst);
@@ -354,7 +354,7 @@ void RDN_Start_Transmit1( char * pBuffT, char * pDest)
     RDN_t1(ihandle0,  pBuffT, pDest);
 //100811 _int_enable();    
 }
- */
+
 
 #ifdef TRAP_ENABLED
 //extern  boolean TRAP1_transmit( IP_IF_PTR  );

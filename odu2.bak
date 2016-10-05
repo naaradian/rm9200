@@ -4622,8 +4622,27 @@ char ProtocolFromModACT155()
 	while(embSerialACT155.UsedMod(i))
 	{
 
-	  if(!(rate_cnt--) break; 
+	  if(!(rate_cnt--)) 
+	  {
+#ifdef DEBUG_LOOP
+	   printfpd("\n\r%d>break", time1);
+#endif
 
+	  break; 
+
+	  }
+
+#ifdef DEBUG_LOOP
+
+	  else
+	  {
+
+	   printfpd("\n\rcnt%d", rate_cnt);
+
+
+	  }
+
+#endif
 			westByte = embSerialACT155.GetMod(i);
 
    //       #ifdef ETH_DEBUG_ENABLED
@@ -4857,6 +4876,15 @@ farinplev2 = -85  + (signed long)(embMsgWest[i].Body(11)>>1);
 	  #ifdef ETH_TRANZIT
 
 				   tBuffEmbMsgEthAll.Add(embMsgWest[i]);	//160718
+
+
+#ifdef DEBUG_LOOP
+for(int i1 = 0; i1 < 15; i1++)
+{    
+	   tBuffEmbMsgEthAll.Add(embMsgWest[i]);	//160718
+}
+
+#endif
 
 		/* t160718
 
@@ -5133,6 +5161,27 @@ if(embMsgEast.IsEnd())
 				EmbMsg embMsgA;
 				embMsgA.Init();
 				tBuffEmbMsgEast.Get(embMsgA);
+
+#ifdef DEBUG_LOOP
+			tBuffEmbMsgEast.Add(embMsgA);
+				tBuffEmbMsgEast.Add(embMsgA);
+					tBuffEmbMsgEast.Add(embMsgA);
+
+		tBuffEmbMsgEast.Add(embMsgA);
+				tBuffEmbMsgEast.Add(embMsgA);
+					tBuffEmbMsgEast.Add(embMsgA);
+	tBuffEmbMsgEast.Add(embMsgA);
+				tBuffEmbMsgEast.Add(embMsgA);
+					tBuffEmbMsgEast.Add(embMsgA);
+	tBuffEmbMsgEast.Add(embMsgA);
+				tBuffEmbMsgEast.Add(embMsgA);
+					tBuffEmbMsgEast.Add(embMsgA);
+	tBuffEmbMsgEast.Add(embMsgA);
+				tBuffEmbMsgEast.Add(embMsgA);
+					tBuffEmbMsgEast.Add(embMsgA);
+
+#endif
+
 
 //#ifndef DEBUG_ASU
 //160729   printEthLongHex(embMsgA.FullSize());  //1E - sendstatus 0d - rnms
@@ -12474,7 +12523,7 @@ for(i =0; i < MODEM_QUANTITY;i++)
  // #ifdef DEBUG_ETH_TRANZIT
 //   printfpd("\n\r%d>> ", time1); 
   //  printfp("  ProtocolToEth()"); 
-   //	  printfpd(" %d ",EthReceiveDelay); 
+//	  printfpd(" %d ",EthReceiveDelay); 
 
 // #endif
 
@@ -12488,6 +12537,10 @@ for(i =0; i < MODEM_QUANTITY;i++)
 
 
  ProtocolToEth();
+
+
+
+
  }
 #endif //ETH_TRANZIT
 
