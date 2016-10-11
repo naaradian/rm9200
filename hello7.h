@@ -314,12 +314,12 @@
 //#define EMPTY_LOOP //test!!!
 //#define ETH_NOT_STOPPED
 //#define ALL_ADDR
-#define WITHOUT_XILINX //
+//#define WITHOUT_XILINX //
 //#define TESTSTART
-#define WITHOUT_INTERRUPTS //
+//#define WITHOUT_INTERRUPTS //
 //#define DEBUG_ALARM
 //#define CAN_ETHERNET_ASU
-#define MAKET_PLATA	 
+//#define MAKET_PLATA	 
 //#define LOCK_ENABLED
 //#define TRAP_ENABLED
 //#define BAD_CHECKSUM

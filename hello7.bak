@@ -4149,7 +4149,7 @@ extern "C" void SetModForSS1(unsigned long);
 #define STATUSSYNT_PORT	(0xf)
 #define TYPE_PORT (1)
 
-#define CON_IF_PORT	(0x3C)
+#define CON_IF_PORT	(0x1C)
 
 
 
