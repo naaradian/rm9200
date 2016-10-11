@@ -166,17 +166,19 @@
 //262 : remove 10 symbols in parse rs232
 
 //#define SOFT_VER (0x509)
-#define SOFT_VER (0x1077)
+#define SOFT_VER (0x1079)
 #ifndef PROG_PU_MSAT
 //#define SOFT_VER_STRING    "   14.12.01.1-800 ADESTO"//263 : maked init counter and data for write_buffer_char1()
 //#ifndef PROG_PUPM3_1_ADESTO	
 //#ifndef PROG_PU_MSAT1
-#define SOFT_VER_STRING      "      16.10.05.2-1077    "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING      "      16.10.11.1-1079    "//263 : maked init counter and data for write_buffer_char1()
 #else
 //#define SOFT_VER_STRING "Radian Ver. 01.00        "//263 : maked init counter and data for write_buffer_char1()
 #define SOFT_VER_STRING   "Radian v.922.50925       "//263 : maked init counter and data for write_buffer_char1()
 #endif
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+//#define DEBUG_TWO_BUFF
 
 //#define DEBUG_LOOP
 
@@ -312,12 +314,12 @@
 //#define EMPTY_LOOP //test!!!
 //#define ETH_NOT_STOPPED
 //#define ALL_ADDR
-//#define WITHOUT_XILINX //
+#define WITHOUT_XILINX //
 //#define TESTSTART
-//#define WITHOUT_INTERRUPTS //
+#define WITHOUT_INTERRUPTS //
 //#define DEBUG_ALARM
 //#define CAN_ETHERNET_ASU
-//#define MAKET_PLATA	 
+#define MAKET_PLATA	 
 //#define LOCK_ENABLED
 //#define TRAP_ENABLED
 //#define BAD_CHECKSUM
@@ -4146,6 +4148,10 @@ extern "C" void SetModForSS1(unsigned long);
 
 #define STATUSSYNT_PORT	(0xf)
 #define TYPE_PORT (1)
+
+#define CON_IF_PORT	(0x1C)
+
+
 
 extern "C" void SetCurrentTrunk(unsigned char);
 #define RATE_100M			(100000000l)

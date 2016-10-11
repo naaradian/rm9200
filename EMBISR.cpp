@@ -1889,8 +1889,13 @@ void EmbRS485::Trans_RDN(unsigned int dest)
   tbuffE[1]  = (char)cur_tbuffE; // 
   tbuffE[2]  = ETH_485;
  // RDN_Start_Transmit();
-  RDN_Start_Transmit(tbuffE, netdest);
+#ifndef DEBUG_TWO_BUFF
 
+  RDN_Start_Transmit(tbuffE, netdest);
+#else
+    RDN_Start_Transmit1(tbuffE, netdest);
+
+#endif
 
 // #ifdef ETH_DEBUG_485E
 //   delay_mcs(400);

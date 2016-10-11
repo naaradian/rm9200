@@ -924,7 +924,8 @@ else	if(rBuffEmbMsg.Used())
                
 //160603		tBuffRS485.Add(*embMsgRequest);   //send to edik request - wrong - need ti rs485e!!!
 
-          tBuffRS485E.Add(*embMsgRequest);  //160603
+      //161006    tBuffRS485E.Add(*embMsgRequest);  //160603
+             tBuffEmbMsgEthAll.Add(*embMsgRequest); //161006
 #ifdef ETH_DEBUG_485E
                         
      printfpd("\n\r%d>add to buffer> ", time1);                    
@@ -1969,8 +1970,9 @@ if(flagRequest) //embMsgRequest->IsEnd())
  */
  //160603		tBuffRS485.Add(*embMsgRequest);     // ? may be rs485E!!!!!!!
  
- 		tBuffRS485E.Add(*embMsgRequest);     // 160603 ? may be rs485E!!!!!!!
-      
+ //161006		tBuffRS485E.Add(*embMsgRequest);     // 160603 ? may be rs485E!!!!!!!
+         tBuffEmbMsgEthAll.Add(*embMsgRequest); //161006
+
       
 //#endif	//   RS485_MSG_BUFF
 
@@ -2375,8 +2377,9 @@ if(flagRequest) //embMsgRequest->IsEnd())
        #endif
 
  
- 		tBuffRS485E.Add(*embMsgRequest);     // 160603 ? may be rs485E!!!!!!!
-      
+ //161006		tBuffRS485E.Add(*embMsgRequest);     // 160603 ? may be rs485E!!!!!!!
+          tBuffEmbMsgEthAll.Add(*embMsgRequest); //161006
+
       
 //#endif	//   RS485_MSG_BUFF
 
@@ -2539,14 +2542,17 @@ if(flagRequest) //embMsgRequest->IsEnd())
 				embMsgA.Init();
 				tBuffRS485E.Get(embMsgA);
             
-            
+#ifndef DEBUG_TWO_BUFF
+         
              tBuffEmbMsgEthAll.Add(embMsgA);    //161005 test
+             
+#endif             
 
             
             
 //#ifdef RS485E_ENABLED
 #ifndef USE_SOCKETSD_485
- /* test161006
+ #ifdef DEBUG_TWO_BUFF
  
 				embRS485.TransE(0x55);	  //EC - RDN!!! in all
 			  	embRS485.TransE(0xAA);
@@ -2595,7 +2601,8 @@ if(flagRequest) //embMsgRequest->IsEnd())
                         
                         
                         
- */                       
+ #endif // DEBUG_TWO_BUFF
+                       
                         
 #else
 					buff_udpt_485[l_udpt_inc_485()] =	0x55;

@@ -2539,14 +2539,18 @@ if(flagRequest) //embMsgRequest->IsEnd())
 				embMsgA.Init();
 				tBuffRS485E.Get(embMsgA);
             
-            
+#ifndef DEBUG_TWO_BUFF
+         
              tBuffEmbMsgEthAll.Add(embMsgA);    //161005 test
+             
+#endif             
 
             
             
 //#ifdef RS485E_ENABLED
 #ifndef USE_SOCKETSD_485
-
+ #ifdef DEBUG_TWO_BUFF
+ 
 				embRS485.TransE(0x55);	  //EC - RDN!!! in all
 			  	embRS485.TransE(0xAA);
 				for(i=0; i<embMsgA.FullSize(); i++) 
@@ -2594,7 +2598,8 @@ if(flagRequest) //embMsgRequest->IsEnd())
                         
                         
                         
-                        
+ #endif // DEBUG_TWO_BUFF
+                       
                         
 #else
 					buff_udpt_485[l_udpt_inc_485()] =	0x55;

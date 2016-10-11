@@ -5683,6 +5683,7 @@ unsigned long eth_ans;
 unsigned long eth_req;
 unsigned long eth_pre_ans;
 unsigned long  eth_flag_ans;
+unsigned long   old_flag_con_if;
 
 
 	
@@ -5922,6 +5923,7 @@ mode5AUp1 = 0;
 mode5AUp2 = 0; 
 
 oldflag = 0xff;
+old_flag_con_if = 0xff;
 //oldflag_710 = 0xff;
 //oldflag_ud1 = 0xff;
 //oldflag_ud2 = 0xff;
@@ -9822,6 +9824,7 @@ ret = PVG610_API_AlarmStatusGet(deviceindex, &Ac);
 
 unsigned char oldflag; //need init
 unsigned char oldflag2; //need init
+//unsigned char old_flag_con_if;
 
 //unsigned char oldflag_710; 
 //unsigned char oldflag_ud1; //need init
@@ -10234,6 +10237,7 @@ unsigned char flag_prv = 0;
 unsigned char flag2 = 0;
 
 unsigned char flag_prv1 = 0;
+unsigned char flag_con_if = 0;
 
 
 //unsigned char flag_710 = 0;
@@ -10249,6 +10253,11 @@ unsigned char flag_prv_changed = 0;
 //unsigned long syntez_error_counter;
 //unsigned long pvg710_error_counter;
 
+unsigned char statsynt = inportb(BLOCK_SWEEP1 + STATUSSYNT_PORT);
+ unsigned char typexil =  inportb(BLOCK_SWEEP1 + TYPE_PORT);
+ unsigned char con_if =  inportb(BLOCK_SWEEP1 + CON_IF_PORT);
+
+ unEmb2TypeVer.emb2TypeVer.signature_hardware[9] = 0;
 
 
 tmp = 0; 
@@ -10306,13 +10315,25 @@ if(countUD2 < ALARM_LEVEL_UD)
 if(norma_status[is] > ALARM_QUANTITY)  //bad answer
 {
  flag = 1;
+ unEmb2TypeVer.emb2TypeVer.signature_hardware[9] |= MASK_BIT_0; 
 }
 }
 
 //_______________________________________________________________
 // unsigned char stat710 = inportb(BLOCK_SWEEP1 + STATUS710_PORT);
- unsigned char statsynt = inportb(BLOCK_SWEEP1 + STATUSSYNT_PORT);
- unsigned char typexil =  inportb(BLOCK_SWEEP1 + TYPE_PORT);
+
+if((con_if & MASK_BIT_0) && (con_if & MASK_BIT_1))
+{
+ flag_con_if = 0;
+ }
+else 
+{
+ flag_con_if = 1;
+ 
+}
+
+if(!(con_if & MASK_BIT_0))	 unEmb2TypeVer.emb2TypeVer.signature_hardware[9] |= MASK_BIT_1; 
+if(!(con_if & MASK_BIT_1))	 unEmb2TypeVer.emb2TypeVer.signature_hardware[9] |= MASK_BIT_2; 
 
 
 //if(stat710 == 0xff)
@@ -10320,8 +10341,13 @@ if(norma_status[is] > ALARM_QUANTITY)  //bad answer
 // stat710 = 0; //without xilinx readed 0xff
 //}
 
- if(norma_status[0] < ALARM_QUANTITY) { LedsReg1 |= MASK_BIT_0; flag_prv = 0;} 
- else {LedsReg1 &= ~(MASK_BIT_0); flag_prv = 1;}
+ if(norma_status[0] < ALARM_QUANTITY)
+   { LedsReg1 |= MASK_BIT_0; flag_prv = 0;} 
+ else {LedsReg1 &= ~(MASK_BIT_0); flag_prv = 1;
+  unEmb2TypeVer.emb2TypeVer.signature_hardware[9] |= MASK_BIT_3; 
+
+ 
+ }
 
 //#ifndef LOAD_ONE_PROVINGENT_ON_PLATA
 // if( (norma_status[1] < ALARM_QUANTITY)) { LedsReg1 |= MASK_BIT_1;	flag_prv1 = 0;}
@@ -10348,7 +10374,9 @@ tmp =  inportb(BLOCK_SWEEP1 + MOD_LED_ADDR2) & MASK_STATUS;
  if(oldflag_prv != flag_prv)	  //160608
  {
  oldflag_prv = flag_prv;
- outportb((BLOCK_SWEEP1 + MOD_LED_ADDR2),  LedsReg1);	//160608
+
+//161011 not have this addr  outportb((BLOCK_SWEEP1 + MOD_LED_ADDR2),  LedsReg1);	//160608
+
  flag_prv_changed = 1;
  }
 
@@ -10377,7 +10405,15 @@ tmp =  inportb(BLOCK_SWEEP1 + MOD_LED_ADDR2) & MASK_STATUS;
 //#else
 
 //160608 need make more if((!flag) && (statsynt & MASK_BIT_0))
- if((!flag) && (statsynt & MASK_BIT_0)  && (!flag_prv)  && ((typexil == 0xB1) || (typexil == 0xC1)))
+
+
+if(!(statsynt & MASK_BIT_0))	 unEmb2TypeVer.emb2TypeVer.signature_hardware[9] |= MASK_BIT_4; 
+
+if((typexil != 0xB1) || (typexil != 0xC1))	 unEmb2TypeVer.emb2TypeVer.signature_hardware[9] |= MASK_BIT_5; 
+
+
+
+ if((!flag) && (!flag_con_if) && (statsynt & MASK_BIT_0)   && ((typexil == 0xB1) || (typexil == 0xC1)))
   {  LedsReg |= NORMA_BIT1;} 		 //common norma
  else {LedsReg &= ~(NORMA_BIT1);}
 //#endif
@@ -10396,15 +10432,18 @@ tmp =  inportb(BLOCK_SWEEP1 + MOD_LED_ADDR2) & MASK_STATUS;
 
 
 
-if((oldflag != flag)  || flag_prv_changed)
+if((oldflag != flag)  || flag_prv_changed  || (flag_con_if != old_flag_con_if))
 {
 
- oldflag = flag;
+// oldflag = flag;
 // oldflag_ud1 = flag_ud1;
 // oldflag_ud2 = flag_ud2;
  //oldflag_710 = flag_710;
   outportb(MOD_LED_ADDR1, LedsReg);	   //common norma
 }
+
+oldflag = flag;
+old_flag_con_if =  flag_con_if;
 
    /*
 if(oldflag_mrcntl != GetMRCntl())
