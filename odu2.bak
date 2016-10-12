@@ -4701,6 +4701,7 @@ if(embMsgWest[i].IsEnd())
 	if(1)
 #endif   
 	{
+ unEmb2TypeVer.emb2TypeVer.signature_hardware[10] = 0;
 	
  //   printfp("\n\r_2");
 							   //091111
@@ -4757,6 +4758,8 @@ curerr1 = (embMsgWest[i].Body(2) << 24) + (embMsgWest[i].Body(3) << 16) +
 #ifdef DEBUG_LOOP_PRINT
  printfp("ch1 ok");
 #endif
+	unEmb2TypeVer.emb2TypeVer.signature_hardware[10]  |= MASK_BIT_0;
+
 			   }
 			   else
 			   {
@@ -10407,11 +10410,13 @@ tmp =  inportb(BLOCK_SWEEP1 + MOD_LED_ADDR2) & MASK_STATUS;
 //160608 need make more if((!flag) && (statsynt & MASK_BIT_0))
 
 
-if(!(statsynt & MASK_BIT_0))	 unEmb2TypeVer.emb2TypeVer.signature_hardware[9] |= MASK_BIT_3; 
+if(!(statsynt & MASK_BIT_0))	 unEmb2TypeVer.emb2TypeVer.signature_hardware[9] |= MASK_BIT_4; 
+
+if((typexil != 0xB1) || (typexil != 0xC1))	 unEmb2TypeVer.emb2TypeVer.signature_hardware[9] |= MASK_BIT_5; 
 
 
 
- if((!flag) && (!flag_con_if) && (statsynt & MASK_BIT_0) && (!flag_prv)  && ((typexil == 0xB1) || (typexil == 0xC1)))
+ if((!flag) && (!flag_con_if) && (statsynt & MASK_BIT_0)   && ((typexil == 0xB1) || (typexil == 0xC1)))
   {  LedsReg |= NORMA_BIT1;} 		 //common norma
  else {LedsReg &= ~(NORMA_BIT1);}
 //#endif

@@ -4701,6 +4701,9 @@ if(embMsgWest[i].IsEnd())
 	if(1)
 #endif   
 	{
+ unEmb2TypeVer.emb2TypeVer.signature_hardware[10] = 0;
+ unEmb2TypeVer.emb2TypeVer.signature_hardware[11] = 0;
+
 	
  //   printfp("\n\r_2");
 							   //091111
@@ -4757,6 +4760,8 @@ curerr1 = (embMsgWest[i].Body(2) << 24) + (embMsgWest[i].Body(3) << 16) +
 #ifdef DEBUG_LOOP_PRINT
  printfp("ch1 ok");
 #endif
+	unEmb2TypeVer.emb2TypeVer.signature_hardware[10]  |= MASK_BIT_0;
+
 			   }
 			   else
 			   {
@@ -4787,6 +4792,9 @@ curerr2 = (embMsgWest[i].Body(6) << 24) + (embMsgWest[i].Body(6) << 16) +
 
 farinplev1 = -85  + (signed long)(embMsgWest[i].Body(10)>>1);
 farinplev2 = -85  + (signed long)(embMsgWest[i].Body(11)>>1);
+
+
+unEmb2TypeVer.emb2TypeVer.signature_hardware[11] = 	farinplev1;
 
   if((embMsgWest[i].Body(0) & PROV1_MASK) &&
 	  (embMsgWest[i].Body(0) & P710_1_MASK) &&
