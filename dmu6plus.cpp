@@ -4405,6 +4405,72 @@ extern "C" unsigned char CheckModulSK(unsigned long modul)
 			 return 0;
 }
 
+
+
+extern "C" unsigned char ModulConv(unsigned char in)
+{
+unsigned char ret = 0;
+
+ switch(in){
+case  MODUL1 : ret = MODUL1T; break; //	(0x10)	 //bpsk	   4
+case  MODUL2 : ret = MODUL2T ; break; //	(0x10)	 //	  qpsk
+case  MODUL3 : ret = MODUL2T ; break; //	(0x10)	 //	  qpsk
+case  MODUL4 : ret = MODUL4T ; break; //	(0x10)	 //	   16
+case  MODUL5 : ret = MODUL5T ; break; //	(0x10)	 //	   32
+case  MODUL6 : ret = MODUL6T ; break; //	(0x10)	 //	   64
+case  MODUL7 : ret = MODUL7T ; break; //	(0x10)	 //		128
+case  MODUL8 : ret = MODUL8T ; break; //	(0x10)	 //	  256
+case  MODUL9 : ret = MODUL9T ; break; //	(0x10)	 //	   512
+case  MODULA : ret = MODULAT ; break; //	(0x10)	 //	   1024
+case  MODULB : ret = MODULBT ; break; //	(0x10)	 //		2048
+case  MODULC : ret = MODULCT ; break; //	(0x10)	 //	 4096
+case  MODUL11 : ret = MODUL1T ; break; //	(0x10)	 //bpsk	   4
+case  MODUL41 : ret = MODUL4T ; break; //	(0x10)	 //	   16
+case  MODUL51 : ret = MODUL5T ; break; //	(0x10)	 //	   32
+case  MODUL61 : ret = MODUL6T ; break; //	(0x10)	 //	   64
+case  MODUL71 : ret = MODUL7T ; break; //	(0x10)	 //		128
+case  MODUL81 : ret = MODUL8T ; break; //	(0x10)	 //	  256
+case  MODUL91 : ret = MODUL9T ; break; //	(0x10)	 //	   512
+case  MODULA1 : ret = MODULAT ; break; //	(0x10)	 //	   1024
+case  MODULB1 : ret = MODULBT ; break; //	(0x10)	 //		2048
+case  MODULC1 : ret = MODULCT ; break; //	(0x10)	 //	 4096
+
+ }
+
+return ret;
+}
+
+
+extern "C" unsigned char ModulConvBack(unsigned char in)
+{
+unsigned char ret = 0x99;
+
+ switch(in){
+case  MODUL1T :  ret = MODUL1 ; break; //	(0x10)	 //bpsk	   4
+case  MODUL2T : ret = MODUL2; break; //	(0x10)	 //	  qpsk
+//case  MODUL3T : ret = MODUL2; break; //	(0x10)	 //	  qpsk
+case  MODUL4T : ret = MODUL4; break; //	(0x10)	 //	   16
+case  MODUL5T : ret = MODUL5; break; //	(0x10)	 //	   32
+case  MODUL6T : ret = MODUL6; break; //	(0x10)	 //	   64
+case  MODUL7T : ret = MODUL7; break; //	(0x10)	 //		128
+case  MODUL8T : ret = MODUL8; break; //	(0x10)	 //	  256
+case  MODUL9T : ret = MODUL9; break; //	(0x10)	 //	   512
+case  MODULAT : ret = MODULA; break; //	(0x10)	 //	   1024
+case  MODULBT : ret = MODULB; break; //	(0x10)	 //		2048
+case  MODULCT : ret = MODULC; break; //	(0x10)	 //	 4096
+
+ }
+
+return ret;
+}
+
+
+
+
+
+
+
+
 extern "C" void LoadModul(void)
 {
  unsigned char modulsk;
@@ -4413,11 +4479,12 @@ extern "C" void LoadModul(void)
 
 	   
 
-				   	  outportb(MODUL_PORT, modulsk);
-					    outportb(MODUL_PORT_T, modulsk);
+				   	  outportb(MODUL_PORT,  ModulConv(modulsk));
+					    outportb(MODUL_PORT_T,  ModulConv(modulsk));
 
 
 }
+
 
 
 
@@ -4436,8 +4503,9 @@ extern "C" void LoadModulSKB(unsigned char chn)
 
 					  { 
 					  modulsk = GetModulSK();
-					  outportb(MODUL_PORT, modulsk);
-					     outportb(MODUL_PORT_T, modulsk);
+
+					  outportb(MODUL_PORT,  ModulConv(modulsk));
+					     outportb(MODUL_PORT_T,  ModulConv(modulsk));
 
 					  }
 					  break;
@@ -4448,8 +4516,9 @@ extern "C" void LoadModulSKB(unsigned char chn)
 					   if(blocktype1 == XCS1_TYPE )
 					  { 
 					  modulsk = GetModulSK2();
-                      outportb(MODUL_PORT, modulsk);
-					     outportb(MODUL_PORT_T, modulsk);
+
+                      outportb(MODUL_PORT,  ModulConv(modulsk));
+					     outportb(MODUL_PORT_T,  ModulConv(modulsk));
 
 				  	  }
 					  break;
@@ -4478,7 +4547,7 @@ extern "C" unsigned char ReadModulSKB(unsigned char chn)
  if(chn <= MAX_CNL)
 		{
 	//	 SetSelector(chn);
-		 return inportb(MODUL_PORT);
+		 return ModulConvBack(inportb(MODUL_PORT));
 	 	}
  return BAD_ANS;
 }

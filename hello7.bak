@@ -48,7 +48,7 @@
 //#define PROG_ODU	   //not used !!! odu.cpp +  + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 						//pvg810_api.c pvg810_api_calibration.c pvg810_api_DataConfig.c
 						//pvg810_api_utilc.c pvg810_api_Application.c pvg810_protocol_MsgUtils.c
-#define PROG_ODU1	   // = rmb _vithout pvg810_ odu2.cpp +  + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
+//#define PROG_ODU1	   // = rmb _vithout pvg810_ odu2.cpp +  + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 
 //#define PROG_ODU4	   // = rmba  maked from pu_m_v_b.cpp	 
 
@@ -159,19 +159,18 @@
 //#define	PROG_PRM_PCH_DEM_XIL_CHN_DMU3  //prm_pch_dem_chn_dmu3.cpp
 //#define	PROG_PRM_PCH_DEM_XIL_CHN_DMU4  //prm_pch_dem_chn_dmu4.cpp
 //#define	PROG_PRM_PCH_DEM_XIL_CHN_DMU5  //prm_pch_dem_chn_dmu5.cpp  dmu + 10G
-
-//#define	PROG_DMU6  //  dmu5.1 dmu6.cpp + dmu6plus.cpp ( provingent + demodulator)	 + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
+#define	PROG_DMU6  //  dmu5.1 dmu6.cpp + dmu6plus.cpp ( provingent + demodulator)	 + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 
 //#define PROG_PROV  //prov.cpp PVG610_API.c  hostDriverForPc.cpp	utils.c	  endian.c	basic.cpp
 //262 : remove 10 symbols in parse rs232
 
 //#define SOFT_VER (0x509)
-#define SOFT_VER (0x1079)
+#define SOFT_VER (0x1080)
 #ifndef PROG_PU_MSAT
 //#define SOFT_VER_STRING    "   14.12.01.1-800 ADESTO"//263 : maked init counter and data for write_buffer_char1()
 //#ifndef PROG_PUPM3_1_ADESTO	
 //#ifndef PROG_PU_MSAT1
-#define SOFT_VER_STRING      "      16.10.11.1-1079    "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING      "      16.10.21.1-1080    "//263 : maked init counter and data for write_buffer_char1()
 #else
 //#define SOFT_VER_STRING "Radian Ver. 01.00        "//263 : maked init counter and data for write_buffer_char1()
 #define SOFT_VER_STRING   "Radian v.922.50925       "//263 : maked init counter and data for write_buffer_char1()
@@ -8405,18 +8404,18 @@ extern "C" void print_signature(void);
 #define MAX_MODULSK		  (0x70)
 #define MIN_MODULSK		  (0x10)
 
-#define MODUL1	(0x10)
-#define MODUL2	(0x20)
-#define MODUL3	(0x21)
-#define MODUL4	(0x40)
-#define MODUL5	(0x50)
-#define MODUL6	(0x60)
-#define MODUL7	(0x70)
-#define MODUL8	(0x80)
-#define MODUL9	(0x90)
-#define MODULA	(0xA0)
-#define MODULB	(0xB0)
-#define MODULC	(0xC0)
+#define MODUL1	(0x10)	 //bpsk	   4
+#define MODUL2	(0x20)	 //qpsk	   0
+#define MODUL3	(0x21)	 //oqpsk
+#define MODUL4	(0x40)	 //16qam	2
+#define MODUL5	(0x50)	 //32qam	3
+#define MODUL6	(0x60)	 //64qam	5
+#define MODUL7	(0x70)	  //128qam	6
+#define MODUL8	(0x80)	 //256qam	7
+#define MODUL9	(0x90)	  //512qam	1
+#define MODULA	(0xA0)	  //1024qam	  8
+#define MODULB	(0xB0)	 //2048		  9
+#define MODULC	(0xC0)	  //4096	 0xa
 
 
 
@@ -8430,6 +8429,20 @@ extern "C" void print_signature(void);
 #define MODULA1	(0xA1)
 #define MODULB1	(0xB1)
 #define MODULC1	(0xC1)
+
+case  MODUL1 : ret = 4; break; //	(0x10)	 //bpsk	   4
+case  MODUL2 : ret = 0; break; //	(0x10)	 //	  qpsk
+case  MODUL3 : ret = 0; break; //	(0x10)	 //	  qpsk
+case  MODUL4 : ret = 2; break; //	(0x10)	 //	   16
+case  MODUL5 : ret = 3; break; //	(0x10)	 //	   32
+case  MODUL6 : ret = 5; break; //	(0x10)	 //	   64
+case  MODUL7 : ret = 6; break; //	(0x10)	 //		128
+case  MODUL8 : ret = 7; break; //	(0x10)	 //	  256
+case  MODUL9 : ret = 1; break; //	(0x10)	 //	   512
+case  MODULA : ret = 8; break; //	(0x10)	 //	   1024
+case  MODULB : ret = 9; break; //	(0x10)	 //		2048
+case  MODULC : ret = 0xA; break; //	(0x10)	 //	 4096
+
 
 
 

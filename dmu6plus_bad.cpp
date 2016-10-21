@@ -4412,59 +4412,33 @@ extern "C" unsigned char ModulConv(unsigned char in)
 unsigned char ret = 0;
 
  switch(in){
-case  MODUL1 : ret = MODUL1T; break; //	(0x10)	 //bpsk	   4
-case  MODUL2 : ret = MODUL2T ; break; //	(0x10)	 //	  qpsk
-case  MODUL3 : ret = MODUL2T ; break; //	(0x10)	 //	  qpsk
-case  MODUL4 : ret = MODUL4T ; break; //	(0x10)	 //	   16
-case  MODUL5 : ret = MODUL5T ; break; //	(0x10)	 //	   32
-case  MODUL6 : ret = MODUL6T ; break; //	(0x10)	 //	   64
-case  MODUL7 : ret = MODUL7T ; break; //	(0x10)	 //		128
-case  MODUL8 : ret = MODUL8T ; break; //	(0x10)	 //	  256
-case  MODUL9 : ret = MODUL9T ; break; //	(0x10)	 //	   512
-case  MODULA : ret = MODULAT ; break; //	(0x10)	 //	   1024
-case  MODULB : ret = MODULBT ; break; //	(0x10)	 //		2048
-case  MODULC : ret = MODULCT ; break; //	(0x10)	 //	 4096
-case  MODUL11 : ret = MODUL1T ; break; //	(0x10)	 //bpsk	   4
-case  MODUL41 : ret = MODUL4T ; break; //	(0x10)	 //	   16
-case  MODUL51 : ret = MODUL5T ; break; //	(0x10)	 //	   32
-case  MODUL61 : ret = MODUL6T ; break; //	(0x10)	 //	   64
-case  MODUL71 : ret = MODUL7T ; break; //	(0x10)	 //		128
-case  MODUL81 : ret = MODUL8T ; break; //	(0x10)	 //	  256
-case  MODUL91 : ret = MODUL9T ; break; //	(0x10)	 //	   512
-case  MODULA1 : ret = MODULAT ; break; //	(0x10)	 //	   1024
-case  MODULB1 : ret = MODULBT ; break; //	(0x10)	 //		2048
-case  MODULC1 : ret = MODULCT ; break; //	(0x10)	 //	 4096
+case  MODUL1 : ret = 4; break; //	(0x10)	 //bpsk	   4
+case  MODUL2 : ret = 0; break; //	(0x10)	 //	  qpsk
+case  MODUL3 : ret = 0; break; //	(0x10)	 //	  qpsk
+case  MODUL4 : ret = 2; break; //	(0x10)	 //	   16
+case  MODUL5 : ret = 3; break; //	(0x10)	 //	   32
+case  MODUL6 : ret = 5; break; //	(0x10)	 //	   64
+case  MODUL7 : ret = 6; break; //	(0x10)	 //		128
+case  MODUL8 : ret = 7; break; //	(0x10)	 //	  256
+case  MODUL9 : ret = 1; break; //	(0x10)	 //	   512
+case  MODULA : ret = 8; break; //	(0x10)	 //	   1024
+case  MODULB : ret = 9; break; //	(0x10)	 //		2048
+case  MODULC : ret = 0xA; break; //	(0x10)	 //	 4096
+case  MODUL11 : ret = 4; break; //	(0x10)	 //bpsk	   4
+case  MODUL41 : ret = 2; break; //	(0x10)	 //	   16
+case  MODUL51 : ret = 3; break; //	(0x10)	 //	   32
+case  MODUL61 : ret = 5; break; //	(0x10)	 //	   64
+case  MODUL71 : ret = 6; break; //	(0x10)	 //		128
+case  MODUL81 : ret = 7; break; //	(0x10)	 //	  256
+case  MODUL91 : ret = 1; break; //	(0x10)	 //	   512
+case  MODULA1 : ret = 8; break; //	(0x10)	 //	   1024
+case  MODULB1 : ret = 9; break; //	(0x10)	 //		2048
+case  MODULC1 : ret = 0xA; break; //	(0x10)	 //	 4096
 
  }
 
 return ret;
 }
-
-
-extern "C" unsigned char ModulConvBack(unsigned char in)
-{
-unsigned char ret = 0x99;
-
- switch(in){
-case  MODUL1T :  ret = MODUL1 ; break; //	(0x10)	 //bpsk	   4
-case  MODUL2T : ret = MODUL2; break; //	(0x10)	 //	  qpsk
-//case  MODUL3T : ret = MODUL2; break; //	(0x10)	 //	  qpsk
-case  MODUL4T : ret = MODUL4; break; //	(0x10)	 //	   16
-case  MODUL5T : ret = MODUL5; break; //	(0x10)	 //	   32
-case  MODUL6T : ret = MODUL6; break; //	(0x10)	 //	   64
-case  MODUL7T : ret = MODUL7; break; //	(0x10)	 //		128
-case  MODUL8T : ret = MODUL8; break; //	(0x10)	 //	  256
-case  MODUL9T : ret = MODUL9; break; //	(0x10)	 //	   512
-case  MODULAT : ret = MODULA; break; //	(0x10)	 //	   1024
-case  MODULBT : ret = MODULB; break; //	(0x10)	 //		2048
-case  MODULCT : ret = MODULC; break; //	(0x10)	 //	 4096
-
- }
-
-return ret;
-}
-
-
 
 
 
@@ -4479,8 +4453,8 @@ extern "C" void LoadModul(void)
 
 	   
 
-				   	  outportb(MODUL_PORT,  ModulConv(modulsk));
-					    outportb(MODUL_PORT_T,  ModulConv(modulsk));
+				   	  outportb(MODUL_PORT, ModulConv(modulsk));
+					    outportb(MODUL_PORT_T, ModulConv(modulsk));
 
 
 }
@@ -4504,8 +4478,8 @@ extern "C" void LoadModulSKB(unsigned char chn)
 					  { 
 					  modulsk = GetModulSK();
 
-					  outportb(MODUL_PORT,  ModulConv(modulsk));
-					     outportb(MODUL_PORT_T,  ModulConv(modulsk));
+					  outportb(MODUL_PORT, ModulConv(modulsk));
+					     outportb(MODUL_PORT_T, ModulConv(modulsk));
 
 					  }
 					  break;
@@ -4517,8 +4491,8 @@ extern "C" void LoadModulSKB(unsigned char chn)
 					  { 
 					  modulsk = GetModulSK2();
 
-                      outportb(MODUL_PORT,  ModulConv(modulsk));
-					     outportb(MODUL_PORT_T,  ModulConv(modulsk));
+                      outportb(MODUL_PORT, ModulConv(modulsk));
+					     outportb(MODUL_PORT_T, ModulConv(modulsk));
 
 				  	  }
 					  break;
@@ -4577,8 +4551,8 @@ unsigned char modulsk;
 	 case MODUL2 :  b14 = 0; b13 = 0;	b12 = 1;   break;
 	 case MODUL3 :  b14 = 0; b13 = 1;	b12 = 0;   break;
 	 case MODUL4 :  b14 = 0; b13 = 1;	b12 = 1;   break;
-	 case MODUL5 :  b14 = 1; b13 = 0;	b12 = 0;   break;
-	 case MODUL6 :  b14 = 1; b13 = 0;	b12 = 1;   break;
+	 case MODUL5 :  b MODUL4 :  b14 = 0; b13 = 1;	b12 = 1;   break;
+	 case MODUL5 :  b= 0;	b12 = 1;   break;
 	 case MODUL7 :  b14 = 1; b13 = 1;	b12 = 0;   break;
 	 case MODUL8 :  b14 = 1; b13 = 1;	b12 = 1;   break;
   //added - need check!!!
@@ -4943,13 +4917,8 @@ extern "C" void  ParseCommand9(char *IPBuff)  //test0
 		 {
 		   add_char_TCP_buff(TYPE_RUN_BAD);
 		   add_char_TCP_buff(IPBuff[1]);
-		   add_char_TCP_buff(NOT_CORRECT_PARAMETER);	
-		 }
-		  breakflag = 1;
-}
-
-
-extern "C" void  ParseCommand8(char *IPBuff)  //
+		   add_char_TCP_buff(NOT_CORRE   add_char_TCP_buff(IPBuff[1]);
+		   add_char_TCP_buff(NOT_CORRE ParseCommand8(char *IPBuff)  //
 {
    unsigned char chn;// = IPBuff[1];
    unsigned char tmp = IPBuff[2];
@@ -5325,10 +5294,7 @@ extern "C" void TestChecksum()
  * pBuf++  = 0x8011; //time = 2 ip p prot tcp = 6
  * pBuf++  = 0; //hier crc	  need 0x0107
  * pBuf++  = 0xc0a8;// cbaco.cbacocfg[numstruct].ip_self[3] << 16 + cbaco.cbacocfg[numstruct].ip_self[2];
- * pBuf++  = 0x0064;// cbaco.cbacocfg[numstruct].ip_self[1] << 16 + cbaco.cbacocfg[numstruct].ip_self[0];
- * pBuf++  = 0xffff;//ffff;
- * pBuf++  = 0xffff;//0xffff;
-   checksum =  CalcChecksum((unsigned)HEADER_LEN, Buffer);
+ * pBuf++  = 0x0064;// cbaco.cbacocfg[numstruct].ip_self[1] << 16 + cbaco.cbacocfg[numstruct].ip_self[0]numstruct].ip_self[1] << 16 + cbaco.cbacocfg[numstruct].ip_self[0]checksum =  CalcChecksum((unsigned)HEADER_LEN, Buffer);
   // Buffer[5]	 = 	   checksum;
 
   printfpd("\n\rchecksum :  %X", checksum);
@@ -5558,8 +5524,7 @@ l_base = 0;
 	outportb(ADDR_REG_ADDR, MAC_DEST_ADDR + 2);
 	outportb(l_base + DATA_REG_ADDR ,dmu5.cfg.mac_dest[2]);//.0xff); //0xff); //cbaco.cbacocfg[numstruct].mac_dest[2]); //	 0xff); // 
 	outportb(ADDR_REG_ADDR, MAC_DEST_ADDR + 3);
-	outportb(l_base + DATA_REG_ADDR ,dmu5.cfg.mac_dest[3]);//.0xff); // 0xff); //cbaco.cbacocfg[numstruct].mac_dest[3]); //  0xff); //
-	outportb(ADDR_REG_ADDR, MAC_DEST_ADDR + 4);
+	outportb(l_base + DATA_REG_ADDR ,dmu5.cfg.mac_dest[3]);//.0xff); // 0xff); //cbaco.cbacocfg[_ADDR ,dmu5.cfg.mac_dest[3]);//.0xff); // 0xff); //cbaco.cbacocfg[AC_DEST_ADDR + 4);
 	outportb(l_base + DATA_REG_ADDR ,dmu5.cfg.mac_dest[4]);//.0xff); // 0xff); //cbaco.cbacocfg[numstruct].mac_dest[4]); //  0xff); //
 	outportb(ADDR_REG_ADDR, MAC_DEST_ADDR + 5);
 	outportb(l_base + DATA_REG_ADDR ,dmu5.cfg.mac_dest[5]);//.0xff); //0xff); //cbaco.cbacocfg[numstruct].mac_dest[5]); //	  0xff); // 

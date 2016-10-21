@@ -13,7 +13,7 @@ LD = C:\ARC\MetaWare\hcarm\bin\hcarm.exe
 AS = C:\ARC\MetaWare\hcarm\bin\hcarm.exe
 VPATH = c:\arc\mqx2.50_atevbrm9200.met\examples\hello7;C:\ARC\rtcs2.95\lib\at91rm9200l.met;C:\ARC\mqx2.50_atevbrm9200.met\lib\atevbrm9200l.met;C:\ARC\mqx2.50_atevbrm9200.met\lib\at91rm9200l.met;C:\ARC\mqx2.50_atevbrm9200.met\lib\atevbrm9200l.met;C:\ARC\MetaWare\hcarm\lib\le\thumb
 
-hello7.elf:  hello7.o asm_test.o work.o at45.o work1.o jump.o EMBISR.o ttl.o hello.o dataflash.o spi_pol.o utils.o endian.o hostDriverForPc.o PVG610_API.o odu2.o rtcs.a atevbrm9200.a mqx.a libc.a met.o
+hello7.elf:  hello7.o asm_test.o work.o at45.o work1.o jump.o EMBISR.o ttl.o hello.o dataflash.o spi_pol.o utils.o endian.o hostDriverForPc.o PVG610_API.o dmu6plus.o dmu6.o rtcs.a atevbrm9200.a mqx.a libc.a met.o
 	@echo Linking...  
 	@$(LD) -Bgrouplib -Bstatic -Hhostlink -Heos=mqx -Hon=Long_enums -Hnoreent -Hnoswst -Hnosdata -Hoff=Behaved -Hheap=0 -HL -m -o C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello7.elf @C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello7.opl -Hldopt=-q > C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello7.map
 	@echo Build is finished.
@@ -105,11 +105,17 @@ PVG610_API.o:
 	@echo Compiling C:\\ARC\\mqx2.50_atevbrm9200.met\\examples\\hello7\\PVG610_API.c ...  
 	@$(CC) -Hnocopyr -c -Hasopt=-c @C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello7.opc C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\PVG610_API.c
 
--include C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\odu2.d
+-include C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\dmu6plus.d
 
-odu2.o:
-	@echo Compiling C:\\ARC\\mqx2.50_atevbrm9200.met\\examples\\hello7\\odu2.cpp ...  
-	@$(CC) -Hnocopyr -c -Hasopt=-c @C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello7.opc C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\odu2.cpp
+dmu6plus.o:
+	@echo Compiling C:\\ARC\\mqx2.50_atevbrm9200.met\\examples\\hello7\\dmu6plus.cpp ...  
+	@$(CC) -Hnocopyr -c -Hasopt=-c @C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello7.opc C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\dmu6plus.cpp
+
+-include C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\dmu6.d
+
+dmu6.o:
+	@echo Compiling C:\\ARC\\mqx2.50_atevbrm9200.met\\examples\\hello7\\dmu6.cpp ...  
+	@$(CC) -Hnocopyr -c -Hasopt=-c @C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello7.opc C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\dmu6.cpp
 
 rtcs.a:
 atevbrm9200.a:
