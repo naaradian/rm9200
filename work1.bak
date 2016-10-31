@@ -23570,7 +23570,7 @@ if(0) //150414
 		case 10:  ParseCommand10(IPBuff);  break;
 
 //161031		case 0xB: ParseCommand11(IPBuff); break;
-		case 0xB:	   if(IPBuff[2] > MAX_ATTB) chkflagattb = 0;
+		case 0xB:	   if(IPBuff[2] > MAX_ATT3) chkflagattb = 0;
 				  else { chkflagattb = 1;	ParseCommand11(IPBuff); 	}	
 		 								  break;
 
@@ -23748,13 +23748,28 @@ if(0) //150414
 	    if(chkflagattb)
   	   {
 
-	//   if(breakflag)
-	  //	   {
+	   if(breakflag)
+		   {
 			  add_char_TCP_buff(TYPE_RUN_OK);
 			  add_char_TCP_buff(IPBuff[1]);
 	 	      add_char_TCP_buff(ATT_RPU_CODE);
-		//   }
-	    }	  //chkflagattb
+		   }
+		   else
+		   {
+   //		      SetFreqToZero(IPBuff[1]);
+  //	          SetStatToZero(IPBuff[1]);
+			  add_char_TCP_buff(TYPE_RUN_BAD);
+			  add_char_TCP_buff(IPBuff[1]);
+			  if(device_found(IPBuff[1]))
+			  {
+	 	      add_char_TCP_buff(LOST_CODE);
+			  }
+			  else
+			  {
+			  add_char_TCP_buff(ALARM_CODE);
+			  }
+		   }
+    }	  //chkflagatt
 	  else
 	  {
 
@@ -23764,7 +23779,13 @@ if(0) //150414
 			//  {
 	 	      add_char_TCP_buff(LOST_CODE);	   //wrong command
 		 //	  }
-	  
+		   //	  else
+		  //	  {
+			 // add_char_TCP_buff(ALARM_CODE);
+		 //	  }
+
+
+
       }
 		   	
  //		   add_char_TCP_buff(IPBuff[1]);

@@ -2088,8 +2088,6 @@ unsigned long DelayWriteTime2;
 unsigned char SourcePCH;
 unsigned char chkflag;
 unsigned char chkflagatt;
-unsigned char chkflagattb;
-
 
 #endif
 

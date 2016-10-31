@@ -122,7 +122,7 @@
 //#define PROG_PRM_PCH_N_2   //prm_pch_n_2.cpp   need rekompile mqx for fast rate!!!
 //#define PROG_PRM_PCH_N_3_NOV //prm_pch_n_3_nov.cpp	need rekompile mqx for fast rate!!!
 //#define PROG_PRM_PCH_N_3_FSB //prm_pch_n_3_fsb.cpp	need rekompile mqx for fast rate!!!
-//#define PROG_PRM_PCH_L_61 // prm_pch.cpp 2 channel - 6 receivers	 added some commands 
+#define PROG_PRM_PCH_L_61 // prm_pch.cpp 2 channel - 6 receivers	 added some commands 
 //#define PROG_PRM_PCH_L_8  // prm_pch8.cpp prm_pch 8 receivers
 //#define PROG_PD  // pd.cpp	make from prm_pch_l61
 //#define PROG_PD1  // pd1.cpp	make from ups1
@@ -159,18 +159,18 @@
 //#define	PROG_PRM_PCH_DEM_XIL_CHN_DMU3  //prm_pch_dem_chn_dmu3.cpp
 //#define	PROG_PRM_PCH_DEM_XIL_CHN_DMU4  //prm_pch_dem_chn_dmu4.cpp
 //#define	PROG_PRM_PCH_DEM_XIL_CHN_DMU5  //prm_pch_dem_chn_dmu5.cpp  dmu + 10G
-#define	PROG_DMU6  //  dmu5.1 dmu6.cpp + dmu6plus.cpp ( provingent + demodulator)	 + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
+//#define	PROG_DMU6  //  dmu5.1 dmu6.cpp + dmu6plus.cpp ( provingent + demodulator)	 + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 
 //#define PROG_PROV  //prov.cpp PVG610_API.c  hostDriverForPc.cpp	utils.c	  endian.c	basic.cpp
 //262 : remove 10 symbols in parse rs232
 
 //#define SOFT_VER (0x509)
-#define SOFT_VER (0x1080)
+#define SOFT_VER (0x1093)
 #ifndef PROG_PU_MSAT
 //#define SOFT_VER_STRING    "   14.12.01.1-800 ADESTO"//263 : maked init counter and data for write_buffer_char1()
 //#ifndef PROG_PUPM3_1_ADESTO	
 //#ifndef PROG_PU_MSAT1
-#define SOFT_VER_STRING      "      16.10.21.1-1080    "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING      "      16.10.31.1-1093    "//263 : maked init counter and data for write_buffer_char1()
 #else
 //#define SOFT_VER_STRING "Radian Ver. 01.00        "//263 : maked init counter and data for write_buffer_char1()
 #define SOFT_VER_STRING   "Radian v.922.50925       "//263 : maked init counter and data for write_buffer_char1()
@@ -7401,6 +7401,10 @@ extern "C" unsigned char device_found(unsigned char);
 #define CODE_COMMAND_7  (7)
 #define MAX_STEPS (500)
 
+#define MAX_ATT3 (30)
+#define MAX_ATTB (30)
+
+
 #define FORMULA_LEN (14)
 #define DEVICE_TYPE_MASK  (0xC3)
 #define PUPM2_TYPE_CONV_MASK (0xC3)
@@ -7827,6 +7831,18 @@ extern "C" void RestoreAtt(unsigned char , unsigned long );
 
 
 #ifdef 	PROG_PRM_PCH_L_61
+
+#define	 EMB5S_SIZE (12)
+
+extern unsigned char chkflag;
+extern unsigned char chkflagatt;
+extern unsigned char chkflagattb;
+
+
+
+extern "C" void SetFreqToZero(unsigned char);
+extern "C" void SetStatToZero(unsigned char);
+
 
 #define SCAN_RESEND
 

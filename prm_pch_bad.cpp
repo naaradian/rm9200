@@ -1488,8 +1488,7 @@ union UnEmb5StatusReciever
 {
 	Emb5StatusReciever emb5statusreciever; 	 // Код канала РПУ (1..2)	
    //	unsigned char byte[11];
- //	unsigned char byte[12];
-	unsigned char byte[EMB5S_SIZE];
+	unsigned char byte[12];
 };
 
 struct Emb5ScanFreq
@@ -1933,6 +1932,7 @@ unsigned char tmp;
 
 		 emb5StatusReciever1.emb5statusreciever.type = unEmb2TypeVer.emb2TypeVer.signature_hardware[0];
       //	  printEthLongHex(unEmb2TypeVer.emb2TypeVer.signature_hardware[0]); 
+   
     }
     	   
     	   
@@ -1944,8 +1944,8 @@ unsigned char tmp;
   case 4:
   case 5:
   case 6:
-  case 20:	unEmb2TypeVer.emb2TypeVer.signature_software[0] =  MakeAttBack(embMsgUD_1.Body(3));//161025	break; //140718
-  case 21: 	emb5StatusReciever1.emb5statusreciever.status =  1; //161025embMsgUD_1.Body(2) >> 4;
+  case 20:	unEmb2TypeVer.emb2TypeVer.signature_software[0] =  MakeAttBack(embMsgUD_1.Body(3));	break; //140718
+  case 21: 	emb5StatusReciever1.emb5statusreciever.status =  embMsgUD_1.Body(2) >> 4;
 			emb5StatusReciever1.emb5statusreciever.signalLevel =  ConvVal( (((unsigned short)embMsgUD_1.Body(2)&0x0F) << 8) + embMsgUD_1.Body(1));
 			emb5StatusReciever1.emb5statusreciever.stepAtt =  MakeAttBack(embMsgUD_1.Body(3));
 			emb5StatusReciever1.emb5statusreciever.lock =  (unsigned short)embMsgUD_1.Body(2) >> 7;
@@ -2034,35 +2034,29 @@ if(modescan2)
   case 4:
   case 5:
   case 6:
-  case 20: 	unEmb2TypeVer.emb2TypeVer.signature_software[8] =  MakeAttBack(embMsgUD_2.Body(3));//161025		break; //140718
-  case 21: 	emb5StatusReciever2.emb5statusreciever.status =  1; //161025 embMsgUD_2.Body(2) >> 4;
+  case 20: 	unEmb2TypeVer.emb2TypeVer.signature_software[8] =  MakeAttBack(embMsgUD_2.Body(3));	break; //140718
+  case 21: 	emb5StatusReciever2.emb5statusreciever.status =  embMsgUD_2.Body(2) >> 4;
 			emb5StatusReciever2.emb5statusreciever.signalLevel =  ConvVal((((unsigned short)embMsgUD_2.Body(2)&0x0F)  << 8) + 	embMsgUD_2.Body(1));
  		   	emb5StatusReciever2.emb5statusreciever.stepAtt =  MakeAttBack(embMsgUD_2.Body(3));  //	break;
  		break;	   //for test
   case 22:	emb5RPUState2.emb5rpustate.temp =  embMsgUD_2.Body(1);
 			emb5RPUState2.emb5rpustate.temp_min =  embMsgUD_2.Body(2);
-			emb5RPUState2.emb5rpustate.temp_max =  embMsgUD_2.Body(3);	 break;
-
+			emb5RPUState2.emb5rpustate.temp_max =  embMsgUD_2.Body(3);
   case 23:	emb5RPUState2.emb5rpustate.u48 =  embMsgUD_2.Body(1);
 			emb5RPUState2.emb5rpustate.u48min =  embMsgUD_2.Body(2);
-			emb5RPUState2.emb5rpustate.u48max =  embMsgUD_2.Body(3);    break;
-
+			emb5RPUState2.emb5rpustate.u48max =  embMsgUD_2.Body(3);
   case 24:	emb5RPUState2.emb5rpustate.u24 =  embMsgUD_2.Body(1);
 			emb5RPUState2.emb5rpustate.u24min =  embMsgUD_2.Body(2);
-			emb5RPUState2.emb5rpustate.u24max =  embMsgUD_2.Body(3);    break;
-
-  case 25:	emb5RPUState2.emb5rpustate.u7 =  embMsgUD_2.Body(1);
+			emb5RPUState2.emb5rpustate.u24max =  embMsgUD_2.Body(3);
+  case 25:	emb5RPUState2.emb5rpustatestate  embMsgUD_2.Body(1);
 			emb5RPUState2.emb5rpustate.u7min =  embMsgUD_2.Body(2);
-			emb5RPUState2.emb5rpustate.u7max =  embMsgUD_2.Body(3);	   break;
-
+			emb5RPUState2.emb5rpustate.u7max =  embMsgUD_2.Body(3);
   case 26:	emb5RPUState2.emb5rpustate.u5 =  embMsgUD_2.Body(1);
 			emb5RPUState2.emb5rpustate.u5min =  embMsgUD_2.Body(2);
-			emb5RPUState2.emb5rpustate.u5max =  embMsgUD_2.Body(3);	  break;
-
+			emb5RPUState2.emb5rpustate.u5max =  embMsgUD_2.Body(3);
   case 27:	emb5RPUState2.emb5rpustate.u_5 =  embMsgUD_2.Body(1);
 			emb5RPUState2.emb5rpustate.u_5min =  embMsgUD_2.Body(2);
-			emb5RPUState2.emb5rpustate.u_5max =  embMsgUD_2.Body(3);   break;
-
+			emb5RPUState2.emb5rpustate.u_5max =  embMsgUD_2.Body(3);
 #ifdef PROG_PRM_PCH_L_61
   case 28:	break; //unEmb2TypeVer.emb2TypeVer.signature_software[8] =  embMsgUD_2.Body(1);	break;
   case 29:	unEmb2TypeVer.emb2TypeVer.signature_software[10] =  embMsgUD_2.Body(1);	break;
@@ -2086,11 +2080,6 @@ unsigned long DelayWriteTime2;
 
 #ifdef PROG_PRM_PCH_L_61
 unsigned char SourcePCH;
-unsigned char chkflag;
-unsigned char chkflagatt;
-unsigned char chkflagattb;
-
-
 #endif
 
 
@@ -2371,7 +2360,7 @@ for(i=14; i<16; i++)
 	}
 
 #ifdef MAKET_PLATA
-			unEmb2TypeVer.emb2TypeVer.signature_hardware[0] =  0xc7;
+			unEmb2TypeVer.emb2TypeVer.signature_hardware[0] = 0] = ;
 			unEmb2TypeVer.emb2TypeVer.signature_hardware[2] = 0xc7;
 #endif
 
@@ -2380,7 +2369,7 @@ for(i=14; i<16; i++)
 
 	unEmb2TypeVer.emb2TypeVer.signature_software[0] = *bt;
 	unEmb2TypeVer.emb2TypeVer.signature_software[1] = *(bt+1);
-	unEmb2TypeVer.emb2TypeVer.signature_software[2] = *(bt+2);
+	unEmb2TypeVer.emb2TypeVer.signatureatureware[2] = *(bt+2);
 	unEmb2TypeVer.emb2TypeVer.signature_software[3] = *(bt+3);
 	unEmb2TypeVer.emb2TypeVer.signature_software[4] = *(bt+4);
 	unEmb2TypeVer.emb2TypeVer.signature_software[5] = *(bt+5);
@@ -2430,8 +2419,7 @@ while(embSerialACT155.UsedMod())
 #endif //PROG_PRM_PCH_C
 
 
-
-for(i=0; i<EMB5S_SIZE; i++)
+for(i=0; i<12; i++)
 	{
 	  emb5StatusReciever1.byte[i] = 0;
 	  emb5StatusReciever2.byte[i] = 0;
@@ -2440,13 +2428,14 @@ for(i=0; i<EMB5S_SIZE; i++)
 	  emb5StatusReciever5.byte[i] = 0;
 	  emb5StatusReciever6.byte[i] = 0;
 	}
+emb5StatusReciever1.emb5statusreciever.number =  1;
+emb5StatusReciever2.emb5statusreciever.number =  2;
+emb5StatusReciever3.emb5statusreciever.number =  3;
+emb5StatusReciever4.emb5statusreciever.number =  4;
+emb5StatusReciever5.emb5statusreciever.number =  5;
+emb5StatusReciever6.emb5statusreciever.number =  6;
 
-emb5StatusReciever1.emb5statusreciever.number = 1; 
-emb5StatusReciever2.emb5statusreciever.number = 2; 
-emb5StatusReciever3.emb5statusreciever.number = 3; 
-emb5StatusReciever4.emb5statusreciever.number = 4; 
-emb5StatusReciever5.emb5statusreciever.number = 5; 
-emb5StatusReciever6.emb5statusreciever.number = 6; 
+
 
 
 
@@ -2762,7 +2751,8 @@ fl1 = 1;
 
   	if(!(inportb(STATUS_PORT) & SEARCH_CHANNEL1)) //t
    	{
- 	 tmpp = inportb(LED_PORT);
+ 	 
+ 	 = inportb(LED_PORT);
   	 outportb(LED_PORT, (tmpp | NO_ALARM_INPUT));
     }	  //status
   else
@@ -3122,7 +3112,7 @@ if(GetTestMode() == 0x50)
 					case 0x5A: embSerialACT155.AddMod(0x5A); embSerialACT155.AddMod(0x00); break;
 					case 0x55: embSerialACT155.AddMod(0x5A); embSerialACT155.AddMod(0x01); break;
 					case 0xA5: embSerialACT155.AddMod(0x5A); embSerialACT155.AddMod(0x02); break;
-					case 0xAA: embSerialACT155.AddMod(0x5A); embSerialACT155.AddMod(0x03); break;
+					case 0xAA: embSerialACT155.AddM.AddM5A); embSerialACT155.AddMod(0x03); break;
 					default: embSerialACT155.AddMod(embMsgUDRequest_2.body[i]);
 					}
 				}
@@ -3449,7 +3439,7 @@ if(GetTestMode() == 0x50)
 				break;
 			}
 		}
-		if( ((time1-time4old) > delay4)	 &&  (power_port2 & CH4_MASK)) // <<<! make later
+		if( ((time1-time4old) > delay4)	 &&  (power_port2 & CH4_MASK)) /K)) /! make later
 		{
 			time4old = time1;
 	   //	  printf("\n\r >>4");
@@ -4092,7 +4082,7 @@ if(GetTestMode() == 0x50)
 			{
 		  // 	  printf(".%02X",embMsgUDRequest_2.body[i]);
 			}
-#endif //PRM_PCH_DEBUG
+#endif //PRM_PPRM_PBUG
 					switch(embMsgUDRequest_2.body[i])
 					{
 					case 0x5A: embSerialACT155.AddTransit(0x5A); embSerialACT155.AddTransit(0x00); break;
@@ -4367,8 +4357,8 @@ if(GetTestMode() == 0x50)
 		   {
 	   //	   printf("\n\r Write!!"); //t
 	   //		 ClearNeedWriteDevId();
-
-			 WriteDevId();
+();
+ WriteDevId();
 			 ClearNeedWriteDevId();
 		   }
 
@@ -4410,7 +4400,7 @@ extern "C" void Remote_PRM_PCH(void)
 /*FUNCTION*-------------------------------------------------------------------
 * 
 * Function Name    : time_notify_core(void)
-* Returned Value   : none
+* Ret* Ret Value   : none
 * Comments         :
 *    This routine is used to port embisr to be called from timer isr
 *END*----------------------------------------------------------------------*/
@@ -4740,8 +4730,7 @@ unsigned char *	Formula8(unsigned long f)
 			{
 				f_tm = f_in - 848000;//1050000;
 				double Ftemp = f_tm * 10000.0;
-				Fsint = (f_tm * 10000.0)/2; // *2 yoi R
-				N = Fsint/Fdds0;  
+				Fsint = (f_tm * 10000.0)/2; // *2 yoi Ryoi R	N = Fsint/Fdds0;  
 				Fint = N*Fdds0;			
 				Fdelta = Fsint - Fint;
 				Fstep_dds = Fdelta/N;
@@ -5026,8 +5015,7 @@ unsigned char *Formula9(unsigned long f, unsigned char m_band)
 				b[6] = (high>>8)&0xFF;
 				b[7] = high&0xFF;
 				b[8] = (low>>24)&0xFF;
-				b[9] = (low>>16)&0xFF;
-				b[10] = (low>>8)&0xFF;
+				b[9] = (low>>16)&0xFF&0xFF		b[10] = (low>>8)&0xFF;
 				b[11] = low&0xFF;
 			}
 			else
@@ -5305,7 +5293,7 @@ unsigned char *Formula9(unsigned long f, unsigned char m_band)
 			if((f_in>=1490000)&&(f_in<1640000)) att=6;
 			if((f_in>=1640000)&&(f_in<1660000)) att=5;
 			if((f_in>=1660000)&&(f_in<1700000)) att=3;
-			if((f_in>=1700000)&&(f_in<1770000)) att=2;	  
+			if((f_in>=1700000)&&(f)&&(f770000)) att=2;	  
 
 			b[0]=7;
 			b[1]=0;
@@ -5598,7 +5586,7 @@ unsigned char *Formula9(unsigned long f, unsigned char m_band)
 				Fint = N*Fdds0;			
 				Fdelta = Fsint - Fint;
 				Fstep_dds = Fdelta/N;
-				Fdds = Fdds0 + Fstep_dds;
+				Fdds = Fdds0 +ds0 +p_dds;
 				Ftemp = N*Fdds;
 				b[2] = 0x01+att;	 // Eiiiooaoi? K
 				ueh.eh.bit7 = 1;
@@ -5873,7 +5861,7 @@ unsigned char *Formula9(unsigned long f, unsigned char m_band)
 				u64base *= (__int64)(100000000l);
 				u64base += (__int64) (76710656l);
 				__int64 u64result = u64base*df;
-				unsigned long low = u64result&0xFFFFFFFF;
+				unsignesigneg low = u64result&0xFFFFFFFF;
 				unsigned long high = (u64result>>32)&0xFFFFFFFF;
 				b[6] = (high>>8)&0xFF;
 				b[7] = high&0xFF;
@@ -6172,7 +6160,7 @@ unsigned char *Formula8(unsigned long f, unsigned char m_band)
 				unsigned long high = (u64result>>32)&0xFFFFFFFF;
 				b[6] = (high>>8)&0xFF;
 				b[7] = high&0xFF;
-				b[8] = (low>>24)&0xFF;
+				b[8] = (l = (l4)&0xFF;
 				b[9] = (low>>16)&0xFF;
 				b[10] = (low>>8)&0xFF;
 				b[11] = low&0xFF;
@@ -6467,8 +6455,7 @@ unsigned char *Formula8(unsigned long f, unsigned char m_band)
 				unsigned long low = u64result&0xFFFFFFFF;
 				unsigned long high = (u64result>>32)&0xFFFFFFFF;
 				b[6] = (high>>8)&0xFF;
-				b[7] = high&0xFF;
-				b[8] = (low>>24)&0xFF;
+				b[7] = high&0xgh&0x				b[8] = (low>>24)&0xFF;
 				b[9] = (low>>16)&0xFF;
 				b[10] = (low>>8)&0xFF;
 				b[11] = low&0xFF;
@@ -6756,7 +6743,7 @@ unsigned char *Formula8(unsigned long f, unsigned char m_band)
 				unsigned long low = u64result&0xFFFFFFFF;
 				unsigned long high = (u64result>>32)&0xFFFFFFFF;
 				b[6] = (high>>8)&0xFF;
-				b[7] = high&0xFF;
+				b[7] = hi = hiFF;
 				b[8] = (low>>24)&0xFF;
 				b[9] = (low>>16)&0xFF;
 				b[10] = (low>>8)&0xFF;
@@ -7101,7 +7088,7 @@ unsigned char * Formula7(unsigned long f)
 
   */
 /*
-unsigned char * Formula6(unsigned long f)
+unsigned char *har *ula6(unsigned long f)
 {
 	unsigned long f_in=f*10;
 	unsigned long f_tm;
@@ -7439,7 +7426,7 @@ extern "C" void  Get7_1()
 				embMsgUDRequest_1.SetLength(1); //?????
 				embMsgUDRequest_1.SetBody(0,CODE_7);	//
 			   	embMsgUDRequest_1.CalcCRC();
-				embMsgUDRequest_1.SetReadyToSend();
+				embMsgUDRequest_1.Set1.SetToSend();
 }
 
 extern "C" void  Get7_2()
@@ -7697,7 +7684,7 @@ val >>= 1;
 
   if(!(val & MASK_BIT_0)) { pio_ptr->CODR = MASK_BIT_8;} else{pio_ptr->SODR = MASK_BIT_8;}
   if(!(val & MASK_BIT_1)) { pio_ptr->CODR = MASK_BIT_10;} else{pio_ptr->SODR = MASK_BIT_10;}
-  if(!(val & MASK_BIT_2)) { pio_ptr->CODR = MASK_BIT_12;} else{pio_ptr->SODR = MASK_BIT_12;}
+  if(!(val & MASK_BIT_2)) { pio_ptr->CODR = MASK_BIT_12;} else{pio_ptr->SODR = DR = BIT_12;}
   if(!(val & MASK_BIT_3)) { pio_ptr->CODR = MASK_BIT_13;} else{pio_ptr->SODR = MASK_BIT_13;}
 #ifdef PROG_PRM_PCH_L_61
    pio_ptr->CODR = MASK_BIT_7; //set olweis to zero 7
@@ -7893,7 +7880,7 @@ extern "C" void  RestoreParameters()
 
 }
 
-extern "C" unsigned char GetType(char *IPBuff)
+extern "C" unsigned char Getr Getchar *IPBuff)
 { 
   unsigned char type = 0xff;
  switch(IPBuff[1])
@@ -7920,8 +7907,6 @@ extern "C" unsigned long GetFrq(char *IPBuff)
 
 extern "C" void  ParseCommand2(char *IPBuff)
 {
- if(!device_found(IPBuff[1])) return;
-
  	switch(IPBuff[1])
 	{
 case  1 : 
@@ -7930,10 +7915,7 @@ case  1 :
 	       delay1 = NO_SCAN_DELAY;
 		   emb5CommandRecieverSetFrequ1.emb5commandrecieversetfrequ.frequ =  (IPBuff[5] << 24) + (IPBuff[4] << 16) +  (IPBuff[3] << 8)  + IPBuff[2]; 
 		   KeepParam(emb5CommandRecieverSetFrequ1.emb5commandrecieversetfrequ.frequ , FREQ1_ADDR);
-		 
-	  //	  if(device_found(IPBuff[1]))
 		   emb5StatusReciever1.emb5statusreciever.frequ = emb5CommandRecieverSetFrequ1.emb5commandrecieversetfrequ.frequ;
-		    emb5StatusReciever1.emb5statusreciever.status =	 1;
 		   SetFreq1();
 			// Stephany19++;
 #ifdef	   PROG_PRM_PCH_L
@@ -7948,8 +7930,6 @@ case  2 :
 		   emb5CommandRecieverSetFrequ2.emb5commandrecieversetfrequ.frequ =  (IPBuff[5] << 24) + (IPBuff[4] << 16) +  (IPBuff[3] << 8)  + IPBuff[2]; 
  		   KeepParam(emb5CommandRecieverSetFrequ2.emb5commandrecieversetfrequ.frequ , FREQ2_ADDR);
 		   emb5StatusReciever2.emb5statusreciever.frequ = emb5CommandRecieverSetFrequ2.emb5commandrecieversetfrequ.frequ;
-		      emb5StatusReciever2.emb5statusreciever.status =	 1;
-
 		   SetFreq2();
 #ifdef	   PROG_PRM_PCH_L
  		   SetNeedWriteDevId2();
@@ -7964,8 +7944,6 @@ case  3 :
 		   emb5CommandRecieverSetFrequ3.emb5commandrecieversetfrequ.frequ =  (IPBuff[5] << 24) + (IPBuff[4] << 16) +  (IPBuff[3] << 8)  + IPBuff[2]; 
  		   KeepParam(emb5CommandRecieverSetFrequ3.emb5commandrecieversetfrequ.frequ , FREQ3_ADDR);
 		   emb5StatusReciever3.emb5statusreciever.frequ = emb5CommandRecieverSetFrequ3.emb5commandrecieversetfrequ.frequ;
-		      emb5StatusReciever3.emb5statusreciever.status =	 1;
-
 		   SetFreq3();
 #ifdef	   PROG_PRM_PCH_L
  		   SetNeedWriteDevId2();
@@ -7982,8 +7960,6 @@ case  4 :
 		   emb5CommandRecieverSetFrequ4.emb5commandrecieversetfrequ.frequ =  (IPBuff[5] << 24) + (IPBuff[4] << 16) +  (IPBuff[3] << 8)  + IPBuff[2]; 
  		   KeepParam(emb5CommandRecieverSetFrequ4.emb5commandrecieversetfrequ.frequ , FREQ4_ADDR);
 		   emb5StatusReciever4.emb5statusreciever.frequ = emb5CommandRecieverSetFrequ4.emb5commandrecieversetfrequ.frequ;
-		      emb5StatusReciever4.emb5statusreciever.status =	 1;
-
 		   SetFreq4();
 #ifdef	   PROG_PRM_PCH_L
  		   SetNeedWriteDevId2();
@@ -8000,8 +7976,6 @@ case  5 :
 		   emb5CommandRecieverSetFrequ5.emb5commandrecieversetfrequ.frequ =  (IPBuff[5] << 24) + (IPBuff[4] << 16) +  (IPBuff[3] << 8)  + IPBuff[2]; 
  		   KeepParam(emb5CommandRecieverSetFrequ5.emb5commandrecieversetfrequ.frequ , FREQ5_ADDR);
 		   emb5StatusReciever5.emb5statusreciever.frequ = emb5CommandRecieverSetFrequ5.emb5commandrecieversetfrequ.frequ;
-		      emb5StatusReciever5.emb5statusreciever.status =	 1;
-
 		   SetFreq5();
 #ifdef	   PROG_PRM_PCH_L
  		   SetNeedWriteDevId2();
@@ -8018,8 +7992,6 @@ case  6 :
 		  emb5CommandRecieverSetFrequ6.emb5commandrecieversetfrequ.frequ =  (IPBuff[5] << 24) + (IPBuff[4] << 16) +  (IPBuff[3] << 8)  + IPBuff[2]; 
  		   KeepParam(emb5CommandRecieverSetFrequ6.emb5commandrecieversetfrequ.frequ , FREQ6_ADDR);
 		   emb5StatusReciever6.emb5statusreciever.frequ = emb5CommandRecieverSetFrequ6.emb5commandrecieversetfrequ.frequ;
-		      emb5StatusReciever6.emb5statusreciever.status =	 1;
-
 		   SetFreq6();
 #ifdef	   PROG_PRM_PCH_L
  		   SetNeedWriteDevId2();
@@ -8153,7 +8125,7 @@ case  5 :
 		//    modescan5 = 0;
 			countTransit5 = 0;
   			delay5 = NO_SCAN_DELAY;
-			emb5CommandRecieverSetAtt5.emb5commandrecieversetatt.stepAtt = MakeAtt(IPBuff[2]); 
+			emb5CommandRecidRecietAtt5.emb5commandrecieversetatt.stepAtt = MakeAtt(IPBuff[2]); 
 	 //		emb5StatusReciever5.emb5statusreciever.stepAtt =  emb5CommandRecieverSetAtt5.emb5commandrecieversetatt.stepAtt;   
    			KeepParam(emb5CommandRecieverSetAtt5.emb5commandrecieversetatt.stepAtt , ATT5_ADDR);		  
 		    SetAtt5();
@@ -8311,8 +8283,6 @@ case  1 :
 	 		{
 	   				add_char_TCP_buff(emb5StatusReciever1.byte[i]);
 	 		} 
-			 add_char_TCP_buff(unEmb2TypeVer.emb2TypeVer.signature_software[12]);
-
   			break;
 case  2 :   
 		  //	  modescan2 = 0;
@@ -8324,10 +8294,6 @@ case  2 :
 	 		{
 	   				add_char_TCP_buff(emb5StatusReciever2.byte[i]);
 	 		}
-
- 			add_char_TCP_buff(unEmb2TypeVer.emb2TypeVer.signature_software[12]);
-
-
  			break;
 #ifdef PRM_PCH_THREE_LINES
 
@@ -8340,9 +8306,6 @@ case  3 :
 	 		{
 	   				add_char_TCP_buff(emb5StatusReciever3.byte[i]);
 	 		}
-
-			add_char_TCP_buff(unEmb2TypeVer.emb2TypeVer.signature_software[12]);
-
  			break;
  #endif //  PRM_PCH_THREE_LINES
 
@@ -8357,11 +8320,6 @@ case  4 :
 	 		{
 	   				add_char_TCP_buff(emb5StatusReciever4.byte[i]);
 	 		}
-
-		   add_char_TCP_buff(unEmb2TypeVer.emb2TypeVer.signature_software[13]);
-
-
-
  			break;
 
 //__________________________________________________________
@@ -8375,9 +8333,6 @@ case  5 :
 	 		{
 	   				add_char_TCP_buff(emb5StatusReciever5.byte[i]);
 	 		}
-
-			  add_char_TCP_buff(unEmb2TypeVer.emb2TypeVer.signature_software[13]);
-
  			break;
 
 //__________________________________________________________
@@ -8391,9 +8346,6 @@ case  6 :
 	 		{
 	   				add_char_TCP_buff(emb5StatusReciever6.byte[i]);
 	 		}
-
-		     add_char_TCP_buff(unEmb2TypeVer.emb2TypeVer.signature_software[13]);
-
  			break;
 
 //__________________________________________________________
@@ -8485,7 +8437,7 @@ case  1 :
 		 //   message = 	IPBuff[8] +  (IPBuff[9] << 8) + 1;
 			if(emb5ScanFreq1.emb5scanfreq.numOfStep > MAX_STEPS) emb5ScanFreq1.emb5scanfreq.numOfStep = MAX_STEPS;
  			emb5CommandRecieverSetFrequ1.emb5commandrecieversetfrequ.frequ =  emb5ScanFreq1.emb5scanfreq.frequStart;
-   			emb5StatusReciever1.emb5statusreciever.frequ =  emb5CommandRecieverSetFrequ1.emb5commandrecieversetfrequ.frequ;
+   			emb5StatusReciever1.emb5statusretusrer.frequ =  emb5CommandRecieverSetFrequ1.emb5commandrecieversetfrequ.frequ;
 			emb5StatusFrequScan1.emb5statusfrequscan.number =   emb5ScanFreq1.emb5scanfreq.number;
 			emb5StatusFrequScan1.emb5statusfrequscan.frequStart =   emb5ScanFreq1.emb5scanfreq.frequStart;
 			emb5StatusFrequScan1.emb5statusfrequscan.step =   emb5ScanFreq1.emb5scanfreq.step;
@@ -8642,7 +8594,7 @@ case  5 :
 			delay5 = SCAN_DELAY;
 			for(i = 0; i < emb5ScanFreq5.emb5scanfreq.numOfStep; i++)
 				{
-	  				emb5StatusFrequScan5.emb5statusfrequscan.level[i] = ConvVal(0);
+	  				emb5StatusFrequScan5.emb5statusfrtusfran.level[i] = ConvVal(0);
 				}
 		    break;
 //__________________________________________________________________________________5
@@ -8829,7 +8781,7 @@ case  5 :
 			add_char_TCP_buff(emb5StatusFrequScan5.emb5statusfrequscan.frequStart);	   //1
 			add_char_TCP_buff(emb5StatusFrequScan5.emb5statusfrequscan.frequStart>>8);	//2
 			add_char_TCP_buff(emb5StatusFrequScan5.emb5statusfrequscan.frequStart>>16);	 //3
-			add_char_TCP_buff(emb5StatusFrequScan5.emb5statusfrequscan.frequStart>>24);	 //4
+			add_char_TCP_buff(emb5StatusFrequScan5.emb5statusfrequscan.frequStart>>24);	24);	
 			add_char_TCP_buff(emb5StatusFrequScan5.emb5statusfrequscan.step);			 //5
 			add_char_TCP_buff(emb5StatusFrequScan5.emb5statusfrequscan.step>>8);		 //6
 			add_char_TCP_buff(emb5StatusFrequScan5.emb5statusfrequscan.numOfStep);		 //7
@@ -9040,10 +8992,8 @@ extern "C" void  ParseCommand11(char *IPBuff)
 {
 //printfp("\n\r11");
   breakflag =1;
-
-//161031   add_char_TCP_buff(TYPE_RUN_OK);
-//161031   add_char_TCP_buff(IPBuff[1]);
-
+   add_char_TCP_buff(TYPE_RUN_OK);
+   add_char_TCP_buff(IPBuff[1]);
 //   add_char_TCP_buff(ATT_RPU_CODE);
 //	  unEmb2TypeVer.emb2TypeVer.signature_hardware[13] = IPBuff[1]; //for test
 
@@ -9093,7 +9043,7 @@ case  2 :
 		    SetAttRPU1(unEmb2TypeVer.emb2TypeVer.signature_hardware[12]);
 #ifdef	   PROG_PRM_PCH_L
  		   SetNeedWriteDevId2();
-#endif     // PROG_PRM_PCH_L
+#endif  dif   PROG_PRM_PCH_L
 
 			break;
 
@@ -9213,9 +9163,7 @@ default :
 
  //  add_char_TCP_buff(TYPE_RUN_OK);
 //   add_char_TCP_buff(IPBuff[1]);
-
-
-//161031   add_char_TCP_buff(ATT_RPU_CODE);
+   add_char_TCP_buff(ATT_RPU_CODE);
 
 
 }
@@ -9326,7 +9274,8 @@ extern "C" void  SetAtt4_13(unsigned char val)
 				embMsgUDRequest_4.Init();
 				embMsgUDRequest_4.SetAddr(0);//embMsg.Body(0));
 				embMsgUDRequest_4.SetLength(2); //?????
-				embMsgUDRequest_4.SetBody(0,CODE_SET_ATT_13);	//
+???
+mbMsgUDRequest_4.SetBody(0,CODE_SET_ATT_13);	//
 			    embMsgUDRequest_4.SetBody(1, val);	//
 		  		embMsgUDRequest_4.CalcCRC();
 				embMsgUDRequest_4.SetReadyToSend();
@@ -9594,7 +9543,7 @@ case  4 :
  //		     emb5CommandRPUSetAtt4.emb5commandrpusetatt.stepAtt = IPBuff[2];  
  //  emb5CommandRPUSetAtt5.emb5commandrpusetatt.stepAtt = IPBuff[2]; 
  //  emb5CommandRPUSetAtt6.emb5commandrpusetatt.stepAtt = IPBuff[2]; 
-			unEmb2TypeVer.emb2TypeVer.signature_hardware[13] = IPBuff[2]>>1;
+			unEmb2TypeVer.emb2TypeVer.signature_hare_hae[13] = IPBuff[2]>>1;
  			unEmb2TypeVer.emb2TypeVer.signature_software[13] = IPBuff[2];
 
    //			emb5StatusReciever4.emb5statusreciever.stepAtt =  emb5CommandRecieverSetAtt4.emb5commandrecieversetatt.stepAtt;   
@@ -9862,7 +9811,7 @@ extern "C" void  GetFlash5(char *pAddrData)
   ReadStatus5[2] = 0;
 
 				embMsgUDRequest_5.Init();
-				embMsgUDRequest_5.SetAddr(0);//emgUDRequest_1.Init();
+				embMsgUDRequestquesttAddr(0);//emgUDRequest_1.Init();
  		     	embMsgUDRequest_5.SetLength(GET_FLASH_LEN); //em
 				embMsgUDRequest_5.SetBody(0 , CODE_GETFLASH);
 			    for(long i = 1; i < GET_FLASH_LEN; i++)
@@ -10255,7 +10204,8 @@ case  5 :
 		//    modescan5 = 0;
 			countTransit5 = 0;
 			delay5 = NO_SCAN_DELAY;
-			 GetAtt5();	 //
+	Y;
+	tAtt5();	 //
 
  
 			break;
@@ -10622,8 +10572,7 @@ extern "C" void ParseUD_3()	 //need make!
 {
 unsigned char tmp;
 
-if(modescan3)
- {
+if(modescanescan{
  if(curval3 >= 0)
  {
    emb5StatusFrequScan3.emb5statusfrequscan.level[curval3] = ConvVal( (((unsigned short)embMsgUD_3.Body(2)&0x0F) << 8) + 	embMsgUD_3.Body(1));
@@ -10662,7 +10611,8 @@ if(modescan3)
 			  unEmb2TypeVer.emb2TypeVer.signature_hardware[4] = embMsgUD_3.Body(1) & DEVICE_TYPE_MASK;
 			}
 		 emb5StatusReciever3.emb5statusreciever.type = unEmb2TypeVer.emb2TypeVer.signature_hardware[4];
-    	   
+4];
+   
     	   }
       //	   	 unEmb2TypeVer.emb2TypeVer.signature_hardware[4] =   embMsgUD_3.Body(1);//temp
     	   	break;	   //hardvare 0
@@ -10673,35 +10623,29 @@ if(modescan3)
   case 4:
   case 5:
   case 6:
-  case 20:	unEmb2TypeVer.emb2TypeVer.signature_software[4] =  MakeAttBack(embMsgUD_3.Body(3));//161025		break; //140718
-  case 21: 	emb5StatusReciever3.emb5statusreciever.status =  1; //161025 embMsgUD_3.Body(2) >> 4;
+  case 20:	unEmb2TypeVer.emb2TypeVer.signature_software[4] =  MakeAttBack(embMsgUD_3.Body(3));	break; //140718
+  case 21: 	emb5StatusReciever3.emb5statusreciever.status =  embMsgUD_3.Body(2) >> 4;
 			emb5StatusReciever3.emb5statusreciever.signalLevel =  ConvVal( (((unsigned short)embMsgUD_3.Body(2)&0x0F)  << 8) + 	embMsgUD_3.Body(1));
  		   	emb5StatusReciever3.emb5statusreciever.stepAtt =  MakeAttBack(embMsgUD_3.Body(3));  //	break;
 			break;	   //for test
   case 22:	emb5RPUState3.emb5rpustate.temp =  embMsgUD_3.Body(1);
 			emb5RPUState3.emb5rpustate.temp_min =  embMsgUD_3.Body(2);
-			emb5RPUState3.emb5rpustate.temp_max =  embMsgUD_3.Body(3);  break;
-
+			emb5RPUState3.emb5rpustate.temp_max =  embMsgUD_3.Body(3);
   case 23:	emb5RPUState3.emb5rpustate.u48 =  embMsgUD_3.Body(1);
 			emb5RPUState3.emb5rpustate.u48min =  embMsgUD_3.Body(2);
-			emb5RPUState3.emb5rpustate.u48max =  embMsgUD_3.Body(3);  break;
-
+			emb5RPUState3.emb5rpustate.u48max =  embMsgUD_3.Body(3);
   case 24:	emb5RPUState3.emb5rpustate.u24 =  embMsgUD_3.Body(1);
 			emb5RPUState3.emb5rpustate.u24min =  embMsgUD_3.Body(2);
-			emb5RPUState3.emb5rpustate.u24max =  embMsgUD_3.Body(3);	 break;
-
+			emb5RPUState3.emb5rpustate.u24max =  embMsgUD_3.Body(3);
   case 25:	emb5RPUState3.emb5rpustate.u7 =  embMsgUD_3.Body(1);
 			emb5RPUState3.emb5rpustate.u7min =  embMsgUD_3.Body(2);
-			emb5RPUState3.emb5rpustate.u7max =  embMsgUD_3.Body(3);	  break;
-
+			emb5RPUState3.emb5rpustate.u7max =  embMsgUD_3.Body(3);
   case 26:	emb5RPUState3.emb5rpustate.u5 =  embMsgUD_3.Body(1);
 			emb5RPUState3.emb5rpustate.u5min =  embMsgUD_3.Body(2);
-			emb5RPUState3.emb5rpustate.u5max =  embMsgUD_3.Body(3);	  break;
-
+			emb5RPUState3.emb5rpustate.u5max =  embMsgUD_3.Body(3);
   case 27:	emb5RPUState3.emb5rpustate.u_5 =  embMsgUD_3.Body(1);
 			emb5RPUState3.emb5rpustate.u_5min =  embMsgUD_3.Body(2);
-			emb5RPUState3.emb5rpustate.u_5max =  embMsgUD_3.Body(3);    break;
-
+			emb5RPUState3.emb5rpustate.u_5max =  embMsgUD_3.Body(3);
 #ifdef PROG_PRM_PCH_L_61
   case 28:	break;//unEmb2TypeVer.emb2TypeVer.signature_software[4] =  embMsgUD_3.Body(1);	break;
   case 29:	unEmb2TypeVer.emb2TypeVer.signature_software[6] =  embMsgUD_3.Body(1);	break;
@@ -10880,7 +10824,7 @@ extern "C" void  Get24_3()
 				embMsgUDRequest_3.SetAddr(0);//
 				embMsgUDRequest_3.SetLength(1); //?????
 				embMsgUDRequest_3.SetBody(0,CODE_24);	//
-			   	embMsgUDRequest_3.CalcCRC();
+			   	embMsgUDRequest_3.CalcCCalcC
 				embMsgUDRequest_3.SetReadyToSend();
 }
 
@@ -10933,7 +10877,7 @@ if(modescan4)
   }
   return;
  }
-if(start4) //100401		
+ if(start4) //100401		
  unEmb2TypeVer.emb2TypeVer.signature_hardware[3] = 1; //have power on 4
  switch(embMsgUD_4.Body(0))
  {
@@ -10954,7 +10898,8 @@ if(start4) //100401
 			  unEmb2TypeVer.emb2TypeVer.signature_hardware[1] = embMsgUD_4.Body(1) & DEVICE_TYPE_MASK;
 			}
 		 emb5StatusReciever4.emb5statusreciever.type = unEmb2TypeVer.emb2TypeVer.signature_hardware[1];
-    	   
+1];
+   
     	   }	break;	   //hardvare 0
 
   case 1:
@@ -10963,35 +10908,29 @@ if(start4) //100401
   case 4:
   case 5:
   case 6:
-  case 20:		unEmb2TypeVer.emb2TypeVer.signature_software[1] =  MakeAttBack(embMsgUD_4.Body(3)); //161025		break; //140718
-  case 21: 	emb5StatusReciever4.emb5statusreciever.status = 1;//161025 embMsgUD_4.Body(2) >> 4;
+  case 20:		unEmb2TypeVer.emb2TypeVer.signature_software[1] =  MakeAttBack(embMsgUD_4.Body(3));	break; //140718
+  case 21: 	emb5StatusReciever4.emb5statusreciever.status =  embMsgUD_4.Body(2) >> 4;
 			emb5StatusReciever4.emb5statusreciever.signalLevel =  ConvVal( (((unsigned short)embMsgUD_4.Body(2)&0x0F)  << 8) + 	embMsgUD_4.Body(1));
  		   	emb5StatusReciever4.emb5statusreciever.stepAtt =  MakeAttBack(embMsgUD_4.Body(3));  //	break;
 			break;	   //for test
   case 22:	emb5RPUState4.emb5rpustate.temp =  embMsgUD_4.Body(1);
 			emb5RPUState4.emb5rpustate.temp_min =  embMsgUD_4.Body(2);
-			emb5RPUState4.emb5rpustate.temp_max =  embMsgUD_4.Body(3);  break;
-
+			emb5RPUState4.emb5rpustate.temp_max =  embMsgUD_4.Body(3);
   case 23:	emb5RPUState4.emb5rpustate.u48 =  embMsgUD_4.Body(1);
 			emb5RPUState4.emb5rpustate.u48min =  embMsgUD_4.Body(2);
-			emb5RPUState4.emb5rpustate.u48max =  embMsgUD_4.Body(3);  break;
-
+			emb5RPUState4.emb5rpustate.u48max =  embMsgUD_4.Body(3);
   case 24:	emb5RPUState4.emb5rpustate.u24 =  embMsgUD_4.Body(1);
 			emb5RPUState4.emb5rpustate.u24min =  embMsgUD_4.Body(2);
-			emb5RPUState4.emb5rpustate.u24max =  embMsgUD_4.Body(3);   break;
-
+			emb5RPUState4.emb5rpustate.u24max =  embMsgUD_4.Body(3);
   case 25:	emb5RPUState4.emb5rpustate.u7 =  embMsgUD_4.Body(1);
 			emb5RPUState4.emb5rpustate.u7min =  embMsgUD_4.Body(2);
-			emb5RPUState4.emb5rpustate.u7max =  embMsgUD_4.Body(3);	    break;
-
+			emb5RPUState4.emb5rpustate.u7max =  embMsgUD_4.Body(3);
   case 26:	emb5RPUState4.emb5rpustate.u5 =  embMsgUD_4.Body(1);
 			emb5RPUState4.emb5rpustate.u5min =  embMsgUD_4.Body(2);
-			emb5RPUState4.emb5rpustate.u5max =  embMsgUD_4.Body(3);	   break;
-
+			emb5RPUState4.emb5rpustate.u5max =  embMsgUD_4.Body(3);
   case 27:	emb5RPUState4.emb5rpustate.u_5 =  embMsgUD_4.Body(1);
 			emb5RPUState4.emb5rpustate.u_5min =  embMsgUD_4.Body(2);
-			emb5RPUState4.emb5rpustate.u_5max =  embMsgUD_4.Body(3);   break;
-
+			emb5RPUState4.emb5rpustate.u_5max =  embMsgUD_4.Body(3);
 #ifdef PROG_PRM_PCH_L_61
   case 28:  break; //	unEmb2TypeVer.emb2TypeVer.signature_software[1] =  embMsgUD_4.Body(1);	break;
   case 29:	unEmb2TypeVer.emb2TypeVer.signature_software[3] =  embMsgUD_4.Body(1);	break;
@@ -11141,7 +11080,7 @@ extern "C" void  GetTemp4()
 				embMsgUDRequest_4.SetAddr(0);//
 				embMsgUDRequest_4.SetLength(1); //?????
 				embMsgUDRequest_4.SetBody(0,CODE_TEMP);	//
-			   	embMsgUDRequest_4.CalcCRC();
+			   	embMsgUbMsgUest_4.CalcCRC();
 				embMsgUDRequest_4.SetReadyToSend();
 }
 
@@ -11219,7 +11158,7 @@ if(modescan5)
  }		
 
 
-if(start5) //100401
+ if(start5) //100401
  unEmb2TypeVer.emb2TypeVer.signature_hardware[11] = 1; //have power on 5
  switch(embMsgUD_5.Body(0))
  {
@@ -11253,35 +11192,29 @@ if(start5) //100401
   case 4:
   case 5:
   case 6:
-  case 20:	unEmb2TypeVer.emb2TypeVer.signature_software[9] =  MakeAttBack(embMsgUD_5.Body(3));	//161025	break; //140718
-  case 21: 	emb5StatusReciever5.emb5statusreciever.status = 1;// embMsgUD_5.Body(2) >> 4;
+  case 20:	unEmb2TypeVer.emb2TypeVer.signature_software[9] =  MakeAttBack(embMsgUD_5.Body(3));	break; //140718
+  case 21: 	emb5StatusReciever5.emb5statusreciever.status =  embMsgUD_5.Body(2) >> 4;
 			emb5StatusReciever5.emb5statusreciever.signalLevel =  ConvVal( (((unsigned short)embMsgUD_5.Body(2)&0x0F)  << 8) + 	embMsgUD_5.Body(1));
  		   	emb5StatusReciever5.emb5statusreciever.stepAtt =  MakeAttBack(embMsgUD_5.Body(3));  //	break;
 			break;	   //for test
   case 22:	emb5RPUState5.emb5rpustate.temp =  embMsgUD_5.Body(1);
 			emb5RPUState5.emb5rpustate.temp_min =  embMsgUD_5.Body(2);
-			emb5RPUState5.emb5rpustate.temp_max =  embMsgUD_5.Body(3);  break;
-
+			emb5RPUState5.emb5rpustate.temp_max =  embMsgUD_5.Body(3);
   case 23:	emb5RPUState5.emb5rpustate.u48 =  embMsgUD_5.Body(1);
 			emb5RPUState5.emb5rpustate.u48min =  embMsgUD_5.Body(2);
-			emb5RPUState5.emb5rpustate.u48max =  embMsgUD_5.Body(3);   break;
-
+			emb5RPUState5.emb5rpustate.u48max =  embMsgUD_5.Body(3);
   case 24:	emb5RPUState5.emb5rpustate.u24 =  embMsgUD_5.Body(1);
 			emb5RPUState5.emb5rpustate.u24min =  embMsgUD_5.Body(2);
-			emb5RPUState5.emb5rpustate.u24max =  embMsgUD_5.Body(3);   break;
-
+			emb5RPUState5.emb5rpustate.u24max =  embMsgUD_5.Body(3);
   case 25:	emb5RPUState5.emb5rpustate.u7 =  embMsgUD_5.Body(1);
 			emb5RPUState5.emb5rpustate.u7min =  embMsgUD_5.Body(2);
-			emb5RPUState5.emb5rpustate.u7max =  embMsgUD_5.Body(3);	   break;
-
+			emb5RPUState5.emb5rpustate.u7max =  embMsgUD_5.Body(3);
   case 26:	emb5RPUState5.emb5rpustate.u5 =  embMsgUD_5.Body(1);
 			emb5RPUState5.emb5rpustate.u5min =  embMsgUD_5.Body(2);
-			emb5RPUState5.emb5rpustate.u5max =  embMsgUD_5.Body(3);	   break;
-
+			emb5RPUState5.emb5rpustate.u5max =  embMsgUD_5.Body(3);
   case 27:	emb5RPUState5.emb5rpustate.u_5 =  embMsgUD_5.Body(1);
 			emb5RPUState5.emb5rpustate.u_5min =  embMsgUD_5.Body(2);
-			emb5RPUState5.emb5rpustate.u_5max =  embMsgUD_5.Body(3);    break;
-
+			emb5RPUState5.emb5rpustate.u_5max =  embMsgUD_5.Body(3);
 #ifdef PROG_PRM_PCH_L_61
   case 28:	break; //unEmb2TypeVer.emb2TypeVer.signature_software[9] =  embMsgUD_5.Body(1);	break;
   case 29:	unEmb2TypeVer.emb2TypeVer.signature_software[11] =  embMsgUD_5.Body(1);	break;
@@ -11405,7 +11338,8 @@ extern "C" void  SetAtt5()
 
 extern "C" void  GetCode5()
 {
- 			embMsgUDRequest_5.Init();
+ 			
+ 			gUDRequest_5.Init();
 				embMsgUDRequest_5.SetAddr(0);//
 				embMsgUDRequest_5.SetLength(1); //?????
 				embMsgUDRequest_5.SetBody(0,CODE_CODE);	//
@@ -11509,7 +11443,6 @@ if(modescan6)
 
 
  if(start6) //100401
-
  unEmb2TypeVer.emb2TypeVer.signature_hardware[7] = 1; //have power on 6
  switch(embMsgUD_6.Body(0))
  {
@@ -11533,8 +11466,8 @@ if(modescan6)
 			  unEmb2TypeVer.emb2TypeVer.signature_hardware[5] = embMsgUD_6.Body(1) & DEVICE_TYPE_MASK;
 			}
     	  		 emb5StatusReciever6.emb5statusreciever.type = unEmb2TypeVer.emb2TypeVer.signature_hardware[5];
- 
-    	   }	break;	   //hardvare 0
+5];
+  	   }	break;	   //hardvare 0
 
   case 1:
   case 2:
@@ -11542,35 +11475,29 @@ if(modescan6)
   case 4:
   case 5:
   case 6:
-  case 20:	unEmb2TypeVer.emb2TypeVer.signature_software[5] =  MakeAttBack(embMsgUD_6.Body(3)); //161025		break; //140718
-  case 21: 	emb5StatusReciever6.emb5statusreciever.status =  1; //161025 embMsgUD_6.Body(2) >> 4;
+  case 20:	unEmb2TypeVer.emb2TypeVer.signature_software[5] =  MakeAttBack(embMsgUD_6.Body(3));	break; //140718
+  case 21: 	emb5StatusReciever6.emb5statusreciever.status =  embMsgUD_6.Body(2) >> 4;
 			emb5StatusReciever6.emb5statusreciever.signalLevel =  ConvVal( (((unsigned short)embMsgUD_6.Body(2)&0x0F)  << 8) + 	embMsgUD_6.Body(1));
  		   	emb5StatusReciever6.emb5statusreciever.stepAtt =  MakeAttBack(embMsgUD_6.Body(3));  //	break;
 			break;	   //for test
   case 22:	emb5RPUState6.emb5rpustate.temp =  embMsgUD_6.Body(1);
 			emb5RPUState6.emb5rpustate.temp_min =  embMsgUD_6.Body(2);
-			emb5RPUState6.emb5rpustate.temp_max =  embMsgUD_6.Body(3);	  break;
-
+			emb5RPUState6.emb5rpustate.temp_max =  embMsgUD_6.Body(3);
   case 23:	emb5RPUState6.emb5rpustate.u48 =  embMsgUD_6.Body(1);
 			emb5RPUState6.emb5rpustate.u48min =  embMsgUD_6.Body(2);
-			emb5RPUState6.emb5rpustate.u48max =  embMsgUD_6.Body(3);    break;
-
+			emb5RPUState6.emb5rpustate.u48max =  embMsgUD_6.Body(3);
   case 24:	emb5RPUState6.emb5rpustate.u24 =  embMsgUD_6.Body(1);
 			emb5RPUState6.emb5rpustate.u24min =  embMsgUD_6.Body(2);
-			emb5RPUState6.emb5rpustate.u24max =  embMsgUD_6.Body(3);   break;
-
+			emb5RPUState6.emb5rpustate.u24max =  embMsgUD_6.Body(3);
   case 25:	emb5RPUState6.emb5rpustate.u7 =  embMsgUD_6.Body(1);
 			emb5RPUState6.emb5rpustate.u7min =  embMsgUD_6.Body(2);
-			emb5RPUState6.emb5rpustate.u7max =  embMsgUD_6.Body(3);	   break;
-
+			emb5RPUState6.emb5rpustate.u7max =  embMsgUD_6.Body(3);
   case 26:	emb5RPUState6.emb5rpustate.u5 =  embMsgUD_6.Body(1);
 			emb5RPUState6.emb5rpustate.u5min =  embMsgUD_6.Body(2);
-			emb5RPUState6.emb5rpustate.u5max =  embMsgUD_6.Body(3);	   break;
-
+			emb5RPUState6.emb5rpustate.u5max =  embMsgUD_6.Body(3);
   case 27:	emb5RPUState6.emb5rpustate.u_5 =  embMsgUD_6.Body(1);
 			emb5RPUState6.emb5rpustate.u_5min =  embMsgUD_6.Body(2);
-			emb5RPUState6.emb5rpustate.u_5max =  embMsgUD_6.Body(3);    break;
-
+			emb5RPUState6.emb5rpustate.u_5max =  embMsgUD_6.Body(3);
 #ifdef PROG_PRM_PCH_L_61
   case 28: break;//	unEmb2TypeVer.emb2TypeVer.signature_software[5] =  embMsgUD_6.Body(1);	break;
   case 29:	unEmb2TypeVer.emb2TypeVer.signature_software[7] =  embMsgUD_6.Body(1);	break;
@@ -12218,41 +12145,6 @@ extern "C" void print_signature(void)
 	//  printf(" %02X",	unEmb2TypeVer.emb2TypeVer.signature_hardware[i]);
 	}
 }
- 
- 
-extern "C" void SetFreqToZero(unsigned char chn)
-{
- switch(chn)
- {
- case 1 :   emb5StatusReciever1.emb5statusreciever.frequ = 0; break;
- case 2 :   emb5StatusReciever2.emb5statusreciever.frequ = 0; break;
- case 3 :   emb5StatusReciever3.emb5statusreciever.frequ = 0; break;
- case 4 :   emb5StatusReciever4.emb5statusreciever.frequ = 0; break;
- case 5 :   emb5StatusReciever5.emb5statusreciever.frequ = 0; break;
- case 6 :   emb5StatusReciever6.emb5statusreciever.frequ = 0; break;
- }
-}
- 
-
-extern "C" void SetStatToZero(unsigned char chn)
-{
- switch(chn)
- {
- case 1 :   emb5StatusReciever1.emb5statusreciever.status = 0;
-            emb5StatusReciever1.emb5statusreciever.stepAtt = 0; break;
- case 2 :   emb5StatusReciever2.emb5statusreciever.status = 0;
- 			emb5StatusReciever2.emb5statusreciever.stepAtt = 0;	  break;
- case 3 :   emb5StatusReciever3.emb5statusreciever.status = 0; 
- 			emb5StatusReciever3.emb5statusreciever.stepAtt = 0;	 break;
- case 4 :   emb5StatusReciever4.emb5statusreciever.status = 0; 
- 			emb5StatusReciever4.emb5statusreciever.stepAtt = 0;	 break;
- case 5 :   emb5StatusReciever5.emb5statusreciever.status = 0;
- 			emb5StatusReciever5.emb5statusreciever.stepAtt = 0;	   break;
- case 6 :   emb5StatusReciever6.emb5statusreciever.status = 0; 
- 			emb5StatusReciever6.emb5statusreciever.stepAtt = 0;	  break;
- }
-}
-
 
 
 
