@@ -8381,8 +8381,14 @@ printfpd("\n\r errorw = %d ", errorw);
  //t  CompareToFilex(size);
   InvertBitOrdering();		//t new 
 
+#ifdef PROG_ODU1
   	  CompareToFilex(ODU_XIL_SIZE);	//t
 
+
+#else
+	    CompareToFilex(1000);
+
+#endif
    //ok	  CompareToFilex(1000);	//t
  //  CompareToFilex(10000);
 
@@ -13302,6 +13308,12 @@ case 0x32l:	  /*
 					wd_reset();
 		 		}
 				*/
+
+                #ifdef	 PROG_PRM_PCH_SPI_NOXIL_ETH
+				WriteAFRTest();
+				#endif
+
+
 				#ifdef PROG_MD310
 			//	printfp()
 				StartEth100p();
@@ -14738,7 +14750,7 @@ case 0xCFl: CheckNetMask((unsigned long)NetMask.Value);
 
 
 case 0xD0l:	  // ReadDevId(0);	  break;
- 		  //		ReadDevId_test(0);  break;
+ 		  		ReadDevId_utest(0);  break;
 
 
 
@@ -23441,11 +23453,20 @@ extern "C" unsigned char ChkFrq(char *IPBuff)
   printfpd(" frg: %d", frg);
    printfpd(" ret: %d", ret);
 
+   ret = 1;
+
+   printfpd(" ret for debug : %d", ret);
+
 
 
 #endif
 
 
+ #ifdef	 PROG_PRM_PCH_SPI_NOXIL_ETH 
+
+ ret = 1; // no check freq temporary
+
+ #endif
 
  return ret;
 }
@@ -23543,7 +23564,12 @@ if(0) //150414
 
 #ifdef MAKET_PLATA
 
- printfpd("\n\r Parse TCP commmand: %d",IPBuff[0]);
+ printfpd("\n\r Parse TCP commmand: 0x%02X",IPBuff[0]);
+ printfpd(" 0x%02X",IPBuff[1]);
+ printfpd(" 0x%02X",IPBuff[2]);
+ printfpd(" 0x%02X",IPBuff[3]);
+ printfpd(" 0x%02X",IPBuff[4]);
+ printfpd(" 0x%02X",IPBuff[5]);
  
 
 #endif

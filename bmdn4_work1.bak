@@ -511,14 +511,14 @@ if(GetModForSS1()) {dev_status5 |= OPER_POWER_BIT;} //operating power
 
 // pOperProg->unmod1get = flagunmod1;
 
-#ifdef	PROG_DMU6 
+//#ifdef	PROG_DMU6 
  if(flagstartparseop)
    {
     // printfp("\n\r flagstartparseop ");
      flagstartparseop = 0;
 	 ClearNeedWriteDevId();
    }
-#endif
+//#endif
 
 }
   /*

@@ -44,7 +44,7 @@
 //#define PROG_BMDN6M		   //maked gybryd bmdn6 and md310  not sat!!!!!
 //#define PROG_BMDN6MI	  //wrong!!!! for sat maked gybryd bmdn6 and md310 + indikator!	md310e_ind.cpp			 
 //#define PROG_MD310_SATI	   //sat + ind md310s,cpp +  + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
-//#define PROG_MD310_SATI2	   //sat + ind md310s2,cpp +  + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
+#define PROG_MD310_SATI2	   //sat + ind md310s2,cpp +  + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 //#define PROG_ODU	   //not used !!! odu.cpp +  + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 						//pvg810_api.c pvg810_api_calibration.c pvg810_api_DataConfig.c
 						//pvg810_api_utilc.c pvg810_api_Application.c pvg810_protocol_MsgUtils.c
@@ -122,7 +122,7 @@
 //#define PROG_PRM_PCH_N_2   //prm_pch_n_2.cpp   need rekompile mqx for fast rate!!!
 //#define PROG_PRM_PCH_N_3_NOV //prm_pch_n_3_nov.cpp	need rekompile mqx for fast rate!!!
 //#define PROG_PRM_PCH_N_3_FSB //prm_pch_n_3_fsb.cpp	need rekompile mqx for fast rate!!!
-#define PROG_PRM_PCH_L_61 // prm_pch.cpp 2 channel - 6 receivers	 added some commands 
+//#define PROG_PRM_PCH_L_61 // prm_pch.cpp 2 channel - 6 receivers	 added some commands 
 //#define PROG_PRM_PCH_L_8  // prm_pch8.cpp prm_pch 8 receivers
 //#define PROG_PD  // pd.cpp	make from prm_pch_l61
 //#define PROG_PD1  // pd1.cpp	make from ups1
@@ -164,13 +164,13 @@
 //#define PROG_PROV  //prov.cpp PVG610_API.c  hostDriverForPc.cpp	utils.c	  endian.c	basic.cpp
 //262 : remove 10 symbols in parse rs232
 
-//#define SOFT_VER (0x509)
-#define SOFT_VER (0x1093)
-#ifndef PROG_PU_MSAT
+//#define SOFT_VER (0x509)	 
+#define SOFT_VER (0x1097)    
+#ifndef PROG_PU_MSAT    
 //#define SOFT_VER_STRING    "   14.12.01.1-800 ADESTO"//263 : maked init counter and data for write_buffer_char1()
 //#ifndef PROG_PUPM3_1_ADESTO	
 //#ifndef PROG_PU_MSAT1
-#define SOFT_VER_STRING      "      16.10.31.1-1093    "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING      "      16.11.17.1-1097    "//263 : maked init counter and data for write_buffer_char1()
 #else
 //#define SOFT_VER_STRING "Radian Ver. 01.00        "//263 : maked init counter and data for write_buffer_char1()
 #define SOFT_VER_STRING   "Radian v.922.50925       "//263 : maked init counter and data for write_buffer_char1()
@@ -274,7 +274,7 @@
 //#define PRINT_DEBUG_CRC
 //#define TEST_PARSING_COMMANDS
 
-//#define TEST_PRINT_SPI
+#define TEST_PRINT_SPI
 //#define TEST_ADDR
 
 //#define DEBUG_LOOP_PRINT
@@ -313,12 +313,12 @@
 //#define EMPTY_LOOP //test!!!
 //#define ETH_NOT_STOPPED
 //#define ALL_ADDR
-//#define WITHOUT_XILINX //
+#define WITHOUT_XILINX //
 //#define TESTSTART
-//#define WITHOUT_INTERRUPTS //
+#define WITHOUT_INTERRUPTS //
 //#define DEBUG_ALARM
 //#define CAN_ETHERNET_ASU
-//#define MAKET_PLATA	 
+#define MAKET_PLATA	 
 //#define LOCK_ENABLED
 //#define TRAP_ENABLED
 //#define BAD_CHECKSUM
@@ -523,6 +523,7 @@ extern "C" void Parse_PD3(char *, unsigned long );
 #ifdef	 PROG_PRM_PCH_SPI_NOXIL_ETH
 
 extern "C" void PrintAFR();
+extern "C" void WriteAFRTest();
 
 
 extern "C" unsigned long GetAtt(unsigned char num);
@@ -4571,6 +4572,9 @@ extern "C" void TestWriteFlash5(void);
 
 #ifdef 	PROG_MD310_SATI2
 
+#define MODES_NUM  (16)
+
+
 extern unsigned lost_mailboxes;
 
 extern "C" void R_ACM(); //operate radian acm
@@ -7427,7 +7431,8 @@ extern "C" void PrintMessages(void);
 #ifndef PROG_PRM_PCH_SPI
 //#define RUN_TIME  (7)
 //151106#define RUN_TIME  		(30) //this was before all
-#define RUN_TIME  		(500) //
+//161101 #define RUN_TIME  		(500) //
+#define RUN_TIME  		(5000) //  161101
 //#define RUN_TIME  		(100)	  //110223
 //#define RUN_TIME  		(75)	  //110223
 //#define RUN_TIME  		(100)	  //110223
@@ -8782,3 +8787,4 @@ unsigned long l_udpt_inc_485(void);
 
 #endif
 
+extern "C" unsigned char ReadDevId_utest(unsigned char);

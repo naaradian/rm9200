@@ -8632,11 +8632,11 @@ printfpd(":%d ",current_command_type);
 //_______________________________hier need add command 0x20 and 0x21 - do not need
 #ifdef USE_ATT_TABLE
 #ifndef PRM_PCH_SPI_STEND
-  case 0x20	: embMsgSSC2N.RunCommandN20(3); break;
-  case 0x21	: embMsgSSC2N.RunCommandN21(3); break;
+  case 0x20	: embMsgSSC2N.RunCommandN20(5); break;
+  case 0x21	: embMsgSSC2N.RunCommandN21(5); break;
 #ifdef TWO_RECEIVERS
-  case 0x22	: embMsgSSC2N.RunCommandN22(3); break;
-  case 0x23	: embMsgSSC2N.RunCommandN23(3); break;
+  case 0x22	: embMsgSSC2N.RunCommandN22(5); break;
+  case 0x23	: embMsgSSC2N.RunCommandN23(5); break;
 
 #endif
 #endif

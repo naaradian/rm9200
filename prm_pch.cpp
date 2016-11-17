@@ -2541,6 +2541,13 @@ if(!(testcounter%1000))
 #endif //no PROG_PRM_PCH_S
   unsigned char power_port;
   power_port = inportb(POWER_PORT);
+
+#ifdef MAKET_PLATA	 
+   power_port = 0xff;
+#endif
+
+
+
 #endif // PROG_PRM_PCH_C
 
 #ifdef PROG_PRM_PCH_S
@@ -2613,6 +2620,8 @@ if(power_port & CH1_MASK)
    //	  			countMod=0;
 
 #ifdef PRM_PCH_DEBUG
+
+
   if(GetTestMode() == 0x50)
 			{
 			//	printfp("\n\rans>");
@@ -2636,7 +2645,11 @@ if(power_port & CH1_MASK)
  // if(countMod > 1)		//for TEST!!!!
 #endif //PRM_PCH_DEBUG1
 if(embMsgUD_1.ChkCRC())
-	{  breakflag = 1;
+	{ 
+//#ifndef MAKET_PLATA	 
+	 breakflag = 1;
+//#endif
+
 	 if(GetTestMode() == 0x50)
 			{
 			 //	printf("crc - ok countMod :%0d",countMod);
@@ -2749,12 +2762,15 @@ fl1 = 1;
 //)return; //t100915
 
 //   		if( ((time1-time1old) > delay1)	 && (power_port & CH1_MASK))
+
+
    		if((power_port & CH1_MASK) && ((time1-time1old) > delay1))//	 && (power_port & CH1_MASK))
 		{
-		if(GetTestMode() == 0x50)
-			{
-		     	printfpd(".%d",modescan1);
-			}
+
+	  //	if(GetTestMode() == 0x50)
+	  //		{
+	   //	     	printfpd("modescan :.%d",modescan1);
+	   //		}
 
 	  			time1old = time1;
 #ifdef PROG_PRM_PCH_C
@@ -2801,6 +2817,12 @@ fl1 = 1;
 		   	
 			if(embMsgUDRequest_1.IsReadyToSend())
 			{
+
+
+
+
+
+
 
 #ifdef TEST_RECEIVE
  //sendp++;
@@ -2950,26 +2972,29 @@ if(GetTestMode() == 0x50)
 
 if(countMod>MAX_COUNT_MOD) 
 {
-
+	 countMod = 0;
 	 setf1 = 0;
 	 setatt1 = 1; //0911090;
 #ifdef COMMAND_RESENDING
  if(GetTestMode() == 0x50)
 			{
-		     	printfp("I1");
+		     	printfp("countMod>MAX_COUNT_MOD");
 			}
 
 	 embMsgUDRequest_1.Init();
 #endif //COMMAND_RESENDING
-}
 
-
-
-if(countMod>5) 
-{
-	fl1 = 0;
+	 fl1 = 0;
 
 }
+
+
+
+//if(countMod>5) 
+//{
+//	fl1 = 0;
+
+//}
 
 
 } //time 091110
@@ -10295,6 +10320,8 @@ extern "C" unsigned char Roulette1(void)
 // printf("\n\rroulette1 code: %d" , requestMod);
 #endif// PRM_PCH_DEBUG
 
+//printfpd("\n\rR1:%d>", time1);
+
  if(start1){ delay1 = ROULETTE_DELAY;}
  switch(requestMod++)
  {
@@ -10337,6 +10364,10 @@ extern "C" unsigned char Roulette2(void)
 #ifdef PRM_PCH_DEBUG
 // printf("\n\rroulette2 code: %d" , requestTransit);
 #endif// PRM_PCH_DEBUG
+
+//printfpd("\n\rR2:%d>", time1);
+
+
 if(start2){ delay2 = ROULETTE_DELAY;}
    switch(requestTransit++)
  {

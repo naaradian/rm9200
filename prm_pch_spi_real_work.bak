@@ -95,10 +95,9 @@ extern "C" void WriteAFR1()
 
 extern "C" void WriteAFR()
 {
-#ifdef TEST_PARSING_COMMANDS
-  printfp("\n\r WriteAFR \n\r");
-  printfpd("\n\r>%02X \n\r",AFR[0]);
-#endif
+
+//  printfp("\n\r WriteAFR \n\r");
+//  printfpd("\n\r>%02X",AFR[0]);
   for(unsigned i = 0; i < AFR_SIZE; i++){ /* Body */
  // if(!(i%0x10))  printfpd("\n\r %04X",i);
  //  printfpd(" %02X",AFR[i]);

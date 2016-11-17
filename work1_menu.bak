@@ -6571,6 +6571,98 @@ for( unsigned j	= i + 1; j < 32; j++)
 }
 
 
+extern "C" unsigned char ReadDevId_utest(unsigned char flag_lock)
+{
+
+
+//return;	  //t
+
+
+ char Buf[DEV_ID_SIZE];
+ unsigned int DeviceAddress = ID_ADDRESS;
+ read_dataflash (DeviceAddress, DEV_ID_SIZE, (char *)&Buf[0]);
+// read_dataflash (DeviceAddress, DEV_ID_SIZE+100, (char *)&Buf[0]);
+ read_flag = 1;
+
+
+
+//__________________________________________________crc
+unsigned char flag_crc = 0;
+unsigned char id_crc = 0;
+unsigned long check_ver = 0;
+
+ for(unsigned long icrc = 0; icrc < (DEV_ID_SIZE - 1); icrc++ )
+ {
+  id_crc +=  Buf[icrc];
+  if(!(icrc%16)) printfpd("\n\r %04X>", icrc);
+  printfpd(" %02X", id_crc);
+
+ }
+ id_crc += 1;
+
+check_ver = ( ((unsigned long)Buf[485] << 24) + ((unsigned long)Buf[486] << 16) 
+ 	+ ((unsigned long)Buf[487] << 8) +  (unsigned long)Buf[488]);
+
+
+ printfpd("\n\r ReadDevId_utest \n\rid_crc 1: %02X", id_crc);
+ printfpd(" Buf[DEV_ID_SIZE - 1]: %02X",Buf[DEV_ID_SIZE - 1]);
+
+
+
+ if(id_crc == Buf[DEV_ID_SIZE - 1])	
+ {
+    flag_crc = 1;
+  //	printfp("\n\r1");
+   if(start_main_loop) printfp("\n\r ReadDevId storage 1 checksum ok!");	
+ }
+ else
+ {
+    if(start_main_loop) printfp("\n\r ReadDevId storage 1 checksum wrong!");	
+ }
+
+
+
+   read_dataflash (ID_ADDRESS3, DEV_ID_SIZE, (char *)&Buf[0]);	   //new address
+
+id_crc = 0;	  //150831	!!!!!!!!
+
+
+for( icrc = 0; icrc < (DEV_ID_SIZE - 1); icrc++ )
+ {
+  id_crc +=  Buf[icrc];
+ }
+ id_crc += 1;
+
+check_ver = ( ((unsigned long)Buf[485] << 24) + ((unsigned long)Buf[486] << 16) 
+ 	+ ((unsigned long)Buf[487] << 8) +  (unsigned long)Buf[488]);
+
+ printfpd("\n\r id_crc 2: %02X", id_crc);
+ printfpd(" Buf[DEV_ID_SIZE - 1]: %02X",Buf[DEV_ID_SIZE - 1]);
+
+
+ if(id_crc == Buf[DEV_ID_SIZE - 1])	
+ {
+    flag_crc = 1;
+  //	printfp("\n\r1");
+    if(start_main_loop) printfp("\n\r ReadDevId storage 2 checksum ok!");	
+ }
+ else  //need use first address for id to property change old wersions of prog without this feature
+ {
+
+//  read_dataflash (ID_ADDRESS, DEV_ID_SIZE, (char *)&Buf[0]); //150120
+     if(start_main_loop) printfp("\n\r ReadDevId storage 2 checksum wrong!");	
+
+
+ }
+
+// }
+
+}
+
+
+
+
+
 extern "C" unsigned char ReadDevId(unsigned char flag_lock)
 {
 
@@ -13105,8 +13197,9 @@ case 351:
 			printfpd("\n\r >%08X ", (unsigned long)IPAddressUDP.Value);
 			printfpd("cv : %08X ", (unsigned long)IPAddressUDP.ChangingValue);
 
-
+#ifndef PROG_PUM	
 			SetNeedWriteDevId();
+#endif
 
 
 			break;
