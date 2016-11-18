@@ -2083,6 +2083,8 @@ SetE14();
 
 
  #ifdef PROG_PU_MSAT
+   printfp("\n\r go Init_PU_M();");
+
   Init_PU_M();
   #endif //PROG_PU_MSAT 
 //printfp("\n\r go Init_PRM_PCH();");
@@ -2097,7 +2099,7 @@ SetE14();
 
  
   #ifdef PROG_PRM_PCH_DEM
-    printfp("\n\r go Init_PRM_PCH();");
+ //   printfp("\n\r go Init_PRM_PCH();");
 
   Init_PRM_PCH();
   #endif //PROG_PRM_PCH

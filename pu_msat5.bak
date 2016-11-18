@@ -5946,7 +5946,7 @@ extern "C" long  Get_SERIAL(void )
 
 }
 
- /*
+
 extern "C" unsigned char IOSpiSend(unsigned char deviceindex, 
  unsigned long length_of_data,	 unsigned char * BufferData, unsigned char * ReadBuffer)
 {
@@ -5955,7 +5955,7 @@ extern "C" unsigned char IOSpiSend(unsigned char deviceindex,
  return 0;
 }
 
- */
+
 
 extern "C" void InitIFModule()
 {

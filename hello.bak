@@ -2900,7 +2900,7 @@ raddrd.sin_addr.s_addr = 0x9B9B9BE6;    //ip remote 230 : ok
 
 #endif
 
-printfpd("\n\rGetIPRemUDP()> 0x%08X",GetIPRemUDP());
+//printfpd("\n\rGetIPRemUDP()> 0x%08X",GetIPRemUDP());
 
 
 

@@ -8383,6 +8383,11 @@ printfpd("\n\r errorw = %d ", errorw);
 
 #ifdef PROG_ODU1
   	  CompareToFilex(ODU_XIL_SIZE);	//t
+
+
+#else
+	    CompareToFilex(1000);
+
 #endif
    //ok	  CompareToFilex(1000);	//t
  //  CompareToFilex(10000);
@@ -26852,7 +26857,7 @@ unsigned int SpiWriteN2 ( unsigned long len, unsigned long pData)
 extern "C" void SendToDDS(unsigned long len, unsigned long pData)
 {
 
-//hjfjfjf//printfp("s1");
+//printfp("1 SendToDDS\n\r ");
 // AT91PS_DataflashDesc pDesc;
 /*
 unsigned long no_hangt = NO_HANGT_VAL;
@@ -27282,6 +27287,7 @@ extern "C" char SpiReadN2 ( unsigned long len, unsigned long pData)
 
 extern "C" void SendToDDS(unsigned long len, unsigned long pData)
 {
+ //printfp("2 SendToDDS\n\r ");
 
 //fjjg
 //printfp("s2");
@@ -27625,7 +27631,7 @@ typedef struct _AT91S_SPI {
 
 unsigned int SpiWriteCS2 ( unsigned long len, unsigned long pData)
 {
-// printfp("2");
+ printfp("2");
 
    	unsigned int timeout;
   //	 _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 4, AT91RM9200_PIO_PERIPHERAL_A, 0);   //cs1
@@ -27713,6 +27719,9 @@ AT91C_BASE_SPI->SPI_CR = AT91C_SPI_SPIEN;
 
 extern "C" void SendToDDS(unsigned long len, unsigned long pData)
 {
+  
+// printfp("3 SendToDDS\n\r ");
+
  // hier is dmu hjgjg
 //nonono
 //printfp("s3");
@@ -27749,7 +27758,7 @@ while(len1--)
 unsigned int SpiWriteCS3 ( unsigned long len, unsigned long pData)
 {
 //printfp("3");
-
+   
    	unsigned int timeout;
   //	 _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 4, AT91RM9200_PIO_PERIPHERAL_A, 0);   //cs1
 
@@ -28018,11 +28027,18 @@ extern "C" WriteAis(unsigned int imr)
 
 #ifdef PROG_PU_MSAT
 #ifndef PROG_PU_MSAT1
+#ifndef PROG_PU_MSAT5
+
 #include <pu_msat_work1.cpp>
-#else
+#endif
+#endif
+
+#ifdef PROG_PU_MSAT1
 #include <pu_msat1_work1.cpp>
 #endif
 
+#ifdef PROG_PU_MSAT5
+#include <pu_msat5_work1.cpp>
 #endif //  PROG_PU_MSAT   
 
 #ifdef PROG_BMDN4

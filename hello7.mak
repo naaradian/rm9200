@@ -13,7 +13,7 @@ LD = C:\ARC\MetaWare\hcarm\bin\hcarm.exe
 AS = C:\ARC\MetaWare\hcarm\bin\hcarm.exe
 VPATH = c:\arc\mqx2.50_atevbrm9200.met\examples\hello7;C:\ARC\rtcs2.95\lib\at91rm9200l.met;C:\ARC\mqx2.50_atevbrm9200.met\lib\atevbrm9200l.met;C:\ARC\mqx2.50_atevbrm9200.met\lib\at91rm9200l.met;C:\ARC\mqx2.50_atevbrm9200.met\lib\atevbrm9200l.met;C:\ARC\MetaWare\hcarm\lib\le\thumb
 
-hello7.elf:  hello7.o asm_test.o work.o at45.o work1.o jump.o EMBISR.o ttl.o hello.o dataflash.o spi_pol.o utils.o endian.o hostDriverForPc.o md310s2.o PVG610_API.o rtcs.a atevbrm9200.a mqx.a libc.a met.o
+hello7.elf:  hello7.o asm_test.o work.o at45.o work1.o jump.o EMBISR.o ttl.o hello.o dataflash.o spi_pol.o pu_msat5.o rtcs.a atevbrm9200.a mqx.a libc.a met.o
 	@echo Linking...  
 	@$(LD) -Bgrouplib -Bstatic -Hhostlink -Heos=mqx -Hon=Long_enums -Hnoreent -Hnoswst -Hnosdata -Hoff=Behaved -Hheap=0 -HL -m -o C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello7.elf @C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello7.opl -Hldopt=-q > C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello7.map
 	@echo Build is finished.
@@ -81,35 +81,11 @@ spi_pol.o:
 	@echo Compiling C:\\ARC\\mqx2.50_atevbrm9200.met\\examples\\hello7\\spi_pol.c ...  
 	@$(CC) -Hnocopyr -c -Hasopt=-c @C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello7.opc C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\spi_pol.c
 
--include C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\utils.d
+-include C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\pu_msat5.d
 
-utils.o:
-	@echo Compiling C:\\ARC\\mqx2.50_atevbrm9200.met\\examples\\hello7\\utils.c ...  
-	@$(CC) -Hnocopyr -c -Hasopt=-c @C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello7.opc C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\utils.c
-
--include C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\endian.d
-
-endian.o:
-	@echo Compiling C:\\ARC\\mqx2.50_atevbrm9200.met\\examples\\hello7\\endian.c ...  
-	@$(CC) -Hnocopyr -c -Hasopt=-c @C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello7.opc C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\endian.c
-
--include C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hostDriverForPc.d
-
-hostDriverForPc.o:
-	@echo Compiling C:\\ARC\\mqx2.50_atevbrm9200.met\\examples\\hello7\\hostDriverForPc.cpp ...  
-	@$(CC) -Hnocopyr -c -Hasopt=-c @C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello7.opc C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hostDriverForPc.cpp
-
--include C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\md310s2.d
-
-md310s2.o:
-	@echo Compiling C:\\ARC\\mqx2.50_atevbrm9200.met\\examples\\hello7\\md310s2.cpp ...  
-	@$(CC) -Hnocopyr -c -Hasopt=-c @C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello7.opc C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\md310s2.cpp
-
--include C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\PVG610_API.d
-
-PVG610_API.o:
-	@echo Compiling C:\\ARC\\mqx2.50_atevbrm9200.met\\examples\\hello7\\PVG610_API.c ...  
-	@$(CC) -Hnocopyr -c -Hasopt=-c @C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello7.opc C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\PVG610_API.c
+pu_msat5.o:
+	@echo Compiling C:\\ARC\\mqx2.50_atevbrm9200.met\\examples\\hello7\\pu_msat5.cpp ...  
+	@$(CC) -Hnocopyr -c -Hasopt=-c @C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello7.opc C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\pu_msat5.cpp
 
 rtcs.a:
 atevbrm9200.a:

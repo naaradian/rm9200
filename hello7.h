@@ -44,7 +44,7 @@
 //#define PROG_BMDN6M		   //maked gybryd bmdn6 and md310  not sat!!!!!
 //#define PROG_BMDN6MI	  //wrong!!!! for sat maked gybryd bmdn6 and md310 + indikator!	md310e_ind.cpp			 
 //#define PROG_MD310_SATI	   //sat + ind md310s,cpp +  + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
-#define PROG_MD310_SATI2	   //sat + ind md310s2,cpp +  + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
+//#define PROG_MD310_SATI2	   //sat + ind md310s2,cpp +  + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 //#define PROG_ODU	   //not used !!! odu.cpp +  + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 						//pvg810_api.c pvg810_api_calibration.c pvg810_api_DataConfig.c
 						//pvg810_api_utilc.c pvg810_api_Application.c pvg810_protocol_MsgUtils.c
@@ -79,7 +79,7 @@
 //#define PROG_PU_MSAT3	// pu_msat.cpp	  linkdoubler 3		2048
 //#define PROG_PU_MSAT4 //pu_msat1.cpp linkdoubler 4 = linkdoubler2(menu with 1024)	 menu	
 
-//#define PROG_PU_MSAT5	 // linkdoubler1 1024 tfs_data.c web interface  file need copy!!!! pu_msat5.cpp  1024
+#define PROG_PU_MSAT5	 // linkdoubler1 1024 tfs_data.c web interface  file need copy!!!! pu_msat5.cpp  1024
 
 
 
@@ -170,10 +170,10 @@
 //#define SOFT_VER_STRING    "   14.12.01.1-800 ADESTO"//263 : maked init counter and data for write_buffer_char1()
 //#ifndef PROG_PUPM3_1_ADESTO	
 //#ifndef PROG_PU_MSAT1
-#define SOFT_VER_STRING      "      16.11.17.1-1097    "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING      "      16.11.17.2-1097    "//263 : maked init counter and data for write_buffer_char1()
 #else
 //#define SOFT_VER_STRING "Radian Ver. 01.00        "//263 : maked init counter and data for write_buffer_char1()
-#define SOFT_VER_STRING   "Radian v.922.50925       "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING   "Radian v1097.61117       "//263 : maked init counter and data for write_buffer_char1()
 #endif
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -3426,6 +3426,10 @@ extern "C" void PU_M(void);
 
 #ifdef 	PROG_PU_MSAT5
 #define	PROG_PU_MSAT
+extern "C" unsigned char IOSpiSend(unsigned char ,  unsigned long ,
+	 unsigned char * , unsigned char * );
+
+
 #endif
 
 
