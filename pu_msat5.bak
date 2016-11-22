@@ -44,7 +44,7 @@ void ResetWatchDog()
 extern "C" unsigned char ReadDevId(unsigned char);
 
 
-
+ /*
 extern "C" void LoadDDSN2()
 {
 
@@ -321,49 +321,6 @@ SendToDDS(LEN_DATA_DDS,  (unsigned long)&DataDDS[0]);
 
 // = 
 //{
-/*
-  0,  0, 0x88
-  00;  01H, 00H  
-  00;  02H, 02H  
-  00;  03H, 19H  
-  00;  04H, 00H  
-  00;  05H, 00H  
-  00H,  10H,0D0H  
-  00H,  12H, 00H  
-  00H,  13H, 00H  
-  00H,  20H, 12H  
-  00H,  22H, 04H  
-  01H,  04H, 00H  
-  01H,  05H, 00H  
-  01H,  06H, 01H  
-  01H, 0A6H, 63H         ;;;189,22 MHZ                                      
-  01H, 0A7H, 0CBH              ;;                                           
-  01H, 0A8H, 3CH                                                            
-  01H, 0A9H, 03H                                                            
-  01H, 0AAH, 34H                                                            
-  01H, 0ABH, 45H              ;;;26,6 ÌÃö 22 22 22 22 22 22 (îïîðà 100 ÌÃÖ) 
-  00H,  05H, 01H  
-  01H, 0ACH, 00H  
-  01H, 0ADH, 00H  
-  02H,  00H, 05H  
-  02H,  01H, 00H  
-  04H,  0BH,0FFH  
-  04H,  0CH, 01H  
-  04H,  0EH, 10H  
-  05H,  00H, 00H  
-  05H,  01H, 00H  
-  05H,  02H, 00H  
-  05H,  03H, 00H  
-  05H,  04H, 00H  
-  05H,  05H, 00H  
-  05H,  06H, 00H  
-  05H,  07H, 00H  
-  05H,  08H, 00H  
-  05H,  09H, 00H  
-  00H,  05H, 01H  
-  */
-//};
-
 
 //test okSendToDDS(LEN_DATA_DDS,  (unsigned long)&DataDDS[0]);
 }
@@ -627,53 +584,6 @@ SendToDDS(LEN_DATA_DDS,  (unsigned long)&DataDDS[0]);
 
 
 
-
-//test ok *pData++ = 0x55;   *pData++ = 0xAA;	 *pData = 0x99;
-
-// = 
-//{
-/*
-  0,  0, 0x88
-  00;  01H, 00H  
-  00;  02H, 02H  
-  00;  03H, 19H  
-  00;  04H, 00H  
-  00;  05H, 00H  
-  00H,  10H,0D0H  
-  00H,  12H, 00H  
-  00H,  13H, 00H  
-  00H,  20H, 12H  
-  00H,  22H, 04H  
-  01H,  04H, 00H  
-  01H,  05H, 00H  
-  01H,  06H, 01H  
-  01H, 0A6H, 63H         ;;;189,22 MHZ                                      
-  01H, 0A7H, 0CBH              ;;                                           
-  01H, 0A8H, 3CH                                                            
-  01H, 0A9H, 03H                                                            
-  01H, 0AAH, 34H                                                            
-  01H, 0ABH, 45H              ;;;26,6 ÌÃö 22 22 22 22 22 22 (îïîðà 100 ÌÃÖ) 
-  00H,  05H, 01H  
-  01H, 0ACH, 00H  
-  01H, 0ADH, 00H  
-  02H,  00H, 05H  
-  02H,  01H, 00H  
-  04H,  0BH,0FFH  
-  04H,  0CH, 01H  
-  04H,  0EH, 10H  
-  05H,  00H, 00H  
-  05H,  01H, 00H  
-  05H,  02H, 00H  
-  05H,  03H, 00H  
-  05H,  04H, 00H  
-  05H,  05H, 00H  
-  05H,  06H, 00H  
-  05H,  07H, 00H  
-  05H,  08H, 00H  
-  05H,  09H, 00H  
-  00H,  05H, 01H  
-  */
-//};
 
 
 //test okSendToDDS(LEN_DATA_DDS,  (unsigned long)&DataDDS[0]);
@@ -947,54 +857,6 @@ pData = DataDDS;
 SendToDDS3(LEN_DATA_DDS,  (unsigned long)&DataDDS[0]);
 
 
-
-
-//test ok *pData++ = 0x55;   *pData++ = 0xAA;	 *pData = 0x99;
-
-// = 
-//{
-/*
-  0,  0, 0x88
-  00;  01H, 00H  
-  00;  02H, 02H  
-  00;  03H, 19H  
-  00;  04H, 00H  
-  00;  05H, 00H  
-  00H,  10H,0D0H  
-  00H,  12H, 00H  
-  00H,  13H, 00H  
-  00H,  20H, 12H  
-  00H,  22H, 04H  
-  01H,  04H, 00H  
-  01H,  05H, 00H  
-  01H,  06H, 01H  
-  01H, 0A6H, 63H         ;;;189,22 MHZ                                      
-  01H, 0A7H, 0CBH              ;;                                           
-  01H, 0A8H, 3CH                                                            
-  01H, 0A9H, 03H                                                            
-  01H, 0AAH, 34H                                                            
-  01H, 0ABH, 45H              ;;;26,6 ÌÃö 22 22 22 22 22 22 (îïîðà 100 ÌÃÖ) 
-  00H,  05H, 01H  
-  01H, 0ACH, 00H  
-  01H, 0ADH, 00H  
-  02H,  00H, 05H  
-  02H,  01H, 00H  
-  04H,  0BH,0FFH  
-  04H,  0CH, 01H  
-  04H,  0EH, 10H  
-  05H,  00H, 00H  
-  05H,  01H, 00H  
-  05H,  02H, 00H  
-  05H,  03H, 00H  
-  05H,  04H, 00H  
-  05H,  05H, 00H  
-  05H,  06H, 00H  
-  05H,  07H, 00H  
-  05H,  08H, 00H  
-  05H,  09H, 00H  
-  00H,  05H, 01H  
-  */
-//};
 
 
 //test okSendToDDS(LEN_DATA_DDS,  (unsigned long)&DataDDS[0]);
@@ -1272,58 +1134,9 @@ SendToDDS(LEN_DATA_DDS,  (unsigned long)&DataDDS[0]);
 
 
 
-
-//test ok *pData++ = 0x55;   *pData++ = 0xAA;	 *pData = 0x99;
-
-// = 
-//{
-/*
-  0,  0, 0x88
-  00;  01H, 00H  
-  00;  02H, 02H  
-  00;  03H, 19H  
-  00;  04H, 00H  
-  00;  05H, 00H  
-  00H,  10H,0D0H  
-  00H,  12H, 00H  
-  00H,  13H, 00H  
-  00H,  20H, 12H  
-  00H,  22H, 04H  
-  01H,  04H, 00H  
-  01H,  05H, 00H  
-  01H,  06H, 01H  
-  01H, 0A6H, 63H         ;;;189,22 MHZ                                      
-  01H, 0A7H, 0CBH              ;;                                           
-  01H, 0A8H, 3CH                                                            
-  01H, 0A9H, 03H                                                            
-  01H, 0AAH, 34H                                                            
-  01H, 0ABH, 45H              ;;;26,6 ÌÃö 22 22 22 22 22 22 (îïîðà 100 ÌÃÖ) 
-  00H,  05H, 01H  
-  01H, 0ACH, 00H  
-  01H, 0ADH, 00H  
-  02H,  00H, 05H  
-  02H,  01H, 00H  
-  04H,  0BH,0FFH  
-  04H,  0CH, 01H  
-  04H,  0EH, 10H  
-  05H,  00H, 00H  
-  05H,  01H, 00H  
-  05H,  02H, 00H  
-  05H,  03H, 00H  
-  05H,  04H, 00H  
-  05H,  05H, 00H  
-  05H,  06H, 00H  
-  05H,  07H, 00H  
-  05H,  08H, 00H  
-  05H,  09H, 00H  
-  00H,  05H, 01H  
-  */
-//};
-
-
 //test okSendToDDS(LEN_DATA_DDS,  (unsigned long)&DataDDS[0]);
 }
-
+   */
 //_________________________________________________________________________
 
 
@@ -5761,17 +5574,21 @@ extern "C" void LoadDDSs(void)
  // SetSelector(CNL1);
 //  for(long i1 = 0; i1 < 100000; i1++) //test
 //to 3a LoadDDSN2();
- LoadDDSN3a();
+// LoadDDSN3a();
 //   for(long i2 = 0; i2 < 100000; i2++) //test
 // LoadSymbolRate(GetSymbolRate());
 // LoadSymbolRate(70000000l);
  LoadFreqPCha(70000000l);
 
 
- LoadDDSN3();
+// LoadDDSN3();
 
 // LoadFreqPCh(GetFreqPCh());
  LoadFreqPCh(70000000l);
+
+
+ InitLoadIF(); //md and dm
+
 
 
 // SetSelector(CNL2);
@@ -5946,112 +5763,42 @@ extern "C" long  Get_SERIAL(void )
 
 }
 
+ // hier will be loaded modulator and demodulator to static mode for test
+//need make pb15(LE3) - md ;	  pa19 - dmd
 
-extern "C" unsigned char IOSpiSend(unsigned char deviceindex, 
- unsigned long length_of_data,	 unsigned char * BufferData, unsigned char * ReadBuffer)
-{
-
-
- return 0;
-}
-
-
-
-extern "C" void InitIFModule()
+extern "C" void InitLoadIF()
 {
 
 unsigned char * pData;
 static unsigned char DataDDS[SENDED_DDS_FREQ_LEN];//
 
 
- /*
-unsigned char tmp = inportb(CON_IFSAT140_ADDR);
- if(!(tmp & IFBLOK_MASK))
- {
-  return;
- }
- */
-
-//___________________________________________________________________________reset 
-	/* not need
-     CON_IFSAT140 &= (~_IFNRST);   //inverse operation : reset on
-	 outportb(CON_IFSAT140_ADDR,CON_IFSAT140);
-	 delay_mcs(200);
-     CON_IFSAT140 |= _IFNRST;   //inverse operation	 : reset off
-	 outportb(CON_IFSAT140_ADDR,CON_IFSAT140);
-     delay_mcs(200);
-   */
-//____________________________________________________________________________filtrs
-//0X30000036:0x0000000a; -- filtr TX
-  /*
-    outportb(ADR_IFSAT140,TXFILTR);
-
-//0X30000037:0x00000078;
-    outportb(ADRFWR, 0x78);
- 	delay_mcs(5);
-//wait 5mks
-
-
-//0X30000036:0x0000000e; -- filtr RX
-    outportb(ADR_IFSAT140,RXFILTR);
-
-//0X30000037:0x0000007c;
-	outportb(ADRFWR, 0x7C);
-	delay_mcs(5);
-   */
-//wait 5mks
- //rx filtr
-pData = DataDDS;
- *pData++ = 0xbf;	 *pData = 0xbd;  //
-IOSpiSend(50 , 2,  DataDDS, DataDDS);	  //channel E
-
-
-//tx filtr
-pData = DataDDS;
- *pData++ = 0xbf;	 *pData = 0xbd;  //
-IOSpiSend(51 , 2,  DataDDS, DataDDS);	  //channel F
-
-
-
-
-//________________________________________________________________________________tx dds  adrf 6720
-
-	
-// outportb(ADR_IFSAT140,TXIFSYNT);	//tx
-
-//00 00 99
-//pData = DataDDS;
-// *pData++ = 0;   *pData++ = 0;	 *pData = 0x1;  //reset
-//IOSpiSend(49 , 3,  DataDDS, DataDDS);	  //channel D
-
- //   delay_mcs(10000);  //delay 10ms
-
 pData = DataDDS;
 *pData++ = 0;   *pData++ = 0;	 *pData = 0;  //reset  off
-IOSpiSend(49 , 3,  DataDDS, DataDDS);	  //channel D
+IOSpiSend(3 , 3,  DataDDS, DataDDS);	  //channel D
 
 	 delay_mcs(10000);  //delay 10ms
 
 
 pData = DataDDS;
 *pData++ = 0x40;   *pData++ = 0x0C;	 *pData = 0x23;  //addr 20
-IOSpiSend(49 , 3,  DataDDS, DataDDS);	  //channel D
+IOSpiSend(3  , 3,  DataDDS, DataDDS);	  //channel D
 
 pData = DataDDS;
 *pData++ = 0x42;   *pData++ = 0;	 *pData = 0x09;  //addr 21
-IOSpiSend(49 , 3,  DataDDS, DataDDS);	  //channel D
+IOSpiSend(3  , 3,  DataDDS, DataDDS);	  //channel D
 
 pData = DataDDS;
 *pData++ = 0x60;   *pData++ = 0;	 *pData = 0x01;  //addr 30
-IOSpiSend(49 , 3,  DataDDS, DataDDS);	  //channel D
+IOSpiSend(3  , 3,  DataDDS, DataDDS);	  //channel D
 
 pData = DataDDS;
 *pData++ = 0x80;   *pData++ = 0;	 *pData = 0x30;  //addr 40
-IOSpiSend(49 , 3,  DataDDS, DataDDS);	  //channel D
+IOSpiSend(3  , 3,  DataDDS, DataDDS);	  //channel D
 
 pData = DataDDS;
 *pData++ = 0x92;   *pData++ = 0x14;	 *pData = 0xb4;  //addr 49 ?????
-IOSpiSend(49 , 3,  DataDDS, DataDDS);	  //channel D
+IOSpiSend(3  , 3,  DataDDS, DataDDS);	  //channel D
 
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -6062,15 +5809,15 @@ IOSpiSend(49 , 3,  DataDDS, DataDDS);	  //channel D
 pData = DataDDS;
 //*pData++ = 0x02;   *pData++ = 0x08;	 *pData = 0x50;  //addr 
 *pData++ = 0x04;   *pData++ = 0x08;	 *pData = 0x50;  //addr 
-IOSpiSend(49 , 3,  DataDDS, DataDDS);	  //channel D
+IOSpiSend(3  , 3,  DataDDS, DataDDS);	  //channel D
 
 pData = DataDDS;
 *pData++ = 0x06;   *pData++ = 0;	 *pData = 0;  //addr3
-IOSpiSend(49 , 3,  DataDDS, DataDDS);	  //channel D
+IOSpiSend(3  , 3,  DataDDS, DataDDS);	  //channel D
 
 pData = DataDDS;
 *pData++ = 0x08;   *pData++ = 0;	 *pData = 0;  //addr 4
-IOSpiSend(49 , 3,  DataDDS, DataDDS);	  //channel D
+IOSpiSend(3  , 3,  DataDDS, DataDDS);	  //channel D
 
 
 //can be controlled lock after 10 ms
@@ -6078,58 +5825,53 @@ IOSpiSend(49 , 3,  DataDDS, DataDDS);	  //channel D
 
 //_________________________________________________________________________rx dds adrf 6820
 
-//pData = DataDDS;
-// *pData++ = 0;   *pData++ = 0;	 *pData = 0x1;  //reset
-//IOSpiSend(48 , 3,  DataDDS, DataDDS);	  //channel C
-
-  //  delay_mcs(10000);  //delay 10ms
 
 pData = DataDDS;
 *pData++ = 0;   *pData++ = 0;	 *pData = 0;  //reset  off
-IOSpiSend(48 , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
 
 	 delay_mcs(10000);  //delay 10ms
 
 pData = DataDDS;
 *pData++ = 0x02;   *pData++ = 0xf6;	 *pData = 0x7f;  //addr 20
-IOSpiSend(48 , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
 
 pData = DataDDS;
 *pData++ = 0x20;   *pData++ = 0xf6;	 *pData = 0x7f;  //addr 20
-IOSpiSend(48 , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
 
 
 
 
 pData = DataDDS;
 *pData++ = 0x40;   *pData++ = 0x0C;	 *pData = 0x23;  //addr 20
-IOSpiSend(48 , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
 
 pData = DataDDS;
 *pData++ = 0x42;   *pData++ = 0;	 *pData = 0x09;  //addr 21
-IOSpiSend(48 , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
 
 pData = DataDDS;
 *pData++ = 0x60;   *pData++ = 0;	 *pData = 0x22;  //addr 30
-IOSpiSend(48 , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
 
 pData = DataDDS;
 *pData++ = 0x62;   *pData++ = 0x05;	 *pData = 0x05;  //addr 
-IOSpiSend(48 , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
 
 pData = DataDDS;
 *pData++ = 0x68;   *pData++ = 0x05;	 *pData = 0;  //addr 
-IOSpiSend(48 , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
 
 
 
 pData = DataDDS;
 *pData++ = 0x80;   *pData++ = 0;	 *pData = 0x30;  //addr 40
-IOSpiSend(48 , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
 
 pData = DataDDS;
 *pData++ = 0x92;   *pData++ = 0x14;	 *pData = 0xb4;  //addr 49 ?????
-IOSpiSend(48 , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
 
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -6139,22 +5881,202 @@ IOSpiSend(48 , 3,  DataDDS, DataDDS);	  //channel C
 
 pData = DataDDS;
 *pData++ = 0x04;   *pData++ = 0x08;	 *pData = 0x50;  //addr 2
-IOSpiSend(48 , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
 
 pData = DataDDS;
 *pData++ = 0x06;   *pData++ = 0;	 *pData = 0;  //addr3
-IOSpiSend(48 , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
 
 pData = DataDDS;
 *pData++ = 0x08;   *pData++ = 0;	 *pData = 0;  //addr 4
-IOSpiSend(48 , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
 
 //can be controlled lock after 10 ms
   
 //_________________________________________________________________________rxdds
 
+}
+
+struct DKoef
+{
+unsigned long fin;
+unsigned char cin;
+unsigned char cout;
+unsigned char bias;
+unsigned char rdac;
+unsigned char cdac;
+};
+
+#define DKOEF_SIZE (13)
+#define FREQ_ODIV  (1425)
+#define FREQ_REF   (10000000)	
 
 
+DKoef dkoef[DKOEF_SIZE];
+
+extern "C" void Init_dkoef()
+{
+
+dkoef[0].fin= 900; dkoef[0].cin=6;dkoef[0].cout=2;dkoef[0].bias=1;dkoef[0].rdac=8;dkoef[0].cdac=7;
+dkoef[1].fin=1000; dkoef[0].cin=5;dkoef[0].cout=1;dkoef[0].bias=1;dkoef[0].rdac=8;dkoef[0].cdac=9;
+dkoef[2].fin=1100; dkoef[0].cin=3;dkoef[0].cout=2;dkoef[0].bias=1;dkoef[0].rdac=9;dkoef[0].cdac=6;
+dkoef[3].fin=1200; dkoef[0].cin=3;dkoef[0].cout=1;dkoef[0].bias=1;dkoef[0].rdac=8;dkoef[0].cdac=8;
+dkoef[4].fin=1300; dkoef[0].cin=2;dkoef[0].cout=1;dkoef[0].bias=2;dkoef[0].rdac=8;dkoef[0].cdac=7;
+dkoef[5].fin=1400; dkoef[0].cin=2;dkoef[0].cout=1;dkoef[0].bias=2;dkoef[0].rdac=9;dkoef[0].cdac=3;
+dkoef[6].fin=1500; dkoef[0].cin=1;dkoef[0].cout=1;dkoef[0].bias=2;dkoef[0].rdac=9;dkoef[0].cdac=4;
+dkoef[7].fin=1600; dkoef[0].cin=1;dkoef[0].cout=1;dkoef[0].bias=1;dkoef[0].rdac=8;dkoef[0].cdac=5;
+dkoef[8].fin=1700; dkoef[0].cin=1;dkoef[0].cout=0;dkoef[0].bias=1;dkoef[0].rdac=8;dkoef[0].cdac=5;
+dkoef[9].fin=1800; dkoef[0].cin=1;dkoef[0].cout=1;dkoef[0].bias=1;dkoef[0].rdac=8;dkoef[0].cdac=6;
+dkoef[10].fin=1900;dkoef[0].cin=1;dkoef[0].cout=0;dkoef[0].bias=1;dkoef[0].rdac=8;dkoef[0].cdac=5;
+dkoef[11].fin=2000;dkoef[0].cin=1;dkoef[0].cout=0;dkoef[0].bias=2;dkoef[0].rdac=8;dkoef[0].cdac=4;
+dkoef[12].fin=2100;dkoef[0].cin=1;dkoef[0].cout=0;dkoef[0].bias=2;dkoef[0].rdac=8;dkoef[0].cdac=4;
 
 }
+
+extern "C" unsigned long Findf(unsigned long freq)
+{
+unsigned long i;
+for(i = 0; i < DKOEF_SIZE; i++)
+{
+if(dkoef[i].fin < freq) break;
+}
+return i;
+}
+
+extern "C" unsigned char GetReg (unsigned long i, unsigned char r)
+{
+unsigned char ret = 0;
+switch(r)
+{
+case 602: ret = (dkoef[i].cout << 5) + (dkoef[0].cin << 1);	break;
+case 621: ret = dkoef[i].bias << 1;	break;
+case 622: ret = (dkoef[i].rdac << 5) + dkoef[0].cdac;	break;
+
+
+default: break;
+}
+
+return ret;
+}
+
+
+
+
+
+
+
+extern "C" void LoadIFDmd(unsigned long freq)
+{
+
+unsigned char * pData;
+static unsigned char DataDDS[SENDED_DDS_FREQ_LEN];//
+unsigned long i = Findf(freq);
+unsigned long odiv;
+unsigned long INT_K;
+unsigned long frac;
+  
+
+//_________________________________________________________________________rx adrf 6820
+
+
+pData = DataDDS;
+*pData++ = 0;   *pData++ = 0;	 *pData = 0;  //reset  off
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+
+	 delay_mcs(10000);  //delay 10ms
+
+pData = DataDDS;
+*pData++ = 0x02;   *pData++ = 0xf6;	 *pData = 0x7f;  //addr 20
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+
+pData = DataDDS;
+*pData++ = 0x20;   *pData++ = 0xf6;	 *pData = 0x7f;  //addr 20
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+
+
+
+
+pData = DataDDS;
+*pData++ = 0x40;   *pData++ = 0x0C;	 *pData = 0x23;  //addr 20
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+
+pData = DataDDS;
+*pData++ = 0x42;   *pData++ = 0;	 *pData = 0x09;  //addr 21
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+
+pData = DataDDS;
+*pData++ = 0x60;   *pData++ = 0;	 *pData = 0x22;  //addr 30
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+
+pData = DataDDS;
+*pData++ = 0x62;   *pData++ = 0x05;	 *pData = 0x05;  //addr 
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+
+pData = DataDDS;
+*pData++ = 0x68;   *pData++ = 0x05;	 *pData = 0;  //addr 
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+
+
+
+pData = DataDDS;
+*pData++ = 0x80;   *pData++ = 0;	 *pData = 0x30;  //addr 40
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+
+pData = DataDDS;
+*pData++ = 0x92;   *pData++ = 0x14;	 *pData = 0xb4;  //addr 49 ?????
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+/*
+pData = DataDDS;
+*pData++ = 0x04;   *pData++ = 0x08;	 *pData = 0x50;  //addr 2
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+
+pData = DataDDS;
+*pData++ = 0x06;   *pData++ = 0;	 *pData = 0;  //addr3
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+
+pData = DataDDS;
+*pData++ = 0x08;   *pData++ = 0;	 *pData = 0;  //addr 4
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+*/
+
+
+pData = DataDDS;
+*pData++ = 0x60;   *pData++ = 0;	 *pData = GetReg (i,602);  //addr 30
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+
+pData = DataDDS;
+*pData++ = 0x62;   *pData++ = GetReg (i,621);  *pData = GetReg (i,622);  //addr 31
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+
+pData = DataDDS;
+*pData++ = 0x44;   *pData++ = 0x2A;
+if(freq > FREQ_ODIV) { *pData++ = 0x03; odiv = 1; } else { *pData++ = 0x0B;	odiv = 2;}
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+
+pData = DataDDS;
+*pData++ = 0x04;   
+
+INT_K = (odiv * freq) / (unsigned long)FREQ_REF;
+
+		 *pData++ = (unsigned char)(INT_K >> 8);    *pData++ = (unsigned char)INT_K; 
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+
+
+pData = DataDDS;
+*pData++ = 0x06;   
+
+
+frac = (((odiv * freq) % (unsigned long)FREQ_REF) << 16)/ (unsigned long)FREQ_REF;
+
+
+
+//can be controlled lock after 10 ms
+  
+//_________________________________________________________________________rxdds
+
+}
+
 

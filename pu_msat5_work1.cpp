@@ -441,14 +441,22 @@ while(len1--)
 
 #define FILTER_SEND_SIZE	(6)
 
-extern "C" void LoadFilter(unsigned char cs, unsigned char data)
+//extern "C" void LoadFilter(unsigned char cs, unsigned char data)
+extern "C" void LoadSPIDev(unsigned char cs, unsigned char data, unsigned char bitsval)
 {
 //printfp("\n\r LoadFilter");
 //printfpd(" %d>", cs);
 //printfpd(" 0x%X", data);
 
   AT91RM9200_PIO_REG_STRUCT_PTR  pio_ptr;
+  AT91RM9200_PIO_REG_STRUCT_PTR  pio_ptra;
+
+
   pio_ptr = (AT91RM9200_PIO_REG_STRUCT_PTR) AT91RM9200_PIOB_BASE;
+  pio_ptra = (AT91RM9200_PIO_REG_STRUCT_PTR) AT91RM9200_PIOA_BASE;
+
+
+
   unsigned char mask = 1;
 
    _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 13, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //ce
@@ -456,9 +464,14 @@ extern "C" void LoadFilter(unsigned char cs, unsigned char data)
    _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 17, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //le0
    _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 18, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //le1
    _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 19, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //le2
+   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 15, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //le3
+   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 19, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //le5
 
-   pio_ptr->SODR = MASK_BIT_19 |  MASK_BIT_18 |MASK_BIT_17 |MASK_BIT_14 | MASK_BIT_13;
 
+
+
+   pio_ptr->SODR = MASK_BIT_19 |  MASK_BIT_18 |MASK_BIT_17 |MASK_BIT_14 | MASK_BIT_13 | MASK_BIT_15;
+   pio_ptra->SODR = MASK_BIT_19;
 
 	data -=  1; // enabled values 1...30  0 - for 1 MHz
 	data <<= 1;
@@ -469,10 +482,15 @@ switch (cs)
   case 0 : 	  pio_ptr->CODR = MASK_BIT_17; break;
   case 1 : 	  pio_ptr->CODR = MASK_BIT_18; break;
   case 2 : 	  pio_ptr->CODR = MASK_BIT_19; break;
+  case 3 : 	  pio_ptr->CODR = MASK_BIT_15; break;
+  case 4 : 	  pio_ptra->CODR = MASK_BIT_19; break;
+
+
   default :   break;
 }
 
-		for(unsigned j = 0; j < FILTER_SEND_SIZE; j++)
+   //		for(unsigned j = 0; j < FILTER_SEND_SIZE; j++)
+       		for(unsigned j = 0; j < bitsval; j++)
 		{
 		   pio_ptr->CODR  = MASK_BIT_13;
 		//   delay_mcs(2);
@@ -490,15 +508,30 @@ delay_mcs(2);
   case 0 : 	  pio_ptr->SODR = MASK_BIT_17; break;
   case 1 : 	  pio_ptr->SODR = MASK_BIT_18; break;
   case 2 : 	  pio_ptr->SODR = MASK_BIT_19; break;
+  case 3 : 	  pio_ptr->SODR = MASK_BIT_15; break;
+  case 4 : 	  pio_ptra->SODR = MASK_BIT_19; break;
+
   default :   break;
 }
 
 }
 
-extern "C" unsigned char IOSpiSend(unsigned char deviceindex, 
+//will be load md and dmd
+//need make pb15(LE3) - md ;	  pa19(LE5) - dmd
+
+
+
+
+//for md : cs = 3
+//for dm : cs = 4  
+extern "C" unsigned char IOSpiSend(unsigned char cs, 
  unsigned long length_of_data,	 unsigned char * BufferData, unsigned char * ReadBuffer)
 {
 
+ while(length_of_data--)
+ {
+	LoadSPIDev( cs, * BufferData++, 8);
+ }
 
  return 0;
 }
@@ -2364,7 +2397,10 @@ extern "C" void LoadDDSN3a();
 extern "C" void  SetTrFrequency() 
 {
 // printfp("SetTrFrequency");
+#ifndef PROG_PU_MSAT5	
  LoadDDSN3a();
+#endif
+
 // LoadFreqPCha(SatSet4.Value * MULT_VALF);
 
  dev1.pum100s1.SatSet4r0 = (unsigned char)SatSet4.Value;
@@ -2385,8 +2421,9 @@ extern "C" void LoadDDSN3();
 extern "C" void  SetRcvFrequency() 
 {
 // printfp("SetRcvFrequency");
+#ifndef PROG_PU_MSAT5	
  LoadDDSN3();
-
+#endif
 
  LoadFreqPCh((SatSet5.Value + SatSet8.Value) * MULT_VALF);
 
@@ -2400,14 +2437,17 @@ extern "C" void  SetTrBound()
 {
 // printfp("SetTrBound+Rcv");
  dev1.pum100s1.SatSet6r0 = (unsigned char)SatSet6.Value;
- LoadFilter(0, SatSet6.Value);
-
+ //LoadFilter(0, SatSet6.Value);
+ LoadSPIDev(0, SatSet6.Value, 6);
 //_________________________________130409
 SatSet7.Value = SatSet6.Value;
 SatSet7.ChangingValue =  SatSet6.Value;
 dev1.pum100s1.SatSet7r0 = (unsigned char)SatSet7.Value;
-LoadFilter(1, SatSet7.Value);
-LoadFilter(2, SatSet7.Value);
+//LoadFilter(1, SatSet7.Value);
+LoadSPIDev(1, SatSet7.Value, 6);
+
+//LoadFilter(2, SatSet7.Value);
+LoadSPIDev(2, SatSet7.Value, 6);
 //_________________________________130409
 }
 
@@ -2416,13 +2456,17 @@ extern "C" void  SetRcvBound()
 // printfp("SetRcvBound+Trncm");
 
  dev1.pum100s1.SatSet7r0 = (unsigned char)SatSet7.Value;
- LoadFilter(1, SatSet7.Value);
- LoadFilter(2, SatSet7.Value);
+// LoadFilter(1, SatSet7.Value);
+ LoadSPIDev(1, SatSet7.Value, 6);
+// LoadFilter(2, SatSet7.Value);
+ LoadSPIDev(2, SatSet7.Value, 6);
 //_________________________________130409
 SatSet6.Value = SatSet7.Value;
 SatSet6.ChangingValue =  SatSet7.Value;
 dev1.pum100s1.SatSet6r0 = (unsigned char)SatSet6.Value;
-LoadFilter(0, SatSet6.Value);
+//LoadFilter(0, SatSet6.Value);
+LoadSPIDev(0, SatSet6.Value, 6);
+
 //_________________________________130409
 
 

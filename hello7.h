@@ -3428,7 +3428,7 @@ extern "C" void PU_M(void);
 #define	PROG_PU_MSAT
 extern "C" unsigned char IOSpiSend(unsigned char ,  unsigned long ,
 	 unsigned char * , unsigned char * );
-
+extern "C" void InitLoadIF();
 
 #endif
 
@@ -3867,6 +3867,10 @@ extern "C" void Transmit2c(unsigned char);
 	  
 extern "C" void SetTxLevel(unsigned char level);
 extern "C" void LoadFilter(unsigned char cs, unsigned char data);
+extern "C" void LoadSPIDev(unsigned char cs, unsigned char data, unsigned char bitsval);
+//#define FILTER_SEND_SIZE	(6)
+
+
 
 extern "C" void LoadDDSs(void);
 
