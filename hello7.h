@@ -170,7 +170,7 @@
 //#define SOFT_VER_STRING    "   14.12.01.1-800 ADESTO"//263 : maked init counter and data for write_buffer_char1()
 //#ifndef PROG_PUPM3_1_ADESTO	
 //#ifndef PROG_PU_MSAT1
-#define SOFT_VER_STRING      "      16.11.17.2-1097    "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING      "      16.11.22.2-1097    "//263 : maked init counter and data for write_buffer_char1()
 #else
 //#define SOFT_VER_STRING "Radian Ver. 01.00        "//263 : maked init counter and data for write_buffer_char1()
 #define SOFT_VER_STRING   "Radian v1097.61117       "//263 : maked init counter and data for write_buffer_char1()
@@ -3429,6 +3429,8 @@ extern "C" void PU_M(void);
 extern "C" unsigned char IOSpiSend(unsigned char ,  unsigned long ,
 	 unsigned char * , unsigned char * );
 extern "C" void InitLoadIF();
+extern "C" void LoadIFDmd(unsigned long freq);
+extern "C" void LoadIFMd(unsigned long freq);
 
 #endif
 
@@ -3681,12 +3683,29 @@ extern "C" void KeepState(void);
 //140227#define	 MAX_SATSET3	(0xF)
 #define	 MAX_SATSET3	(7)
 
+#ifndef PROG_PU_MSAT5
+
 #define	 MIN_SATSET4	(40000)	 //* 100000
 //#define	 MAX_SATSET4	(100000)	 //* 100000
 #define	 MAX_SATSET4	(145000)	 //* 100000
 #define	 MIN_SATSET5	(40000)	//* 100000
 //#define	 MAX_SATSET5	(100000)	 //*100000
 #define	 MAX_SATSET5	(145000)	 //*100000
+
+#else
+
+#define	 MIN_SATSET4	(950000)	 //* 100000
+//#define	 MAX_SATSET4	(100000)	 //* 100000
+#define	 MAX_SATSET4	(2150000)	 //* 100000
+#define	 MIN_SATSET5	(950000)	//* 100000
+//#define	 MAX_SATSET5	(100000)	 //*100000
+#define	 MAX_SATSET5	(2150000)	 //*1000
+
+#endif
+
+
+
+
 #define	 MIN_SATSET6	(1)
 #define	 MAX_SATSET6	(30)  //*1000000
 #define	 MIN_SATSET7	(1)

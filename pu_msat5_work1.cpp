@@ -450,10 +450,13 @@ extern "C" void LoadSPIDev(unsigned char cs, unsigned char data, unsigned char b
 
   AT91RM9200_PIO_REG_STRUCT_PTR  pio_ptr;
   AT91RM9200_PIO_REG_STRUCT_PTR  pio_ptra;
+  AT91RM9200_PIO_REG_STRUCT_PTR  pio_ptrc;
+
 
 
   pio_ptr = (AT91RM9200_PIO_REG_STRUCT_PTR) AT91RM9200_PIOB_BASE;
   pio_ptra = (AT91RM9200_PIO_REG_STRUCT_PTR) AT91RM9200_PIOA_BASE;
+  pio_ptrc = (AT91RM9200_PIO_REG_STRUCT_PTR) AT91RM9200_PIOC_BASE;
 
 
 
@@ -466,24 +469,27 @@ extern "C" void LoadSPIDev(unsigned char cs, unsigned char data, unsigned char b
    _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 19, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //le2
    _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 15, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //le3
    _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 19, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //le5
-
+   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_C,  3, AT91RM9200_PIO_PERIPHERAL_IO, 1);	 //sclk2
 
 
 
    pio_ptr->SODR = MASK_BIT_19 |  MASK_BIT_18 |MASK_BIT_17 |MASK_BIT_14 | MASK_BIT_13 | MASK_BIT_15;
    pio_ptra->SODR = MASK_BIT_19;
+   pio_ptrc->SODR = MASK_BIT_3;
 
-	data -=  1; // enabled values 1...30  0 - for 1 MHz
-	data <<= 1;
-	data +=  1; //write bit
+
+ //	data -=  1; // enabled values 1...30  0 - for 1 MHz
+ //	data <<= 1;
+ //	data +=  1; //write bit
 
 switch (cs)
 {
-  case 0 : 	  pio_ptr->CODR = MASK_BIT_17; break;
-  case 1 : 	  pio_ptr->CODR = MASK_BIT_18; break;
-  case 2 : 	  pio_ptr->CODR = MASK_BIT_19; break;
-  case 3 : 	  pio_ptr->CODR = MASK_BIT_15; break;
-  case 4 : 	  pio_ptra->CODR = MASK_BIT_19; break;
+  case 0 : 	  pio_ptr->CODR = MASK_BIT_17; break;	//filt
+  case 1 : 	  pio_ptr->CODR = MASK_BIT_18; break;	//filt1
+  case 2 : 	  pio_ptr->CODR = MASK_BIT_19; break;	//filt2
+  case 3 : 	  pio_ptr->CODR = MASK_BIT_15; break;	//md
+  case 4 : 	  pio_ptra->CODR = MASK_BIT_19; break;	//dmd
+  case 5 : 	  pio_ptrc->CODR = MASK_BIT_3; break;	 //dmd1
 
 
   default :   break;
@@ -510,6 +516,7 @@ delay_mcs(2);
   case 2 : 	  pio_ptr->SODR = MASK_BIT_19; break;
   case 3 : 	  pio_ptr->SODR = MASK_BIT_15; break;
   case 4 : 	  pio_ptra->SODR = MASK_BIT_19; break;
+  case 5 : 	  pio_ptrc->SODR = MASK_BIT_3; break;
 
   default :   break;
 }
@@ -524,6 +531,7 @@ delay_mcs(2);
 
 //for md : cs = 3
 //for dm : cs = 4  
+//for dm1 : cs = 5
 extern "C" unsigned char IOSpiSend(unsigned char cs, 
  unsigned long length_of_data,	 unsigned char * BufferData, unsigned char * ReadBuffer)
 {
@@ -2399,6 +2407,8 @@ extern "C" void  SetTrFrequency()
 // printfp("SetTrFrequency");
 #ifndef PROG_PU_MSAT5	
  LoadDDSN3a();
+#else
+ LoadIFMd((unsigned long) ((SatSet4.Value + SatSet8.Value) * MULT_VALF));
 #endif
 
 // LoadFreqPCha(SatSet4.Value * MULT_VALF);
@@ -2414,7 +2424,7 @@ signed short tmp8 = SatSet8.Value;
 
 
 
- LoadFreqPCha((SatSet4.Value + SatSet8.Value) * MULT_VALF);
+// LoadFreqPCha((SatSet4.Value + SatSet8.Value) * MULT_VALF);
 }
 extern "C" void LoadDDSN3();
 
@@ -2423,9 +2433,13 @@ extern "C" void  SetRcvFrequency()
 // printfp("SetRcvFrequency");
 #ifndef PROG_PU_MSAT5	
  LoadDDSN3();
+#else
+ LoadIFDmd((unsigned long)((SatSet5.Value + SatSet8.Value) * MULT_VALF));
+
+
 #endif
 
- LoadFreqPCh((SatSet5.Value + SatSet8.Value) * MULT_VALF);
+// LoadFreqPCh((SatSet5.Value + SatSet8.Value) * MULT_VALF);
 
  dev1.pum100s1.SatSet5r0 = (unsigned char)SatSet5.Value;
  dev1.pum100s1.SatSet5r1 = (unsigned char)((unsigned long)SatSet5.Value >> 8);

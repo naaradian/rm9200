@@ -2916,7 +2916,7 @@ void Check2InitTransitMod()
 
 }
 
-
+	   /*
 unsigned char	ab1[] =	{ 0x45,0x60,0xBF,0x25,0x52,0x2A,0x64,0x3F,0x89,0x00};   // IM-Filter part 1 
 unsigned char	ab2[] =	{ 0x45,0x68,0x53,0x02,0x49,0x8A,0x07,0xF6,0x04,0x00};   // IM-Filter part 2 
 unsigned char	ab3[] =	{ 0x45,0x18,0x08,0xB0,0xC5,0x42,0x3E,0xFB,0x72,0x07 };  // FRR-Filter    
@@ -2972,7 +2972,7 @@ unsigned char	a28[] =	{ 0x07 }; // power dnv mode -- ожидание поднятия трубки
 //outportb(0x511, 0x00); // on hook
 unsigned char aaa[7];
 unsigned char aa[] = { 0xC4,0x07,0xFF,0x00,0x00,0x00,0x00 }; 
-
+	
 void InitTLF()
 {
 	int i;
@@ -3013,7 +3013,8 @@ void InitTLF()
 	outportb(0x510, 0x02); for(i=0; i<sizeof(ab29); i++) outportb(0x50F, ab29[i]); outportb(0x510, 0x01); for(i=0; i<200*sizeof(ab29); i++);
 	outportb(0x510, 0x02); for(i=0; i<sizeof(ab30); i++) outportb(0x50F, ab30[i]); outportb(0x510, 0x01); for(i=0; i<200*sizeof(ab30); i++);
 }
-
+	*/
+	/*
 void Ring()
 {
 	int i;
@@ -3068,7 +3069,7 @@ void Read()
 	for(i=0; i<7; i++) aaa[i] = inportb(0x50F);
 	
 }
-
+  */
 
 
 void SaveFile()
@@ -3929,6 +3930,7 @@ extern "C" void time_notify_core(void)	// called frequency = 1 ms
  } 
 
 //_____________________________________________________________________________
+			 /*
 #define a14 ab22  
 #define a15 ab23
 #define a16 ab24  
@@ -3940,17 +3942,21 @@ extern "C" void time_notify_core(void)	// called frequency = 1 ms
 #define a21 ab28
 #define a23 ab30
 #define ac   aa
-
+			  */
 void t2ms(unsigned long d)
 {
  delay_mcs(d * 2000l);
 }
 
 
-
+  
 
 void StartTestTlf()
 {
+
+}
+
+/*
 // unsigned char j, aa_loc, aa1, aa2, aa3, code;
  unsigned int i;//,z,  merc, zerc,up0erc,up1erc, w;
  
@@ -4065,14 +4071,6 @@ while((inportb(0x510) & 0x01)!=0);
 //outport(wdtcon,0xaaaa);
 
 	
-/*
-	outportb(0x510, 0x02); for(i=0; i<sizeof(a272); i++) outportb(0x50F, a27[i]); outportb(0x510, 0x01);// for(i=0; i<100; i++);
-while((inportb(0x510) & 0x01)!=0);
-	outportb(0x510, 0x02); for(i=0; i<sizeof(a271); i++) outportb(0x50F, a271[i]); outportb(0x510, 0x01);// for(i=0; i<100; i++);
-while((inportb(0x510) & 0x01)!=0);
-	outportb(0x510, 0x02); for(i=0; i<sizeof(a27); i++) outportb(0x50F, a272[i]); outportb(0x510, 0x01);// for(i=0; i<100; i++);
-while((inportb(0x510) & 0x01)!=0);
-*/
 
 //t2ms(1000);
 //outport(wdtcon,0x5555);
@@ -4082,10 +4080,14 @@ while((inportb(0x510) & 0x01)!=0);
 
 
 }
+*/
 //while(1)
+
+
 void TestTlf()
 	{
-
+	}
+/*
   unsigned char  aa_loc, aa1, aa2, aa3, code;
   unsigned int i;
 
@@ -4173,7 +4175,7 @@ t2ms(10);
 //  asm { db 0fah, 0eah ,00h, 0ah, 00h, 27h ;}  // -- exit to monitor
 
 }
-
+		*/
 extern "C" void test_PU37_start()
 {
  unsigned char  n, i;
@@ -5339,8 +5341,12 @@ extern "C" void embMsgWestE_Add(char * pc)
 //}
 
 //___________________________________________________________________________________
+ 
 char TestRing()
 {
+}
+/*
+
 unsigned char  aa_loc, aa1, aa2, aa3;//, code;
 unsigned int i;
   	t2ms(2);
@@ -5375,11 +5381,13 @@ unsigned int i;
 	t2ms(10);
 	return 0;
 }
-
+ */
 void StartRing()
 {
- Ring();
+// Ring();
 }
+
+
 //__________________________________________________________________________________
 
 
@@ -5407,6 +5415,8 @@ unsigned char  *bt;
 #endif //PROG_PU_M_MUX_TEST
 
 typedef	unsigned long long __int64;
+
+/*
 
 unsigned char * FormulaDMU2_0(unsigned long f)
 {
@@ -5561,7 +5571,7 @@ pData = DataDDS;
 SendToDDS(LEN_DATA_DDS,  (unsigned long)&DataDDS[0]);
 //}
 }
-
+ */
 
 extern "C" void LoadDDSs(void)
 {
@@ -5578,13 +5588,13 @@ extern "C" void LoadDDSs(void)
 //   for(long i2 = 0; i2 < 100000; i2++) //test
 // LoadSymbolRate(GetSymbolRate());
 // LoadSymbolRate(70000000l);
- LoadFreqPCha(70000000l);
+// LoadFreqPCha(70000000l);
 
 
 // LoadDDSN3();
 
 // LoadFreqPCh(GetFreqPCh());
- LoadFreqPCh(70000000l);
+// LoadFreqPCh(70000000l);
 
 
  InitLoadIF(); //md and dm
@@ -5829,16 +5839,19 @@ IOSpiSend(3  , 3,  DataDDS, DataDDS);	  //channel D
 pData = DataDDS;
 *pData++ = 0;   *pData++ = 0;	 *pData = 0;  //reset  off
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 	 delay_mcs(10000);  //delay 10ms
 
 pData = DataDDS;
 *pData++ = 0x02;   *pData++ = 0xf6;	 *pData = 0x7f;  //addr 20
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 pData = DataDDS;
 *pData++ = 0x20;   *pData++ = 0xf6;	 *pData = 0x7f;  //addr 20
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 
 
@@ -5846,32 +5859,39 @@ IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
 pData = DataDDS;
 *pData++ = 0x40;   *pData++ = 0x0C;	 *pData = 0x23;  //addr 20
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 pData = DataDDS;
 *pData++ = 0x42;   *pData++ = 0;	 *pData = 0x09;  //addr 21
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 pData = DataDDS;
 *pData++ = 0x60;   *pData++ = 0;	 *pData = 0x22;  //addr 30
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 pData = DataDDS;
 *pData++ = 0x62;   *pData++ = 0x05;	 *pData = 0x05;  //addr 
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 pData = DataDDS;
 *pData++ = 0x68;   *pData++ = 0x05;	 *pData = 0;  //addr 
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 
 
 pData = DataDDS;
 *pData++ = 0x80;   *pData++ = 0;	 *pData = 0x30;  //addr 40
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 pData = DataDDS;
 *pData++ = 0x92;   *pData++ = 0x14;	 *pData = 0xb4;  //addr 49 ?????
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -5882,14 +5902,17 @@ IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
 pData = DataDDS;
 *pData++ = 0x04;   *pData++ = 0x08;	 *pData = 0x50;  //addr 2
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 pData = DataDDS;
 *pData++ = 0x06;   *pData++ = 0;	 *pData = 0;  //addr3
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 pData = DataDDS;
 *pData++ = 0x08;   *pData++ = 0;	 *pData = 0;  //addr 4
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 //can be controlled lock after 10 ms
   
@@ -5963,7 +5986,7 @@ return ret;
 
 
 
-
+#define    SENDED_DDS_FREQ_LEN	  (8)
 
 extern "C" void LoadIFDmd(unsigned long freq)
 {
@@ -5982,16 +6005,19 @@ unsigned long frac;
 pData = DataDDS;
 *pData++ = 0;   *pData++ = 0;	 *pData = 0;  //reset  off
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 	 delay_mcs(10000);  //delay 10ms
 
 pData = DataDDS;
 *pData++ = 0x02;   *pData++ = 0xf6;	 *pData = 0x7f;  //addr 20
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 pData = DataDDS;
 *pData++ = 0x20;   *pData++ = 0xf6;	 *pData = 0x7f;  //addr 20
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 
 
@@ -5999,32 +6025,39 @@ IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
 pData = DataDDS;
 *pData++ = 0x40;   *pData++ = 0x0C;	 *pData = 0x23;  //addr 20
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 pData = DataDDS;
 *pData++ = 0x42;   *pData++ = 0;	 *pData = 0x09;  //addr 21
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 pData = DataDDS;
 *pData++ = 0x60;   *pData++ = 0;	 *pData = 0x22;  //addr 30
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 pData = DataDDS;
 *pData++ = 0x62;   *pData++ = 0x05;	 *pData = 0x05;  //addr 
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 pData = DataDDS;
 *pData++ = 0x68;   *pData++ = 0x05;	 *pData = 0;  //addr 
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 
 
 pData = DataDDS;
 *pData++ = 0x80;   *pData++ = 0;	 *pData = 0x30;  //addr 40
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 pData = DataDDS;
 *pData++ = 0x92;   *pData++ = 0x14;	 *pData = 0xb4;  //addr 49 ?????
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -6046,37 +6079,116 @@ IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
 pData = DataDDS;
 *pData++ = 0x60;   *pData++ = 0;	 *pData = GetReg (i,602);  //addr 30
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 pData = DataDDS;
 *pData++ = 0x62;   *pData++ = GetReg (i,621);  *pData = GetReg (i,622);  //addr 31
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 pData = DataDDS;
 *pData++ = 0x44;   *pData++ = 0x2A;
 if(freq > FREQ_ODIV) { *pData++ = 0x03; odiv = 1; } else { *pData++ = 0x0B;	odiv = 2;}
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 pData = DataDDS;
-*pData++ = 0x04;   
+*pData++ = 0x04;   	  //addr2
 
 INT_K = (odiv * freq) / (unsigned long)FREQ_REF;
 
 		 *pData++ = (unsigned char)(INT_K >> 8);    *pData++ = (unsigned char)INT_K; 
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 
 pData = DataDDS;
-*pData++ = 0x06;   
+*pData++ = 0x06;   	   //addr 3
+
 
 
 frac = (((odiv * freq) % (unsigned long)FREQ_REF) << 16)/ (unsigned long)FREQ_REF;
 
+		 *pData++ = (unsigned char)(frac >> 8);    *pData++ = (unsigned char)frac; 
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
+pData = DataDDS;
+*pData++ = 0x08;   *pData++ = 0xff;	 *pData = 0xff;  //addr 4
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 //can be controlled lock after 10 ms
   
 //_________________________________________________________________________rxdds
 
 }
+
+
+extern "C" void LoadIFMd(unsigned long freq)
+{
+
+unsigned char * pData;
+static unsigned char DataDDS[SENDED_DDS_FREQ_LEN];//
+//unsigned long i = Findf(freq);
+//unsigned long odiv;
+//unsigned long INT_K;
+//unsigned long frac;
+  
+
+//_________________________________________________________________________tx adrf 6720
+
+pData = DataDDS;
+*pData++ = 0;   *pData++ = 0;	 *pData = 0;  //reset  off
+IOSpiSend(3 , 3,  DataDDS, DataDDS);	  //channel D
+
+	 delay_mcs(10000);  //delay 10ms
+
+
+pData = DataDDS;
+*pData++ = 0x40;   *pData++ = 0x0C;	 *pData = 0x23;  //addr 20
+IOSpiSend(3  , 3,  DataDDS, DataDDS);	  //channel D
+
+pData = DataDDS;
+*pData++ = 0x42;   *pData++ = 0;	 *pData = 0x09;  //addr 21
+IOSpiSend(3  , 3,  DataDDS, DataDDS);	  //channel D
+
+pData = DataDDS;
+*pData++ = 0x60;   *pData++ = 0;	 *pData = 0x01;  //addr 30
+IOSpiSend(3  , 3,  DataDDS, DataDDS);	  //channel D
+
+pData = DataDDS;
+*pData++ = 0x80;   *pData++ = 0;	 *pData = 0x30;  //addr 40
+IOSpiSend(3  , 3,  DataDDS, DataDDS);	  //channel D
+
+pData = DataDDS;
+*pData++ = 0x92;   *pData++ = 0x14;	 *pData = 0xb4;  //addr 49 ?????
+IOSpiSend(3  , 3,  DataDDS, DataDDS);	  //channel D
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+pData = DataDDS;
+//*pData++ = 0x02;   *pData++ = 0x08;	 *pData = 0x50;  //addr 
+*pData++ = 0x04;   *pData++ = 0x08;	 *pData = 0x50;  //addr 
+IOSpiSend(3  , 3,  DataDDS, DataDDS);	  //channel D
+
+pData = DataDDS;
+*pData++ = 0x06;   *pData++ = 0;	 *pData = 0;  //addr3
+IOSpiSend(3  , 3,  DataDDS, DataDDS);	  //channel D
+
+pData = DataDDS;
+*pData++ = 0x08;   *pData++ = 0;	 *pData = 0;  //addr 4
+IOSpiSend(3  , 3,  DataDDS, DataDDS);	  //channel D
+
+//can be controlled lock after 10 ms
+  
+//_________________________________________________________________________rxdds
+
+}
+
 
 

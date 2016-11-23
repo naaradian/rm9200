@@ -3071,7 +3071,11 @@ SatSet4.Init( &theAnyStrings.c6d[0],  //tr freq
   				  8, 2,  //x,y
 				  1 ,		//  changable
 	   			  ZeroStorage, //sweep in storage - new
+#ifndef PROG_PU_MSAT5
 				  6,  //chars
+#else
+				  7,  //chars
+#endif
 		  		  &theCntFunc, //pControl
 				  139,//6,  //cntnum - function for control of value
 				  139, //	6, //oprnum - operation if setted new value
@@ -3081,7 +3085,11 @@ SatSet4.Init( &theAnyStrings.c6d[0],  //tr freq
    				  0,  //init value
 				  &theAnyStrings.cRemSatSet4[0], //remote command	  
   		 		  &theAnyStrings.c6d[0], //remote format
-		 		  6,  //remchars 
+#ifndef PROG_PU_MSAT5
+				  6,  //chars
+#else
+				  7,  //chars
+#endif
 		 		  139 //remnum
 			,1,	 MIN_SATSET4,
 			 MAX_SATSET4,
@@ -3091,7 +3099,11 @@ SatSet5.Init( &theAnyStrings.c6d[0],  //format
   				  8, 2,  //x,y
 				  1 ,		//  changable
 	   			  ZeroStorage, //sweep in storage - new
+#ifndef PROG_PU_MSAT5
 				  6,  //chars
+#else
+				  7,  //chars
+#endif
 		  		  &theCntFunc, //pControl
 				  140,//6,  //cntnum - function for control of value
 				  140, //	6, //oprnum - operation if setted new value
@@ -3101,7 +3113,11 @@ SatSet5.Init( &theAnyStrings.c6d[0],  //format
    				  0,  //init value
 				  &theAnyStrings.cRemSatSet5[0], //remote command	  
   		 		  &theAnyStrings.c6d[0], //remote format
-		 		  6,  //remchars 
+#ifndef PROG_PU_MSAT5
+				  6,  //chars
+#else
+				  7,  //chars
+#endif
 		 		  140 //remnum
 			 ,1 ,	 MIN_SATSET5,
 			 MAX_SATSET5,			 1);
@@ -11167,6 +11183,9 @@ extern "C" AnyStrings::Init()
 
 #ifdef PROG_PU_MSAT
 	  //	 strcpy(cLogoLd,   " PU-MSAT                ");
+
+#ifndef PROG_PU_MSAT5
+
 #ifndef PROG_PU_MSAT1
 		 strcpy(cLogoLd,   "SBSL-LinkDoubler1       ");
 #else
@@ -11188,6 +11207,11 @@ extern "C" AnyStrings::Init()
 
 #endif
 #endif
+
+#else	 //PU_MSAT5
+	     strcpy(cLogoLd,   "SBSL-LinkDoubler5       ");
+
+#endif	  //PU_MSAT5
 
 //		 strcpy(cLogoLd1,  "        PU-MSAT         ");
  strcpy(cLogoLd1,  "        SBSL-100        ");
