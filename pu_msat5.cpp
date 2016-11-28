@@ -5939,22 +5939,42 @@ unsigned char cdac;
 
 DKoef dkoef[DKOEF_SIZE];
 
+struct MKoef
+{
+unsigned long fin;
+unsigned char cin;
+unsigned char cout;
+unsigned char rsel;
+unsigned char csel;
+
+};
+
+#define MKOEF_SIZE (9)
+
+
+MKoef mkoef[MKOEF_SIZE];
+
+
+
+
+
+
 extern "C" void Init_dkoef()
 {
 
-dkoef[0].fin= 900; dkoef[0].cin=6;dkoef[0].cout=2;dkoef[0].bias=1;dkoef[0].rdac=8;dkoef[0].cdac=7;
-dkoef[1].fin=1000; dkoef[0].cin=5;dkoef[0].cout=1;dkoef[0].bias=1;dkoef[0].rdac=8;dkoef[0].cdac=9;
-dkoef[2].fin=1100; dkoef[0].cin=3;dkoef[0].cout=2;dkoef[0].bias=1;dkoef[0].rdac=9;dkoef[0].cdac=6;
-dkoef[3].fin=1200; dkoef[0].cin=3;dkoef[0].cout=1;dkoef[0].bias=1;dkoef[0].rdac=8;dkoef[0].cdac=8;
-dkoef[4].fin=1300; dkoef[0].cin=2;dkoef[0].cout=1;dkoef[0].bias=2;dkoef[0].rdac=8;dkoef[0].cdac=7;
-dkoef[5].fin=1400; dkoef[0].cin=2;dkoef[0].cout=1;dkoef[0].bias=2;dkoef[0].rdac=9;dkoef[0].cdac=3;
-dkoef[6].fin=1500; dkoef[0].cin=1;dkoef[0].cout=1;dkoef[0].bias=2;dkoef[0].rdac=9;dkoef[0].cdac=4;
-dkoef[7].fin=1600; dkoef[0].cin=1;dkoef[0].cout=1;dkoef[0].bias=1;dkoef[0].rdac=8;dkoef[0].cdac=5;
-dkoef[8].fin=1700; dkoef[0].cin=1;dkoef[0].cout=0;dkoef[0].bias=1;dkoef[0].rdac=8;dkoef[0].cdac=5;
-dkoef[9].fin=1800; dkoef[0].cin=1;dkoef[0].cout=1;dkoef[0].bias=1;dkoef[0].rdac=8;dkoef[0].cdac=6;
-dkoef[10].fin=1900;dkoef[0].cin=1;dkoef[0].cout=0;dkoef[0].bias=1;dkoef[0].rdac=8;dkoef[0].cdac=5;
-dkoef[11].fin=2000;dkoef[0].cin=1;dkoef[0].cout=0;dkoef[0].bias=2;dkoef[0].rdac=8;dkoef[0].cdac=4;
-dkoef[12].fin=2100;dkoef[0].cin=1;dkoef[0].cout=0;dkoef[0].bias=2;dkoef[0].rdac=8;dkoef[0].cdac=4;
+dkoef[0].fin= 900; dkoef[0].cin=6; dkoef[0].cout=2; dkoef[0].bias=1; dkoef[0].rdac=8; dkoef[0].cdac=7;
+dkoef[1].fin=1000; dkoef[1].cin=5; dkoef[1].cout=1; dkoef[1].bias=1; dkoef[1].rdac=8; dkoef[1].cdac=9;
+dkoef[2].fin=1100; dkoef[2].cin=3; dkoef[2].cout=2; dkoef[2].bias=1; dkoef[2].rdac=9; dkoef[2].cdac=6;
+dkoef[3].fin=1200; dkoef[3].cin=3; dkoef[3].cout=1; dkoef[3].bias=1; dkoef[3].rdac=8; dkoef[3].cdac=8;
+dkoef[4].fin=1300; dkoef[4].cin=2; dkoef[4].cout=1; dkoef[4].bias=2; dkoef[4].rdac=8; dkoef[4].cdac=7;
+dkoef[5].fin=1400; dkoef[5].cin=2; dkoef[5].cout=1; dkoef[5].bias=2; dkoef[5].rdac=9; dkoef[5].cdac=3;
+dkoef[6].fin=1500; dkoef[6].cin=1; dkoef[6].cout=1; dkoef[6].bias=2; dkoef[6].rdac=9; dkoef[6].cdac=4;
+dkoef[7].fin=1600; dkoef[7].cin=1; dkoef[7].cout=1; dkoef[7].bias=1; dkoef[7].rdac=8; dkoef[7].cdac=5;
+dkoef[8].fin=1700; dkoef[8].cin=1; dkoef[8].cout=0; dkoef[8].bias=1; dkoef[8].rdac=8; dkoef[8].cdac=5;
+dkoef[9].fin=1800; dkoef[9].cin=1; dkoef[9].cout=1; dkoef[9].bias=1; dkoef[9].rdac=8; dkoef[9].cdac=6;
+dkoef[10].fin=1900;dkoef[10].cin=1;dkoef[10].cout=0;dkoef[10].bias=1;dkoef[10].rdac=8;dkoef[10].cdac=5;
+dkoef[11].fin=2000;dkoef[11].cin=1;dkoef[11].cout=0;dkoef[11].bias=2;dkoef[11].rdac=8;dkoef[11].cdac=4;
+dkoef[12].fin=2100;dkoef[12].cin=1;dkoef[12].cout=0;dkoef[12].bias=2;dkoef[12].rdac=8;dkoef[12].cdac=4;
 
 }
 
@@ -5968,13 +5988,44 @@ if(dkoef[i].fin < freq) break;
 return i;
 }
 
-extern "C" unsigned char GetReg (unsigned long i, unsigned char r)
+ //   rsel csel = ??????????????????????????????????????????
+extern "C" void Init_mkoef()
+{
+
+mkoef[0].fin= 930; mkoef[0].cin=11;mkoef[0].cout=0; mkoef[0].rsel=11;mkoef[0].csel=11;
+mkoef[1].fin= 970; mkoef[1].cin=10;mkoef[1].cout=0; mkoef[1].rsel=11;mkoef[1].csel=11;
+mkoef[2].fin=1020; mkoef[2].cin=9; mkoef[2].cout=0; mkoef[2].rsel=11;mkoef[2].csel=11;
+mkoef[3].fin=1100; mkoef[3].cin=8; mkoef[3].cout=0; mkoef[3].rsel=11;mkoef[3].csel=11;
+mkoef[4].fin=1170; mkoef[4].cin=4; mkoef[4].cout=0; mkoef[4].rsel=11;mkoef[4].csel=11;
+mkoef[5].fin=1250; mkoef[5].cin=3; mkoef[5].cout=0; mkoef[5].rsel=11;mkoef[5].csel=11;
+mkoef[6].fin=1380; mkoef[6].cin=2; mkoef[6].cout=0;	mkoef[6].rsel=11;mkoef[6].csel=11;
+mkoef[7].fin=1550; mkoef[7].cin=1; mkoef[7].cout=0; mkoef[7].rsel=11;mkoef[7].csel=11;
+mkoef[8].fin=1730; mkoef[8].cin=0; mkoef[8].cout=0; mkoef[8].rsel=11;mkoef[8].csel=11;
+}
+
+extern "C" unsigned long Finmf(unsigned long freq)
+{
+unsigned long i;
+for(i = 0; i < MKOEF_SIZE; i++)
+{
+if(mkoef[i].fin < freq) break;
+}
+return i;
+}
+
+
+
+
+
+
+
+extern "C" unsigned char GetDReg (unsigned long i, unsigned char r)
 {
 unsigned char ret = 0;
 switch(r)
 {
 case 602: ret = (dkoef[i].cout << 5) + (dkoef[0].cin << 1);	break;
-case 621: ret = dkoef[i].bias << 1;	break;
+case 621: ret = (dkoef[i].bias << 1) +  (dkoef[i].rdac >> 3);  	break;
 case 622: ret = (dkoef[i].rdac << 5) + dkoef[0].cdac;	break;
 
 
@@ -5983,6 +6034,38 @@ default: break;
 
 return ret;
 }
+
+extern "C" unsigned char GetMReg (unsigned long i, unsigned char r)
+{
+unsigned char ret = 0;
+switch(r)
+{
+case 602: ret = (mkoef[i].cout << 4) + mkoef[0].cin ;	break;
+case 621: ret = mkoef[i].rsel >> 2;	break;
+case 622: ret = (mkoef[i].rsel << 6) + mkoef[0].csel;	break;
+
+
+default: break;
+}
+
+return ret;
+}
+
+
+
+
+extern "C" void LoadIFADC(unsigned long freq)
+{
+
+unsigned char * pData;
+static unsigned char DataDDS[SENDED_DDS_FREQ_LEN];//
+
+pData = DataDDS;
+*pData++ = 0;   *pData++ = 0;	 *pData = 0;  // tempurary
+IOSpiSend(7 , 3,  DataDDS, DataDDS);	  //c
+
+}
+
 
 
 
@@ -6078,12 +6161,12 @@ IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
 
 
 pData = DataDDS;
-*pData++ = 0x60;   *pData++ = 0;	 *pData = GetReg (i,602);  //addr 30
+*pData++ = 0x60;   *pData++ = 0;	 *pData = GetDReg (i,602);  //addr 30
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
 IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
 pData = DataDDS;
-*pData++ = 0x62;   *pData++ = GetReg (i,621);  *pData = GetReg (i,622);  //addr 31
+*pData++ = 0x62;   *pData++ = GetDReg (i,621);  *pData = GetDReg (i,622);  //addr 31
 IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
 IOSpiSend(5   , 3,  DataDDS, DataDDS);	
 
@@ -6126,15 +6209,30 @@ IOSpiSend(5   , 3,  DataDDS, DataDDS);
 }
 
 
+
+extern "C" void LoadIFDAC(unsigned long freq)
+{
+
+unsigned char * pData;
+static unsigned char DataDDS[SENDED_DDS_FREQ_LEN];//
+
+pData = DataDDS;
+*pData++ = 0;   *pData++ = 0;	 *pData = 0;  //temporary
+IOSpiSend(6 , 3,  DataDDS, DataDDS);	  //c
+
+}
+
+
+
 extern "C" void LoadIFMd(unsigned long freq)
 {
 
 unsigned char * pData;
 static unsigned char DataDDS[SENDED_DDS_FREQ_LEN];//
-//unsigned long i = Findf(freq);
-//unsigned long odiv;
-//unsigned long INT_K;
-//unsigned long frac;
+unsigned long i = Findf(freq);
+unsigned long odiv;
+unsigned long INT_K;
+unsigned long frac;
   
 
 //_________________________________________________________________________tx adrf 6720
@@ -6172,6 +6270,12 @@ IOSpiSend(3  , 3,  DataDDS, DataDDS);	  //channel D
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+
+
+/*
+
 pData = DataDDS;
 //*pData++ = 0x02;   *pData++ = 0x08;	 *pData = 0x50;  //addr 
 *pData++ = 0x04;   *pData++ = 0x08;	 *pData = 0x50;  //addr 
@@ -6184,6 +6288,52 @@ IOSpiSend(3  , 3,  DataDDS, DataDDS);	  //channel D
 pData = DataDDS;
 *pData++ = 0x08;   *pData++ = 0;	 *pData = 0;  //addr 4
 IOSpiSend(3  , 3,  DataDDS, DataDDS);	  //channel D
+
+*/
+
+pData = DataDDS;
+*pData++ = 0x60;   *pData++ = 0;	 *pData = GetMReg (i,602);  //addr 30
+IOSpiSend(3   , 3,  DataDDS, DataDDS);	  //channel C
+
+pData = DataDDS;
+*pData++ = 0x62;   *pData++ = GetMReg (i,621);  *pData = GetMReg (i,622);  //addr 31
+IOSpiSend(3   , 3,  DataDDS, DataDDS);	  //channel C
+
+	
+ /*
+pData = DataDDS;
+*pData++ = 0x44;   *pData++ = 0x2A;
+if(freq > FREQ_ODIV) { *pData++ = 0x03; odiv = 1; } else { *pData++ = 0x0B;	odiv = 2;}
+IOSpiSend(4   , 3,  DataDDS, DataDDS);	  //channel C
+IOSpiSend(5   , 3,  DataDDS, DataDDS);	
+  */
+
+
+pData = DataDDS;
+*pData++ = 0x04;   	  //addr2
+
+INT_K = (odiv * freq) / (unsigned long)FREQ_REF;
+
+		 *pData++ = (unsigned char)(INT_K >> 8);    *pData++ = (unsigned char)INT_K; 
+IOSpiSend(3   , 3,  DataDDS, DataDDS);	  //channel C
+
+
+pData = DataDDS;
+*pData++ = 0x06;   	   //addr 3
+
+
+
+frac = (((odiv * freq) % (unsigned long)FREQ_REF) << 16)/ (unsigned long)FREQ_REF;
+
+		 *pData++ = (unsigned char)(frac >> 8);    *pData++ = (unsigned char)frac; 
+IOSpiSend(3   , 3,  DataDDS, DataDDS);	  //channel C
+
+pData = DataDDS;
+*pData++ = 0x08;   *pData++ = 0xff;	 *pData = 0xff;  //addr 4
+IOSpiSend(3   , 3,  DataDDS, DataDDS);	  //channel C
+
+
+
 
 //can be controlled lock after 10 ms
   

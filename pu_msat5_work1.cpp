@@ -469,13 +469,15 @@ extern "C" void LoadSPIDev(unsigned char cs, unsigned char data, unsigned char b
    _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 19, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //le2
    _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 15, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //le3
    _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 19, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //le5
-   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_C,  3, AT91RM9200_PIO_PERIPHERAL_IO, 1);	 //sclk2
+   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_C,  3, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //sclk2
+   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 11, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //le4	dac
+   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_C, 14, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //le6	adc
 
 
 
-   pio_ptr->SODR = MASK_BIT_19 |  MASK_BIT_18 |MASK_BIT_17 |MASK_BIT_14 | MASK_BIT_13 | MASK_BIT_15;
+   pio_ptr->SODR = MASK_BIT_19 |  MASK_BIT_18 |MASK_BIT_17 |MASK_BIT_14 | MASK_BIT_13 | MASK_BIT_15 | MASK_BIT_11;
    pio_ptra->SODR = MASK_BIT_19;
-   pio_ptrc->SODR = MASK_BIT_3;
+   pio_ptrc->SODR = MASK_BIT_3 | MASK_BIT_14;
 
 
  //	data -=  1; // enabled values 1...30  0 - for 1 MHz
@@ -484,12 +486,14 @@ extern "C" void LoadSPIDev(unsigned char cs, unsigned char data, unsigned char b
 
 switch (cs)
 {
-  case 0 : 	  pio_ptr->CODR = MASK_BIT_17; break;	//filt
-  case 1 : 	  pio_ptr->CODR = MASK_BIT_18; break;	//filt1
-  case 2 : 	  pio_ptr->CODR = MASK_BIT_19; break;	//filt2
-  case 3 : 	  pio_ptr->CODR = MASK_BIT_15; break;	//md
+  case 0 : 	  pio_ptr->CODR  = MASK_BIT_17; break;	//filt
+  case 1 : 	  pio_ptr->CODR  = MASK_BIT_18; break;	//filt1
+  case 2 : 	  pio_ptr->CODR  = MASK_BIT_19; break;	//filt2
+  case 3 : 	  pio_ptr->CODR  = MASK_BIT_15; break;	//md
   case 4 : 	  pio_ptra->CODR = MASK_BIT_19; break;	//dmd
   case 5 : 	  pio_ptrc->CODR = MASK_BIT_3; break;	 //dmd1
+  case 6 : 	  pio_ptr->CODR  = MASK_BIT_11; break;	 //dac
+  case 7 : 	  pio_ptrc->CODR = MASK_BIT_14; break;	 //adc
 
 
   default :   break;
@@ -511,12 +515,14 @@ delay_mcs(2);
 
  switch (cs)
 {
-  case 0 : 	  pio_ptr->SODR = MASK_BIT_17; break;
-  case 1 : 	  pio_ptr->SODR = MASK_BIT_18; break;
-  case 2 : 	  pio_ptr->SODR = MASK_BIT_19; break;
-  case 3 : 	  pio_ptr->SODR = MASK_BIT_15; break;
+  case 0 : 	  pio_ptr->SODR  = MASK_BIT_17; break;
+  case 1 : 	  pio_ptr->SODR  = MASK_BIT_18; break;
+  case 2 : 	  pio_ptr->SODR  = MASK_BIT_19; break;
+  case 3 : 	  pio_ptr->SODR  = MASK_BIT_15; break;
   case 4 : 	  pio_ptra->SODR = MASK_BIT_19; break;
   case 5 : 	  pio_ptrc->SODR = MASK_BIT_3; break;
+  case 6 : 	  pio_ptr->SODR  = MASK_BIT_11; break;	 //dac
+  case 7 : 	  pio_ptrc->SODR = MASK_BIT_14; break;	 //adc
 
   default :   break;
 }
