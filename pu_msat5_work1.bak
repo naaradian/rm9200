@@ -2547,11 +2547,11 @@ extern "C" void  SetRcvBound()
  dev1.pum100s1.SatSet7r0 = (unsigned char)SatSet7.Value;
 // LoadFilter(1, SatSet7.Value);
 // LoadSPIDev(1, SatSet7.Value, 6);
-  LoadBaudO(SatSet7.Value, 1);
+  LoadFiltersO (SatSet7.Value, 1);
 
 // LoadFilter(2, SatSet7.Value);
 // LoadSPIDev(2, SatSet7.Value, 6);
-  LoadBaudO(SatSet7.Value, 2);
+  LoadFiltersO (SatSet7.Value, 2);
 
 //_________________________________130409
 SatSet6.Value = SatSet7.Value;
@@ -2559,7 +2559,7 @@ SatSet6.ChangingValue =  SatSet7.Value;
 dev1.pum100s1.SatSet6r0 = (unsigned char)SatSet6.Value;
 //LoadFilter(0, SatSet6.Value);
 //LoadSPIDev(0, SatSet6.Value, 6);
- LoadBaudO(SatSet6.Value, 0);
+ LoadFiltersO (SatSet6.Value, 0);
 
 
 //_________________________________130409
