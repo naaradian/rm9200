@@ -3431,8 +3431,6 @@ extern "C" unsigned char IOSpiSend(unsigned char ,  unsigned long ,
 extern "C" void InitLoadIF();
 extern "C" void LoadIFDmd(unsigned long freq);
 extern "C" void LoadIFMd(unsigned long freq);
-extern "C" void LoadIFDAC(unsigned long freq);
-extern "C" void LoadIFADC(unsigned long freq);
 
 #endif
 
