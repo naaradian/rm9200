@@ -442,9 +442,18 @@ while(len1--)
 
 
 
+
+
+
+
 #define FILTER_SEND_SIZE	(6)
 
 //extern "C" void LoadFilter(unsigned char cs, unsigned char data)
+
+
+
+
+
 extern "C" void LoadSPIDev(unsigned char cs, unsigned char data, unsigned char bitsval)
 {
 //printfp("\n\r LoadFilter");
@@ -536,6 +545,11 @@ delay_mcs(2);
 
 }
 
+
+
+
+
+
 //will be load md and dmd
 //need make pb15(LE3) - md ;	  pa19(LE5) - dmd
 
@@ -545,6 +559,64 @@ delay_mcs(2);
 //for md : cs = 3
 //for dm : cs = 4  
 //for dm1 : cs = 5
+
+
+extern "C" void LoadSPIDevR(unsigned char cs, unsigned char data, unsigned char bitsval)
+{
+  AT91RM9200_PIO_REG_STRUCT_PTR  pio_ptr;
+  pio_ptr = (AT91RM9200_PIO_REG_STRUCT_PTR) AT91RM9200_PIOB_BASE;
+//  unsigned char mask = 1;
+  unsigned char mask = 0x80;
+
+   pio_ptr->SODR = MASK_BIT_14 | MASK_BIT_13 ;
+   delay_mcs(2);
+
+   //		for(unsigned j = 0; j < FILTER_SEND_SIZE; j++)
+       		for(unsigned j = 0; j < bitsval; j++)
+		{
+		   pio_ptr->CODR  = MASK_BIT_13;
+		//   delay_mcs(2);
+		   if(data & mask)   pio_ptr->SODR  = MASK_BIT_14;
+		   else  pio_ptr->CODR  = MASK_BIT_14;
+	       delay_mcs(2);
+	       pio_ptr->SODR  = MASK_BIT_13;
+		   delay_mcs(2);
+   //		   mask <<= 1;
+		   mask >>= 1;
+		}
+   delay_mcs(2);
+}
+
+extern "C" unsigned char ReadSPIDevR(unsigned char cs,  unsigned char bitsval)
+{
+  AT91RM9200_PIO_REG_STRUCT_PTR  pio_ptr;
+  pio_ptr = (AT91RM9200_PIO_REG_STRUCT_PTR) AT91RM9200_PIOB_BASE;
+  unsigned char mask = 0x80;
+  unsigned char ret = 0;
+  unsigned long status;
+
+   pio_ptr->SODR = MASK_BIT_13 ;
+   delay_mcs(2);
+ 
+        for(unsigned j = 0; j < bitsval; j++)
+		{
+		  ret <<= 1;
+		  pio_ptr->CODR  = MASK_BIT_13;
+		  delay_mcs(2);
+     	  status = pio_ptr->PDSR; //wait line init hier zero
+     		if(status & (1 << 14))
+      		{ 
+				ret |= 1; 
+       		}
+	       pio_ptr->SODR  = MASK_BIT_13;
+		   delay_mcs(2);
+		}
+ return ret;
+}
+
+
+
+
 extern "C" unsigned char IOSpiSend(unsigned char cs, 
  unsigned long length_of_data,	 unsigned char * BufferData, unsigned char * ReadBuffer)
 {
@@ -559,6 +631,116 @@ extern "C" unsigned char IOSpiSend(unsigned char cs,
    printfp("\n\r");
  return 0;
 }
+
+
+
+extern "C" unsigned char IOSpiSendR(unsigned char cs, 
+ unsigned long length_of_data_send,	 unsigned long length_of_data_receive,
+  unsigned char * BufferData, unsigned char * ReadBuffer)
+{
+  printfpd("\n\r IOSpiSendR cs :", cs);
+  AT91RM9200_PIO_REG_STRUCT_PTR  pio_ptr;
+  AT91RM9200_PIO_REG_STRUCT_PTR  pio_ptra;
+  AT91RM9200_PIO_REG_STRUCT_PTR  pio_ptrc;
+
+  pio_ptr = (AT91RM9200_PIO_REG_STRUCT_PTR) AT91RM9200_PIOB_BASE;
+  pio_ptra = (AT91RM9200_PIO_REG_STRUCT_PTR) AT91RM9200_PIOA_BASE;
+  pio_ptrc = (AT91RM9200_PIO_REG_STRUCT_PTR) AT91RM9200_PIOC_BASE;
+
+
+
+//  unsigned char mask = 1;
+//  unsigned char mask = 0x80;
+
+   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 13, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //ce
+   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 14, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //ld
+   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 17, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //le0
+   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 18, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //le1
+   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 19, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //le2
+   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 15, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //le3
+   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 19, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //le5
+   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_C,  3, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //sclk2
+   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 11, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //le4	dac
+   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_C, 14, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //le6	adc
+
+
+
+   pio_ptr->SODR = MASK_BIT_19 |  MASK_BIT_18 |MASK_BIT_17 |MASK_BIT_14 | MASK_BIT_13 | MASK_BIT_15 | MASK_BIT_11;
+   pio_ptra->SODR = MASK_BIT_19;
+   pio_ptrc->SODR = MASK_BIT_3 | MASK_BIT_14;
+	/*
+ if(cs < 3) //for filters
+ {
+ 	data -=  1; // enabled values 1...30  0 - for 1 MHz
+ 	data <<= 1;
+ 	data +=  1; //write bit
+ }
+   */
+switch (cs)
+{
+  case 0 : 	  pio_ptr->CODR  = MASK_BIT_17; break;	//filt
+  case 1 : 	  pio_ptr->CODR  = MASK_BIT_18; break;	//filt1
+  case 2 : 	  pio_ptr->CODR  = MASK_BIT_19; break;	//filt2
+  case 3 : 	  pio_ptr->CODR  = MASK_BIT_15; break;	//md
+  case 4 : 	  pio_ptra->CODR = MASK_BIT_19; break;	//dmd
+  case 5 : 	  pio_ptrc->CODR = MASK_BIT_3; break;	 //dmd1
+  case 6 : 	  pio_ptr->CODR  = MASK_BIT_11; break;	 //dac
+  case 7 : 	  pio_ptrc->CODR = MASK_BIT_14; break;	 //adc
+
+
+  default :   break;
+}
+
+
+
+ while((length_of_data_send)--)
+ {
+   if(!(length_of_data_send % 10))	printfp("\n\r");
+   printfpd(" %02X",(unsigned char)(* BufferData));
+
+	LoadSPIDevR( cs, * BufferData++, 8);
+ }
+   printfp("\n\r");
+
+
+  _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 14, AT91RM9200_PIO_PERIPHERAL_IO, 0);  //set as input
+
+
+
+ while((length_of_data_receive)--)
+ {
+  // if(!(length_of_data % 10))	printfp("\n\r");
+  // printfpd(" %02X",(unsigned char)(* BufferData));
+
+   * ReadBuffer = ReadSPIDevR( cs, 8);
+ }
+ //  printfp("\n\r");
+ _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 14, AT91RM9200_PIO_PERIPHERAL_IO, 1);  //set as output
+
+delay_mcs(2);
+
+ switch (cs)
+{
+  case 0 : 	  pio_ptr->SODR  = MASK_BIT_17; break;
+  case 1 : 	  pio_ptr->SODR  = MASK_BIT_18; break;
+  case 2 : 	  pio_ptr->SODR  = MASK_BIT_19; break;
+  case 3 : 	  pio_ptr->SODR  = MASK_BIT_15; break;
+  case 4 : 	  pio_ptra->SODR = MASK_BIT_19; break;
+  case 5 : 	  pio_ptrc->SODR = MASK_BIT_3;  break;
+  case 6 : 	  pio_ptr->SODR  = MASK_BIT_11; break;	 //dac
+  case 7 : 	  pio_ptrc->SODR = MASK_BIT_14; break;	 //adc
+
+  default :   break;
+}
+
+
+ return 0;
+}
+
+
+
+
+
 
 extern "C" void LoadFiltersO (unsigned char baud, unsigned char chnl)
 {
@@ -593,7 +775,7 @@ WriteReadSpiBm( 51,  length_of_data, BufferData , BufferData);
 }
   */
 
-IOSpiSend(chnl, 2, BufferData, BufferData);
+IOSpiSendR(chnl, 2, BufferData, BufferData);
 
 
 }
@@ -2507,6 +2689,7 @@ extern "C" void LoadDDSN3();
 
 extern "C" void  SetRcvFrequency() 
 {
+LoadIFADC((unsigned long)((SatSet5.Value + SatSet8.Value) * MULT_VALF));
 // printfp("SetRcvFrequency");
 #ifndef PROG_PU_MSAT5	
  LoadDDSN3();

@@ -3426,8 +3426,13 @@ extern "C" void PU_M(void);
 
 #ifdef 	PROG_PU_MSAT5
 #define	PROG_PU_MSAT
-extern "C" unsigned char IOSpiSend(unsigned char ,  unsigned long ,
+//extern "C" unsigned char IOSpiSend(unsigned char ,  unsigned long ,
+//	 unsigned char * , unsigned char * );
+
+extern "C" unsigned char IOSpiSendR(unsigned char ,  unsigned long , unsigned long ,
 	 unsigned char * , unsigned char * );
+
+
 extern "C" void InitLoadIF();
 extern "C" void LoadIFDmd(unsigned long freq);
 extern "C" void LoadIFMd(unsigned long freq);

@@ -6062,7 +6062,7 @@ static unsigned char DataDDS[SENDED_DDS_FREQ_LEN];//
 
 pData = DataDDS;
 *pData++ = 0;   *pData++ = 0;	 *pData = 0;  // tempurary
-//IOSpiSendR(7 , 3, 0, DataDDS, DataDDS);	  //c
+//IOSpiSend(7 , 3,  DataDDS, DataDDS);	  //c
 
 }
 
@@ -6218,7 +6218,7 @@ static unsigned char DataDDS[SENDED_DDS_FREQ_LEN];//
 
 pData = DataDDS;
 *pData++ = 0;   *pData++ = 0;	 *pData = 0;  //temporary
-//IOSpiSendR(6 , 3, 0, DataDDS, DataDDS);	  //c
+//IOSpiSend(6 , 3,  DataDDS, DataDDS);	  //c
 
 }
 
