@@ -775,7 +775,7 @@ WriteReadSpiBm( 51,  length_of_data, BufferData , BufferData);
 }
   */
 
-IOSpiSendR(chnl, 2, BufferData, BufferData);
+IOSpiSendR(chnl, 2, 0, BufferData, BufferData);
 
 
 }

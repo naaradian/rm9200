@@ -6057,12 +6057,37 @@ return ret;
 extern "C" void LoadIFADC(unsigned long freq)
 {
 
-unsigned char * pData;
-static unsigned char DataDDS[SENDED_DDS_FREQ_LEN];//
+// The first phase of the transfer is the  instruction is shifted in the instruction phase, which consists 
+// of 16 bits followed by data specified that can be of variable lengths in multiples of 8 bits.
+// The first bit in the stream is the read/write indicator bit (R/W). W1 and W0 represent the number of 
+// data bytes to transfer for The first bit in the stream is the read/write indicator bit (R/W).
+// either read or write. The value represented by W1:W0 + 1 is the When this bit is high, a read is being 
+// requested. At the comnumber of bytes to transfer. The remaining 13 bits represent the starting address 
+// of the data sent. If more than one word is being sent, sequential addressing is used, starting with the 
+// one specified, and it either increments or decrements based on the mode setting.
 
-pData = DataDDS;
-*pData++ = 0;   *pData++ = 0;	 *pData = 0;  // tempurary
-//IOSpiSendR(7 , 3, 0, DataDDS, DataDDS);	  //c
+
+
+unsigned char * pData;
+static unsigned char DataADC[9];//
+
+pData = DataADC;
+*pData++ = 0;  *pData++ = 0;  //write 1 byte to addr 0
+*pData = 0x24;  // 	00100100  soft reset
+IOSpiSendR(7 , 3, 0, DataADC, DataADC);	  //soft reset
+delay_mcs(2);
+
+pData = DataADC;
+*pData++ = 0xE0;  *pData = 0;  //read 4 bytes from addr 0
+IOSpiSendR(7 , 2,  4, DataADC, DataADC);	  //read four bytes
+delay_mcs(2);
+printfp("\n\r Read from adc 0 - 3 :");
+for(unsigned i = 0; i < 4; i++)
+{
+ printfpd(" %d : ", i);
+ printfpd(" %02X ", DataADC[i]);
+}
+
 
 }
 
@@ -6209,16 +6234,88 @@ IOSpiSendR(5   , 3,  0,DataDDS, DataDDS);
 }
 
 
-
+#define DAC_BUFFER_LEN (9)
 extern "C" void LoadIFDAC(unsigned long freq)
 {
 
-unsigned char * pData;
-static unsigned char DataDDS[SENDED_DDS_FREQ_LEN];//
+//INSTRUCTION BYTE
+//The instruction byte contains the information shown below.
+//N1 N0 Description
+//0 0 Transfer 1 Byte
+//0 1 Transfer 2 Bytes
+//1 0 Transfer 3 Bytes
+//1 1 Transfer 4 Bytes
+//R/W
+//Bit 7 of the instruction byte determines whether a read or a
+//write data transfer occurs after the instruction byte write. Logic
+//1 indicates read operation. Logic 0 indicates a write operation.
+//N1, N0
+//Bit 6 and Bit 5 of the instruction byte determine the number of
+//bytes to be transferred during the data transfer cycle. The bit
+//decodes are shown in the following table.
+//MSB LSB
+//I7 I6 I5 I4 I3 I2 I1 I0
+//R/W N1 N0 A4 A3 A2 A1 A0
+//A4, A3, A2, A1, A0
+//Bit 4, Bit 3, Bit 2, Bit 1, and Bit 0 of the instruction byte
+//determine which register is accessed during the data transfer
+//portion of the communications cycle. For multibyte transfers,
+//this address is the starting byte address.
 
-pData = DataDDS;
-*pData++ = 0;   *pData++ = 0;	 *pData = 0;  //temporary
-//IOSpiSendR(6 , 3, 0, DataDDS, DataDDS);	  //c
+unsigned char * pData;
+static unsigned char DataDAC[SENDED_DDS_FREQ_LEN];//
+
+pData = DataDAC;
+*pData++ = 0;	//write to addr 0 1 byte
+*pData = 0x24; //00100100;  reset
+
+IOSpiSendR(6 , 2, 0, DataDAC, DataDAC);	  //reset
+delay_mcs(5);
+
+pData = DataDAC;
+*pData = 0xE0; //11100000;  read four bytes from addr 0
+IOSpiSendR(6 , 1, 4, DataDAC, DataDAC);	  //read four bytes from addr 0
+printfp("\n\r Read from dac 0 - 3 :");
+for(unsigned i = 0; i < 4; i++)
+{
+ printfpd(" %d : ", i);
+ printfpd(" %02X ", DataDAC[i]);
+}
+pData = DataDAC;
+*pData = 0xE4; //11100100;  read four bytes from addr 4
+IOSpiSendR(6 , 1, 4, DataDAC, DataDAC);	  //read for bytes from addr 0
+printfp("\n\r Read from dac 4 - 7 :");
+for(i = 0; i < 4; i++)
+{
+ printfpd(" %d : ", (i + 4));
+ printfpd(" %02X ", DataDAC[i]);
+}
+pData = DataDAC;
+*pData = 0xE8; //11101000;  read four bytes from addr 8
+IOSpiSendR(6 , 1, 4, DataDAC, DataDAC);	  //read for bytes from addr 0
+printfp("\n\r Read from dac 8 - 11 :");
+for(i = 0; i < 4; i++)
+{
+ printfpd(" %d : ", (i + 8));
+ printfpd(" %02X ", DataDAC[i]);
+}
+pData = DataDAC;
+*pData = 0xEC; //10101100;  read one byte from addr 12
+IOSpiSendR(6 , 1, 1, DataDAC, DataDAC);	  //read for bytes from addr 0
+printfp("\n\r Read from dac 12 :");
+printfpd("12 : %02X ", DataDAC[0]);
+
+
+
+
+
+
+
+
+
+
+//can read all regs
+
 
 }
 

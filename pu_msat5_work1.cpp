@@ -638,7 +638,7 @@ extern "C" unsigned char IOSpiSendR(unsigned char cs,
  unsigned long length_of_data_send,	 unsigned long length_of_data_receive,
   unsigned char * BufferData, unsigned char * ReadBuffer)
 {
-  printfpd("\n\r IOSpiSendR cs :", cs);
+  printfpd("\n\r IOSpiSendR cs : %d   >>>", cs);
   AT91RM9200_PIO_REG_STRUCT_PTR  pio_ptr;
   AT91RM9200_PIO_REG_STRUCT_PTR  pio_ptra;
   AT91RM9200_PIO_REG_STRUCT_PTR  pio_ptrc;
@@ -695,12 +695,12 @@ switch (cs)
 
  while((length_of_data_send)--)
  {
-   if(!(length_of_data_send % 10))	printfp("\n\r");
+ //  if(!(length_of_data_send % 10))	printfp("\n\r");
    printfpd(" %02X",(unsigned char)(* BufferData));
 
 	LoadSPIDevR( cs, * BufferData++, 8);
  }
-   printfp("\n\r");
+ //  printfp("\n\r");
 
 
   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 14, AT91RM9200_PIO_PERIPHERAL_IO, 0);  //set as input
@@ -712,7 +712,7 @@ switch (cs)
   // if(!(length_of_data % 10))	printfp("\n\r");
   // printfpd(" %02X",(unsigned char)(* BufferData));
 
-   * ReadBuffer = ReadSPIDevR( cs, 8);
+   * ReadBuffer++ = ReadSPIDevR( cs, 8);
  }
  //  printfp("\n\r");
  _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 14, AT91RM9200_PIO_PERIPHERAL_IO, 1);  //set as output
