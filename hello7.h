@@ -39,6 +39,10 @@
 //#define PROG_BMDN5	 //act155051 1+0 use PVG710 maked mode 1+1  bmdn5.cpp!!!+ pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 //#define PROG_BMDN6		// 155052 //try md310e.cpp+ filters act155051 1+0 use PVG710 maked mode 1+1 + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 //#define PROG_MD310	  //+ filters act155051 1+0 use PVG710 maked mode 1+1  md310e.cpp!!!+ pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
+//#define PROG_KAZAH			// 155052 //try md310e.cpp => kazah.cpp + filters act155051 1+0 use PVG710 maked mode 1+1 + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
+
+
+
 
 //#define PROG_MD310_SAT  //old	  //+ filters act155051 1+0 use PVG710 maked mode 1+1  md310e.cpp!!!+ pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 //#define PROG_BMDN6M		   //maked gybryd bmdn6 and md310  not sat!!!!!
@@ -69,7 +73,7 @@
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>263 need : 
 
 //#define PROG_PU_M		   //pu_m.cpp
-//#define PROG_PU_M_MUX	  //pu_m.cpp
+#define PROG_PU_M_MUX	  //pu_m.cpp
 //#define PROG_PU_M710   //= md34e	  //pu_m710.cpp
 
 //#define PROG_PU_M100	 //pu_m100.cpp	 any maket
@@ -79,7 +83,7 @@
 //#define PROG_PU_MSAT3	// pu_msat.cpp	  linkdoubler 3		2048
 //#define PROG_PU_MSAT4 //pu_msat1.cpp linkdoubler 4 = linkdoubler2(menu with 1024)	 menu	
 
-#define PROG_PU_MSAT5	 // linkdoubler1 1024 tfs_data.c web interface  file need copy!!!! pu_msat5.cpp  1024
+//#define PROG_PU_MSAT5	 // linkdoubler1 1024 tfs_data.c web interface  file need copy!!!! pu_msat5.cpp  1024
 
 
 
@@ -160,22 +164,32 @@
 //#define	PROG_PRM_PCH_DEM_XIL_CHN_DMU4  //prm_pch_dem_chn_dmu4.cpp
 //#define	PROG_PRM_PCH_DEM_XIL_CHN_DMU5  //prm_pch_dem_chn_dmu5.cpp  dmu + 10G
 //#define	PROG_DMU6  //  dmu5.1 dmu6.cpp + dmu6plus.cpp ( provingent + demodulator)	 + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
+//#define	PROG_VNV1 //vnosvinos vnv.cpp
+
 
 //#define PROG_PROV  //prov.cpp PVG610_API.c  hostDriverForPc.cpp	utils.c	  endian.c	basic.cpp
 //262 : remove 10 symbols in parse rs232
 
 //#define SOFT_VER (0x509)	 
-#define SOFT_VER (0x1097)    
+#define SOFT_VER (0x1116)    
 #ifndef PROG_PU_MSAT    
 //#define SOFT_VER_STRING    "   14.12.01.1-800 ADESTO"//263 : maked init counter and data for write_buffer_char1()
 //#ifndef PROG_PUPM3_1_ADESTO	
 //#ifndef PROG_PU_MSAT1
-#define SOFT_VER_STRING      "      16.11.22.2-1097    "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING      "      17.03.15.1-1116    "//263 : maked init counter and data for write_buffer_char1()
 #else
 //#define SOFT_VER_STRING "Radian Ver. 01.00        "//263 : maked init counter and data for write_buffer_char1()
-#define SOFT_VER_STRING   "Radian v1097.61117       "//263 : maked init counter and data for write_buffer_char1()
+#ifdef	PROG_VNV1
+#define SOFT_VER_STRING      "      17.01.30.2-1116    "//263 : maked init counter and data for write_buffer_char1()
+#else
+#define SOFT_VER_STRING   "Radian v1116.70303       "//263 : maked init counter and data for write_buffer_char1()
+#endif
 #endif
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//#define OP_TRUNKS
+//#define DEB_ETH_485
+
+//#define FIND_CONF_ERR  
 
 //#define DEBUG_TWO_BUFF
 
@@ -274,7 +288,7 @@
 //#define PRINT_DEBUG_CRC
 //#define TEST_PARSING_COMMANDS
 
-#define TEST_PRINT_SPI
+//#define TEST_PRINT_SPI
 //#define TEST_ADDR
 
 //#define DEBUG_LOOP_PRINT
@@ -313,12 +327,12 @@
 //#define EMPTY_LOOP //test!!!
 //#define ETH_NOT_STOPPED
 //#define ALL_ADDR
-#define WITHOUT_XILINX //
+//#define WITHOUT_XILINX //
 //#define TESTSTART
-#define WITHOUT_INTERRUPTS //
+//#define WITHOUT_INTERRUPTS //
 //#define DEBUG_ALARM
 //#define CAN_ETHERNET_ASU
-#define MAKET_PLATA	 
+//#define MAKET_PLATA	 
 //#define LOCK_ENABLED
 //#define TRAP_ENABLED
 //#define BAD_CHECKSUM
@@ -3408,6 +3422,9 @@ extern "C" void Init_PU_M(void);
 extern "C" void PU_M(void);
 #endif //PROG_PU_M100
 
+
+
+
 #ifdef 	PROG_PU_MSAT3
 #define	PROG_PU_MSAT
 #endif
@@ -3423,6 +3440,12 @@ extern "C" void PU_M(void);
 #ifdef 	PROG_PU_MSAT1
 #define	PROG_PU_MSAT
 #endif
+
+#ifdef	PROG_VNV1
+//#define	PROG_DMU6
+#define	PROG_PU_MSAT5
+#endif
+
 
 #ifdef 	PROG_PU_MSAT5
 #define	PROG_PU_MSAT
@@ -3548,8 +3571,13 @@ extern "C" void Init_Alarms_IOs(void);
 
 extern "C" void ResetPult(void);
 
+#ifndef	PROG_VNV
 
 #define USE_HTTP
+
+#endif
+
+
 #ifdef USE_HTTP
 #define EVENTS_IN_LIST	(2)
 extern unsigned long page_number;
@@ -3872,8 +3900,9 @@ extern "C" void CheckWEBData(void);
 
 extern "C" void UpdateDataVal(void);
 	
-
+#ifndef PROG_VNV1
 #define USE_PULT
+#endif
 
 #define IncEmbIndicator
 
@@ -3937,6 +3966,7 @@ extern "C" void PU_M(void);
 #ifdef 	PROG_PU_M_MUX
 
 #define OP_TRUNKS
+
 #define  ALARM_LEVEL_UD (4)
 #define POWER_ALARM		(85 << 1)
 //t#define MAX_CUR_ERR	(4)
@@ -4190,10 +4220,14 @@ extern "C" void SetModForSS1(unsigned long);
 extern "C" void SetCurrentTrunk(unsigned char);
 #define RATE_100M			(100000000l)
 #define POWER_TRESHOLD		(100000)	 //temporary
-#define POWER_ALARM		(85 << 1)
+#define POWER_ALARM		(87 << 1)
+//#define PDPOWER_ALARM	((85 + 2) << 1)
+
+
 extern unsigned char currenttrunk;
 extern unsigned char cur_err;
-#define MAX_CUR_ERR	(4)
+//#define MAX_CUR_ERR	(4)
+#define MAX_CUR_ERR	(100)
 
 #define ETH_PORT	(0xC)
 #define GETH_BIT	(2)
@@ -4553,6 +4587,7 @@ extern "C" unsigned char APP_BBMode15GHzSet(void);
 #define 	PROG_MD310_SATI2
 
 #endif
+
 
 #ifdef	PROG_DMU6
  extern "C" void LoadDDS_Symb_Start(void);
@@ -5229,8 +5264,11 @@ extern "C" void SetItemConfig();
 extern  unsigned long password_state;
 extern  unsigned char key_enter_flag;
 
+#ifndef	PROG_VNV
 
 #define USE_HTTP
+#endif
+
 #ifdef USE_HTTP
 #define EVENTS_IN_LIST	(2)
 extern unsigned long page_number;
@@ -5268,7 +5306,14 @@ extern "C" void Transmit2c(unsigned char);
 //________________________________________________
 #define		PROG_MD310_SAT
 #define     PROG_BMDN6MI
+
+
+//#ifndef PROG_DMU6
 extern "C" unsigned char CheckWEBData();
+//#endif
+
+
+
 extern unsigned long start_event;
 
 
@@ -5321,6 +5366,12 @@ extern "C" void ConfigFileDestroy(unsigned long);
 
 
 #ifdef 	PROG_MD310
+#define RS485E_ENABLED
+
+
+#define START_PRINT
+#define PRINT_START
+
 
 #define TWO_TRUNKS
 //#define SEND_MOD_LOCK
@@ -5372,8 +5423,32 @@ extern "C" void SetBand(unsigned char im, unsigned long rate);
 
 #endif
 
+#ifdef PROG_KAZAH
+
+#define RS485E_ENABLED
+
+
+
+
+#define START_PRINT
+#define PRINT_START
+
+
+
+
+#define HAVE_GATEWAY
+
+
+#define	PROG_BMDN6
+
+#endif
+
+
 //________________________________________________________________bmdn6
 #ifdef 	PROG_BMDN6
+
+//#define KAZAH_ONLY
+
   #define NUM_CALIBR_FILE		(20)
 
 //130221 #define USE_CALIBR
@@ -5506,9 +5581,11 @@ extern unsigned long timechangemode;
 extern unsigned long timekeepMSE;
 extern unsigned char previons_mode;
 
+#ifndef PROG_KAZAH
 #ifndef PROG_ODU1
 #ifndef PROG_DMU6
 #define RACM
+#endif
 #endif
 #endif
 
@@ -5516,7 +5593,12 @@ extern unsigned char previons_mode;
 
 
 #define  FLAG_CUR_STATE (0x40)
+
+#ifndef PROG_VNV
+
 #define XIL_FLASH //120622
+
+#endif
 
 //#define LOAD_ONE_PROVINGENT_ON_PLATA  //for specific use only  no kazah
 

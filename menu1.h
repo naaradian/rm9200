@@ -411,7 +411,7 @@ class CntFunc
  class MData
 {
 	public:
-	MData();
+ //	MData();
 	char * pFormat;	
 	char   XPos;
 	char   YPos;
@@ -425,7 +425,7 @@ class CntFunc
 	char   RemChars;
 	char   RemNum;
 	Uint16   CntNum;	
-//	MData();
+	MData();
 };
 
 
@@ -1546,6 +1546,8 @@ MDataS(){};
 class MDataI : public MData
 {
 	public:
+	MDataI(){};
+
 	float64	Value;
 	void   MakeResultStrI();	
 	void   DrawMDataI();

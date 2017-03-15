@@ -200,6 +200,8 @@ sprintf(
 
 */
 
+#ifndef PROG_VNV
+
 sprintf(
 		(char *)&AnyConfig.Value,
 		"num%3d\r\n"
@@ -266,7 +268,7 @@ sprintf(
 				);
 
 
-
+#endif //PROG_VNV
 
 //printfpd("\n\rstrlen():%d", strlen(AnyConfig.Value));
 //printfpd("\n\r[-1]:%c", AnyConfig.Value[strlen(AnyConfig.Value) - 1]);	 //n

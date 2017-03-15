@@ -413,12 +413,16 @@ extern "C" void OperateTrunks()
   if(GetModForSS())
  // if(1)
  {
+ printfp(" OTr ");
+
 
    if(!CheckCurrentTrunk())
  {
   if(HaveEnoverTrunks())
   {
   	ChangeCurrentTrunk();
+	 printfp(" Ch ");
+
  //	printEthLongHex(10);
   }
  }
@@ -426,6 +430,8 @@ extern "C" void OperateTrunks()
   if(!CheckNotCurrentTrunk())
  {
   SetNotCurrentTrunk(0);
+	 printfp(" SN ");
+
  // printEthLongHex(11);
  }
 
@@ -436,11 +442,14 @@ extern "C" void OperateTrunks()
   } 
     else
   {
-     if( (!trunk1.modetrunk.onpd) )
+    // if( (!trunk1.modetrunk.onpd ) )
+		 if( (!(trunk1.modetrunk.onpd )) )
+
 			{
 //printEthLongHex(12);
 //printfp("\n\r________________________0");
-			    SetTrunk(0, 1);
+ 			    SetTrunk(0, 1);
+// printfpd(" onpd1:0x%02X",trunk1.byte);
    			}
      if( (!trunk2.modetrunk.onpd) )
 			{

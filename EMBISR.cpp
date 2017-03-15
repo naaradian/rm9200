@@ -4331,7 +4331,7 @@ extern "C" void embMsgWestE_Add( char *);
 extern "C" void RDN_receive(char * pData) 
 {
 // return; //for test 091210
-
+//  printfp("\n\r RDN_receive\n\r ");
  // pRDN_BufferR = RDN_BufferR;
  unsigned long len;
  char type; //new 0 - 485; 1 - 232
@@ -4343,6 +4343,8 @@ extern "C" void RDN_receive(char * pData)
   len = (unsigned long)*pData++;
  len <<= 8;
  len +=  (unsigned long)*pData++;
+ //  printfpd("type : %02X \n\r", *pData);
+
  type =  *pData++; //new
 // printf("\n\r %X", type);
 	 if(len >=  RDN_BUFFER_SIZE) 
@@ -4399,7 +4401,7 @@ extern "C" void RDN_receive(char * pData)
  {
 	  for(long t = 0; t < 6; t++)	 //hostmac
  {
-  // printf(".%02X", pData++);
+ //  printfpd(".%02X", *pData);
  //dirRS232.rcvbufE.Add((unsigned char)*src++);  //t
 //  src++;
   //  dirRS232.rcvbufE.Add((unsigned char)*pData++);
@@ -4421,6 +4423,7 @@ extern "C" void RDN_receive(char * pData)
      TrzBuff232.Add((char)*pData);
    }
 //_______________________________________________test
+//printfpd(".%02X", *pData);
    	  dirRS232.rcvbufE.Add((unsigned char)*pData++);   //if comment all ok
 	  //  dirRS232.rcvbufE.Add((unsigned char)0x55);	  //t
   }

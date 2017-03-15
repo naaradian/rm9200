@@ -634,7 +634,7 @@ command_counter++;
                     break;
                     
          case 0x57: //eth 
-                  printfpd("\n\r57 : %X",embMsgRequest->Body(0));
+                //  printfpd("\n\r57 : %X",embMsgRequest->Body(0));
                   SetModEth((unsigned long)embMsgRequest->Body(0));
                    StartEth(1); //151005
 						embMsgAns.SetType(0x57);
@@ -1073,7 +1073,7 @@ command_counter++;
 
           */
       case 0x70: // read data text file
-                                   
+                  //   printfpd("\n\rrfil : %d ", embMsgRequest->Body(0));              
                      embMsgAns.SetType(0x70);
 //							embMsgAns.SetLength(3);
 //                     embMsgAns.SetBody(0, embMsgRequest->Body(0));

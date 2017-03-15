@@ -657,8 +657,11 @@ MDataC	ModulSK4;
 
 MDataS	DecFileData;
 
+#ifndef PROG_VNV
+
 #include "dmu4_work1.cpp"
 
+#endif
 
 #endif //PROG_PRM_PCH_DEM
 
@@ -849,6 +852,8 @@ Item  TimeItem;
 Item  WebPasswordItem;
 #endif
 
+//#ifndef PROG_VNV
+
 #ifdef PROG_MD310_SATI
 
 #ifndef PROG_MD310_SATI2
@@ -856,12 +861,15 @@ Item  WebPasswordItem;
 #include "md100se.cpp"
 #include md310s_items.cpp
 #else
+
 #include "md100se2.cpp"
 #include md310s2_items.cpp
 
 #endif
 
 #endif
+
+//#endif //PROG_VNV
 
 Menu UsedMenu;
 MDataV  RestartData;
@@ -7320,6 +7328,16 @@ printfp("\n\r Operate File");
 #endif
 
 
+//#ifdef PROG_KAZAH		
+
+//if(!(ComparePOK(1)))
+//  {
+//    printfp("\n\rOperateFile: To can writing something POK need set to '1'\n\r");
+//	 return;
+//  }
+//#endif
+
+
 //_________________________for tftp loader
  _ip_address server;
   char_ptr filename;
@@ -7629,6 +7647,13 @@ unsigned char config_flag = 0;
 //#endif
 #endif
 
+//__________________________________________
+
+//__________________________________________
+
+
+
+
 
 
    
@@ -7732,6 +7757,7 @@ if((addr_dest == (XilFileDataAddressD - 0x20)) ||  (addr_dest == (XilFileDataAdd
 	  }
 //#endif
 #endif
+
    
 
 #ifdef PROG_MF20
@@ -8193,12 +8219,16 @@ if(!config_flag)
 	FillConfigFileVersion();
 #endif // PROG_BMDN
 
+#ifndef PROG_VNV
+
 #ifdef PROG_BMDN3
 ScanTxtFiles();
 #endif
 
 #ifdef PROG_BMDN4
 ScanTxtFiles();
+#endif
+
 #endif
 
 
@@ -8379,7 +8409,12 @@ printfpd("\n\r errorw = %d ", errorw);
  //  return; //to test
 
  //t  CompareToFilex(size);
+#ifndef PROG_MD310
+#ifndef PROG_KAZAH
   InvertBitOrdering();		//t new 
+#endif
+#endif
+
 
 #ifdef PROG_ODU1
   	  CompareToFilex(ODU_XIL_SIZE);	//t
@@ -8542,6 +8577,8 @@ if(addr_dest == (XilFileDataAddressD - 0x20))
 	FillConfigFileVersion();
 #endif // PROG_BMDN
 
+#ifndef PROG_VNV
+
 #ifdef PROG_BMDN3
 ScanTxtFiles();
 #endif
@@ -8549,7 +8586,7 @@ ScanTxtFiles();
 #ifdef PROG_BMDN4
 ScanTxtFiles();
 #endif
-
+#endif
 
 	 keep &= ~((uint_32)TFTP_PROCEED);
 	 keep |= (uint_32)FILE_WRITE_OK;
@@ -8966,7 +9003,11 @@ if(addr_dest == (XilFileDataAddressD2 - 0x20))
 			delay_mcs(1000000l); //wait while loading
 			delay_mcs(1000000l); //wait while loading
 			delay_mcs(1000000l); //wait while loading
+  #ifndef PROG_VNV
+
             StartLoadAllM();
+  #endif
+
 		    wd_reset();
    //ok		  TestWriteFlash2();
 		}
@@ -9000,7 +9041,10 @@ if(addr_dest == (XilFileDataAddressD2 - 0x20))
 			delay_mcs(1000000l); //wait while loading
 			delay_mcs(1000000l); //wait while loading
 			delay_mcs(1000000l); //wait while loading
+  #ifndef PROG_VNV
+
             StartLoadAllM();
+  #endif
 		    wd_reset();
    //ok		  TestWriteFlash2();
 		}
@@ -9118,6 +9162,9 @@ if(!config_flag)
 	FillConfigFileVersion();
 #endif // PROG_BMDN
 
+
+#ifndef PROG_VNV
+
 #ifdef PROG_BMDN3
 ScanTxtFiles();
 #endif
@@ -9125,7 +9172,7 @@ ScanTxtFiles();
 #ifdef PROG_BMDN4
 ScanTxtFiles();
 #endif
-
+#endif
 
 	 keep &= ~((uint_32)TFTP_PROCEED);
 	 keep |= (uint_32)FILE_WRITE_OK;
@@ -11412,6 +11459,10 @@ extern "C" void SetSlowClock()
   pmc_ptr->SCDR = 0xff; //disable all clocks
 
 }
+
+
+#ifndef	 PROG_VNV
+
 #ifdef 	PROG_MD310_SATI
 
 
@@ -11604,6 +11655,8 @@ extern "C" void SetItemConfig()
 }
 
  
+
+#endif
 
 #endif
 
@@ -13359,13 +13412,13 @@ case 0x35l:
 	  		#endif //PROG_DTVM
 				 
 				#ifdef USE_P710
-			for(;;)
-			{
-			PVG710_Init(0);	  //for test
+		//	for(;;)
+	   ////		{
+	 //		PVG710_Init(0);	  //for test
 	  //		PVG710_Init(1);	  //for test
-			wd_reset();
+	  //		wd_reset();
 
-	  		}
+	 // 		}
 			#endif
 				  
 
@@ -13384,7 +13437,7 @@ case 0x36l:
 						#ifdef USE_P710
 		  //	for(;;)
 	  //		{
-			PVG710_Init(0);	  //for test
+	  //		PVG710_Init(0);	  //for test
 	  //		PVG710_Init(1);	  //for test
 		 //	wd_reset();
 
@@ -13411,6 +13464,7 @@ case 0x37l:
 #endif
         errorw =   (signed char)
 		*/
+    #ifndef PROG_VNV
 
   #ifdef PROG_DMU6
 		     SetSelector(CNL1);	  //try use cs1
@@ -13431,6 +13485,7 @@ case 0x37l:
 		  	OperateBuffers_usart0t();
 		}
 
+ #endif
  #endif
       break;
 case 0x41l:  
@@ -13671,6 +13726,8 @@ SetEthPhyParams();
 				break;
 
 case 0x60l:
+  #ifndef PROG_VNV
+
 #ifdef PROG_BMDN
 			 tm =GetVersionAPI();
 			 printfpd("\n\rhot ver: %d\n\r", tm);
@@ -13678,6 +13735,7 @@ case 0x60l:
 
 
 #endif //PROG_BMDN
+#endif
 				break;
 
 case 0x61l:
@@ -13714,11 +13772,14 @@ case 0x63l:
 case 0x64l:
 																			
 //#ifdef ETH_CAN_RESTART
+  #ifndef PROG_VNV
+
 #ifdef PROG_DMU6
 LoadDDSs_Start();
 // LoadDDS_Symb_Start();
  //Restart_Eth();
 
+#endif
 #endif
 // TestMode.Value = 0x64l;
 // TestMode.ChangingValue = TestMode.Value;
@@ -13744,8 +13805,8 @@ case 0x66l:
 			  //	DirectLoad();	//ok
 
 	   //			FirmwareLoad();
-	   PVG710_Init(0);	  //for test
-		PVG710_Init(1);	  //for test
+	//   PVG710_Init(0);	  //for test
+	//	PVG710_Init(1);	  //for test
 
 
 #endif //PROG_BMDN
@@ -13826,7 +13887,7 @@ case 0x72l:
 			*/
 
 #ifdef 	PROG_MD310_SATI
- FillMenu();
+// FillMenu();
 #endif
 
 
@@ -13869,51 +13930,51 @@ case 0x76l:			   SetUsart0BaudRate(38400l); break;
 
 case 0x77l:
 #ifdef PROG_BMDN
- 		ComConfigure(0);
+   //		ComConfigure(0);
 #endif //PROG_BMDN
 				break;
 
 case 0x78l:
 #ifdef PROG_BMDN
- 		 ComConfigure(1);
+   //		 ComConfigure(1);
 #endif //PROG_BMDN
 				break;
 
 case 0x79l:
 #ifdef PROG_BMDN
-          EthStatusSet();
+     //     EthStatusSet();
 	   //	  ConfigFileLoad();	   //ok
 #endif //PROG_BMDN
 				break;
 
 case 0x7Al:
 #ifdef PROG_BMDN
-		  SetLoop(PVG610_LOOPBACK_MODEM_E ,0 , 1 , 0);	   //ok
+	  //	  SetLoop(PVG610_LOOPBACK_MODEM_E ,0 , 1 , 0);	   //ok
 #endif //PROG_BMDN
 				break;
 case 0x7Bl:
 #ifdef PROG_BMDN
-		  SetLoop(PVG610_LOOPBACK_NONE_E ,0 , 1 , 0);	   //ok
+	   //	  SetLoop(PVG610_LOOPBACK_NONE_E ,0 , 1 , 0);	   //ok
 #endif //PROG_BMDN
 				break;
 case 0x7Cl:
 #ifdef PROG_BMDN
-		  SetLoop(PVG610_LOOPBACK_MODEM_E ,0 , 0, 0);	   //ok
+		//  SetLoop(PVG610_LOOPBACK_MODEM_E ,0 , 0, 0);	   //ok
 #endif //PROG_BMDN
 				break;
 case 0x7Dl:
 #ifdef PROG_BMDN
-		  SetLoop(PVG610_LOOPBACK_NONE_E ,0 , 0, 0);	   //ok
+	  //	  SetLoop(PVG610_LOOPBACK_NONE_E ,0 , 0, 0);	   //ok
 #endif //PROG_BMDN
 				break;
 case 0x7El:
 #ifdef PROG_BMDN
-		  SetLoop(PVG610_LOOPBACK_INTERFACE_E ,0 , 1, 0);	   //ok
+		//  SetLoop(PVG610_LOOPBACK_INTERFACE_E ,0 , 1, 0);	   //ok
 #endif //PROG_BMDN
 				break;
 case 0x7Fl:
 #ifdef PROG_BMDN
-		  SetLoop(PVG610_LOOPBACK_NONE_E ,0 , 1, 0);	   //ok
+	   //	  SetLoop(PVG610_LOOPBACK_NONE_E ,0 , 1, 0);	   //ok
 #endif //PROG_BMDN
 				break;
 
@@ -13930,7 +13991,7 @@ case 0x80l:
 case 0x81l:
 #ifdef PROG_BMDN
 #ifndef PROG_BMDN6MI
-		  ConfigFileRun();	   //ok
+		 // ConfigFileRun();	   //ok
 #endif
 #endif //PROG_BMDN
 				break;
@@ -13938,7 +13999,7 @@ case 0x81l:
 case 0x82l:
 #ifdef PROG_BMDN
 #ifndef PROG_BMDN6MI
-		  ModemStatusGet();	   //ok
+		//  ModemStatusGet();	   //ok
 #endif
 #endif //PROG_BMDN
 				break;
@@ -13952,7 +14013,7 @@ case 0x83l:
 case 0x84l:
 #ifdef PROG_BMDN
 #ifndef PROG_BMDN6MI
-		  ModemAcquireCountersGet();	   //ok
+	   //	  ModemAcquireCountersGet();	   //ok
 #endif
 #endif //PROG_BMDN
 				break;
@@ -13979,14 +14040,14 @@ case 0x87l:
 #ifdef PROG_BMDN
 #ifndef PROG_BMDN6MI
 
-ModemMailboxMessageReceive();
+//ModemMailboxMessageReceive();
 #endif
 #endif //PROG_BMDN
 				break;
 
 case 0x88l:
 #ifdef PROG_BMDN
-ModemAlarmEnableGet();
+//ModemAlarmEnableGet();
 #endif //PROG_BMDN
 				break;
 
@@ -13996,15 +14057,15 @@ case 0x89l:
 //ModemAlarmEnableSetAllm(4);
 //ModemAlarmEnableSetAllm(8);
 //ConfigFileRunm(MODEM_QUANTITY);
-  protection_mode = MODE_N_PLUS_1;
-  SetNeedInitAllProt(); 
+ // protection_mode = MODE_N_PLUS_1;
+//  SetNeedInitAllProt(); 
 #endif //PROG_BMDN
 				break;
 case 0x8Al:
 #ifdef PROG_BMDN
 			 //	StartModems(MODEM_QUANTITY);
-				protection_mode = MODE_NO_PROT;
-				SetNeedInitAllProt(); 
+		//		protection_mode = MODE_NO_PROT;
+		 //		SetNeedInitAllProt(); 
 #endif //PROG_BMDN
 				break;
 
@@ -14021,13 +14082,13 @@ case 0x8Cl:
 	//  ResetSyntOnly(2);
 	//  delay_mcs(10000);
 	//  ResetSyntOff(2);
-	  LoadSyntmf(0, 0);
+	//  LoadSyntmf(0, 0);
 	  
  //  ModemAlarmStatusGetAllm();
       
 #endif //PROG_BMDN
 
-ENET_tx_underrun();
+//ENET_tx_underrun();
 
 				break;
 
@@ -14088,11 +14149,6 @@ break;
 
 
 #ifdef PROG_PRM_PCH_DEM	
-	      for(tm = 0; tm < 100000; tm++) //test
-		  {
- LoadSymbolRate(GetSymbolRate());
- wd_reset();
- }
 
  #endif
 
@@ -14183,137 +14239,15 @@ case 0x96l:
 #endif //
 
 
-case 0x97l:
-#ifdef PROG_BMDN
-/*
-PVG610_ERROR_MSG_ENUM PVG610_API_ProtectionTxModeSet (BYTE                        deviceIndex,
-                                                      BYTE                        modemIndex,
-                                                      PVG610_PROTECTION_MODE_ENUM protectionMode,
-                                                      BYTE                        phyId,
-                                                      BOOLEAN                     copyAcmFormWorking)
 
-*/
- PVG610_API_ProtectionTxModeSet (17,    8,	  2,    8,    0);
-#endif
-break;
-
-case 0x98l:
-#ifdef PROG_BMDN
- PVG610_API_ProtectionRxModeSet (17,     8,	   2,   8);
-#endif
-break;
-
-case 0x99l:
-#ifdef PROG_BMDN
- PVG610_API_ProtectionTxModeSet (16,   8,   1,	  8,   0);
-#endif
-break;
-
-case 0x9Al:
-#ifdef PROG_BMDN
- PVG610_API_ProtectionRxModeSet (16, 8,	1, 8);
-#endif
-break;
-
-case 0x9Bl:
-#ifdef PROG_BMDN
- PVG610_API_ProtectionTxModeSet (7,	  3,      2,   3,    0);
-#endif
-break;
-
-case 0x9Cl:
-#ifdef PROG_BMDN
- PVG610_API_ProtectionRxModeSet (7,	   3,	  2,    3 );
-#endif
-break;
-
-case 0x9Dl:
-#ifdef PROG_BMDN
- PVG610_API_ProtectionTxModeSet (6, 3,   1,	  3,  0);
-#endif
-break;
-
-case 0x9El:
-#ifdef PROG_BMDN
- PVG610_API_ProtectionRxModeSet (6, 3,	1, 3);
-#endif
-break;
-
-
-case 0x9Fl:
-#ifdef PROG_BMDN
- PVG610_API_ProtectionTxModeSet (9,4,2, 4,0);
-#endif
-break;
-
-case 0xA0l:
-#ifdef PROG_BMDN
- PVG610_API_ProtectionRxModeSet (9, 4, 2, 4 );
-#endif
-break;
-
-case 0xA1l:
-#ifdef PROG_BMDN
- PVG610_API_ProtectionTxModeSet (8,4,1,4, 0);
-#endif
-break;
-
-case 0xA2l:
-#ifdef PROG_BMDN
- PVG610_API_ProtectionRxModeSet (8, 4,	1, 4);
-#endif
-break;
-
-case 0xA3l:
-#ifdef PROG_BMDN
-
-  Protect0.Value = 0;
-#ifndef PROG_BMDN6MI
-  Protect1.Value = 0;
-  Protect2.Value = 0;
-  Protect3.Value = 0;
-  Protect4.Value = 0;
-  Protect5.Value = 0;
-  Protect6.Value = 0;
-  Protect7.Value = 0;
-  Protect8.Value = 0;
-  Protect9.Value = 0;
-  Protect10.Value = 0;
-  Protect11.Value = 0;
-  Protect12.Value = 0;
-  Protect13.Value = 0;
-  Protect14.Value = 0;
-  Protect15.Value = 0;
-  Protect16.Value = 0;
-  Protect17.Value = 0;
-#endif
-  StartProtection();
-
-#endif
-break;
 
 case 0xA4l:
-#ifdef PROG_BMDN
-ConfigFileRunm(MODEM_QUANTITY);
-#endif
 #ifdef PROG_PU_M710
 
 printfpd("\n\rm : %d", MirrorTest());
 printfpd("x : %d",IsXilWrited());
 #endif
 
-break;
-
-case 0xA5l:
-#ifdef PROG_BMDN
-ModemAlarmEnableSetAllm(MODEM_QUANTITY);
-#endif
-break;
-
-case 0xA6l:
-#ifdef PROG_BMDN
-SetModemXILNPL1m(MODEM_QUANTITY);
-#endif
 break;
 
 
@@ -14359,6 +14293,7 @@ SetSelector(CNL2);
 #endif
 
 				break;
+#ifndef PROG_VNV
 
 case 0xAC :
 #ifdef PROG_BMDN3
@@ -14371,6 +14306,8 @@ case 0xAD :
  ScanTxtFiles();
 	   break;
 #endif
+
+#endif //no vnv 
 
 case 0xAE :
 #ifdef PROG_BMDN3
@@ -14419,55 +14356,6 @@ case 0xB3 :
 	   SetSlowClock();
  		 break;
 
-case 0xB4 :
-
-#ifdef PROG_PRM_PCH_DEM_XIL_CHN_DMU4
-	
-	  		WriteRamData(MODUL9);
-	  		WriteRamData(MODUL8);
-	  		WriteRamData(MODUL7);
-	  		WriteRamData(MODUL6);
-	  		WriteRamData(MODUL5);
-	  		WriteRamData(MODUL4);
-	  		WriteRamData(MODUL3);
-	  		WriteRamData(MODUL2);
-	  		WriteRamData(MODUL1);
-			break;
-#endif
-
-case 0xB5 :
-#ifdef PROG_PRM_PCH_DEM_XIL_CHN_DMU4
-			SetSelector(CNL1);
-			LoadSymbolRate(RAM_LOAD_RATE);
-			SetDecOff();
-	  		WriteRamData(MODUL1);
-   //			SetDecOn();
-			break;
-#endif
-
-case 0xB6 :
-#ifdef PROG_PRM_PCH_DEM_XIL_CHN_DMU4
-			UnLoadRam(CNL1);
-			break;
-#endif
-
-case 0xB7 :
-#ifdef PROG_PRM_PCH_DEM_XIL_CHN_DMU4
-			UnLoadRam(CNL2);
-			break;
-#endif
-
-case 0xB8 :
-#ifdef PROG_PRM_PCH_DEM_XIL_CHN_DMU4
-			LoadRam(CNL1);
-			break;
-#endif
-
-case 0xB9 :
-#ifdef PROG_PRM_PCH_DEM_XIL_CHN_DMU4
-			LoadRam(CNL2);
-			break;
-#endif
 
 case 0xBA :
 
@@ -14509,13 +14397,6 @@ case 0xBC :
   my_rx_usart0_int(0x55);
   break;
 
-case 0xBD :
-
-#ifdef	PROG_PRM_PCH_DEM_XIL_CHN_DMU4 
-  LoadrateTest();
-#endif
-	 break;
-
 case 0xBE :
 
   my_rx_usart0_int(0xAA);
@@ -14550,81 +14431,6 @@ case 0xBF :
   my_rx_usart0_int(0x55);
   break;
 
-
-
-
-
-
-
-
-//case 0x97l:
-//#ifdef PROG_PU_M_V
-//	printfp("\n\r 1ok");
-//    printfpd("%d",ch1ok);
-//	printfp(" 1b");
-//    printfpd("%d",ch1bad);
-//    printfp(" 2ok:");
-//    printfpd("%d",ch2ok);
-//	printfp(" 2b:");
-//    printfpd("%d",ch2bad);
-
-//#endif
-case 0xC0l:
-
-#ifdef 	PROG_BMDN4
-  printfp("\n\rstart test spi channels pvg710 and temp...");
-   for(tm=0; tm<2000000; tm++)
-{
-  LoadReg(0,25,0);
-  LoadReg(1,25,0);
-  ReadSpiTemp();
-  wd_reset();
-}
- printfp("...finish test spi channels pvg710 and temp");
-
-#endif
-
-#ifdef 	PROG_PU_M710
-  printfp("\n\rstart test spi channels pvg710 and temp...");
-   for(tm=0; tm<2000000; tm++)
-{
-//  LoadReg(0,25,0);
-//  LoadReg(1,25,0);
-  ReadSpiTemp();
-  wd_reset();
-}
- printfp("...finish test spi channels pvg710 and temp");
-
-#endif
-
-
-break;
-
-case 0xC1l:
-
-#ifdef 	PROG_BMDN4
-  printfp("\n\rstart test calibrate pvg710...");
- //   OperateBuffers_usart0t();
-
- LoadReg(0,38,0x74);
-// LoadReg5(0, 63);  //load code of temp
-// mid_band = GetMidBand(dev);
-   for(tm=0; tm<1; tm++)
-{
-  delay_mcs(2000);
-//final settings
- LoadReg(0,4, GetMidBand1(0));
-  wd_reset();
- //OperateBuffers_usart0t();
- }
- LoadReg(0,5, 0);
- LoadReg(0,38, 0x78);
-
-  printfp("...finish test calibrate pvg710");
-
-#endif
-
-break;
 
 case 0xC2l:
 
@@ -14719,7 +14525,12 @@ case 0xCAl:
 printfpd("\n\r wr : %d", writeid_counter);
 //printfpd("\n\r h : %02X",unEmb2TypeVer.emb2TypeVer.signature_hardware[i]);
 #ifdef RACM
+#ifndef PROG_KAZAH
+#ifndef PROG_MD310
+
 ACM_DEFAULT_init();
+#endif
+#endif
 #endif
 
 
@@ -14755,9 +14566,6 @@ case 0xD0l:	  // ReadDevId(0);	  break;
 
 
 case 0xD1l:
-#ifdef 	PROG_MD310_SATI
- TestWriteIFModule();
-#endif
 
 	   //break;
 #ifdef PROG_BACO
@@ -14769,36 +14577,6 @@ case 0xD1l:
 
 
 
-case 0xD2l:
-
-#ifdef 	PROG_MD310_SATI
- checklog();
-
-#endif
-
-	  	break;
-
-case 0xD3l:
-
-#ifdef 	PROG_MD310_SATI
- MRfOut.Value = 0xff;
- MRfOut.ChangingValue=MRfOut.Value;
- MDemod.Value = 0xff;
- MDemod.ChangingValue = MDemod.Value;
- WriteDevId();
-
-#endif
-
-	  	break;
-
-case 0xD4l:
-
-#ifdef 	PROG_MD310_SATI
-
- check_exp();
-#endif
-
-	break;
 
 case 0xD5l:
 
@@ -20912,9 +20690,10 @@ extern "C" void dev_restart ( void )
 
 
   AT91RM9200_ST_REG_STRUCT_PTR st_ptr;
-
+#ifndef PROG_VNV
 #ifdef PROG_BMDN6
   CommonResetOn(0);
+#endif
 #endif
 
 #ifdef PROG_MD310_SATI
@@ -24945,7 +24724,7 @@ printfpd("\n\r ParseTCP : %d", IPBuff[0]);
 //________________________________________________________echo for test
 
 	//   SetPower(IPBuff[1]);//t
-
+#ifndef PROG_VNV
     switch(IPBuff[0])
 	{
 		case 1:   ParseCommand1();        break;
@@ -24966,26 +24745,6 @@ printfpd("\n\r ParseTCP : %d", IPBuff[0]);
 #ifdef	PROG_PRM_PCH_DEM_XIL_CHN_DMU5  //prm_pch_dem_chn_dmu5.cpp
 		case 0x10:	  ParseCommand10(IPBuff);  break; //this is 0x10 = 16(dec)
 #endif
-
-
-
-  /*
-		case 6:	  ParseCommand6(IPBuff);  break;
-		case 7:	  ParseCommand7(IPBuff);  break;
-		case 8:	  ParseCommand8(IPBuff);  break;
-		case 9:	  ParseCommand9(IPBuff);  break;
-		case 0xB: ParseCommand11(IPBuff); break;
-#ifdef PROG_PRM_PCH_L_61
-		case 0xC: ParseCommand12(IPBuff); break;
-		case 0xD: ParseCommand13(IPBuff); break;
-		case 0xE: ParseCommand14(IPBuff); break;
-		case 0x1E: ParseCommand30(IPBuff); break;
-		case 0x1F: ParseCommand31(IPBuff); break;
-		case 0x20: ParseCommand32(IPBuff); break;
-		case 0x21: ParseCommand33(IPBuff); break;
-
-#endif // PROG_PRM_PCH_L_61
- */
 
 
 		default : break;
@@ -25015,422 +24774,9 @@ printfpd("\n\r ParseTCP : %d", IPBuff[0]);
   //	  message++; 
  	  PRM_PCH();
 	}
-  /*	 
-	 if((unsigned char)IPBuff[0] == (unsigned char)2)	//freq
-	 {
- 
 
-	   if(breakflag)
-		   {
-			   add_char_TCP_buff(TYPE_RUN_OK);
-			   add_char_TCP_buff(IPBuff[1]);
-	 	       add_char_TCP_buff(FREQ_CODE);
-
-
-		   }
-		   else
-		   {
-			  add_char_TCP_buff(TYPE_RUN_BAD);
-			  add_char_TCP_buff(IPBuff[1]);
-			  if(device_found(IPBuff[1]))
-			  {
-	 	      add_char_TCP_buff(LOST_CODE);
-			  }
-			  else
-			  {
-			  add_char_TCP_buff(ALARM_CODE);
-			  }
-
-
-		   }	
-	  //	   add_char_TCP_buff(IPBuff[1]);
-	  //	   add_char_TCP_buff(FREQ_CODE);
-	  return;
-	 }
-
- 	if((unsigned char)IPBuff[0] == (unsigned char)3)	//att
-	 {
-	   if(breakflag)
-		   {
-			  add_char_TCP_buff(TYPE_RUN_OK);
-			  add_char_TCP_buff(IPBuff[1]);
-	 	      add_char_TCP_buff(ATT_CODE);
-		   }
-		   else
-		   {
-			  add_char_TCP_buff(TYPE_RUN_BAD);
-			  add_char_TCP_buff(IPBuff[1]);
-			  if(device_found(IPBuff[1]))
-			  {
-	 	      add_char_TCP_buff(LOST_CODE);
-			  }
-			  else
-			  {
-			  add_char_TCP_buff(ALARM_CODE);
-			  }
-		   }	
- //		   add_char_TCP_buff(IPBuff[1]);
- //	 	   add_char_TCP_buff(ATT_CODE);
-  return;
-	 }
-
-#ifdef PROG_PRM_PCH_L_61
-
-if((unsigned char)IPBuff[0] == (unsigned char)COMMAND_12)	//att
-	 {
-	   if(breakflag)
-		   {
-			  add_char_TCP_buff(TYPE_RUN_OK);
-			  add_char_TCP_buff(IPBuff[1]);
-	 	      add_char_TCP_buff(COMMAND_12);
-		   }
-		   else
-		   {
-			  add_char_TCP_buff(TYPE_RUN_BAD);
-			  add_char_TCP_buff(IPBuff[1]);
-			  if(device_found(IPBuff[1]))
-			  {
-	 	      add_char_TCP_buff(LOST_CODE);
-			  }
-			  else
-			  {
-			  add_char_TCP_buff(ALARM_CODE);
-			  }
-		   }	
- //		   add_char_TCP_buff(IPBuff[1]);
- //	 	   add_char_TCP_buff(ATT_CODE);
-  return;
-	 }
-
-if((unsigned char)IPBuff[0] == (unsigned char)COMMAND_13)	//att
-	 {
-	   if(breakflag)
-		   {
-			  add_char_TCP_buff(TYPE_RUN_OK);
-			  add_char_TCP_buff(IPBuff[1]);
-	 	      add_char_TCP_buff(COMMAND_13);
-		   }
-		   else
-		   {
-			  add_char_TCP_buff(TYPE_RUN_BAD);
-			  add_char_TCP_buff(IPBuff[1]);
-			  if(device_found(IPBuff[1]))
-			  {
-	 	      add_char_TCP_buff(LOST_CODE);
-			  }
-			  else
-			  {
-			  add_char_TCP_buff(ALARM_CODE);
-			  }
-		   }	
- //		   add_char_TCP_buff(IPBuff[1]);
- //	 	   add_char_TCP_buff(ATT_CODE);
-  return;
-	 }
-
-
-
-
-if((unsigned char)IPBuff[0] == (unsigned char)WRITE_FLASH_COMMAND)	//write flash
-	 {
-#ifdef TEST_L_61
-	 breakflag = 1;
-	  WriteStatus1 = 1;
-#endif // TEST_L_61
-
-
-	   if(breakflag)
-		   {
-			  switch(IPBuff[1])
-			  {
-				  case 1:  if(WriteStatus1)
-				   			{
-			 	 				add_char_TCP_buff(TYPE_RUN_OK);
-			  					add_char_TCP_buff(IPBuff[1]);
-			  					add_char_TCP_buff(WRITE_FLASH_COMMAND);
-				   			}
-				   			else
-				   			{
-				    			add_char_TCP_buff(TYPE_RUN_BAD);
-			  					add_char_TCP_buff(IPBuff[1]);
-		   		 				add_char_TCP_buff(LOST_CODE);		  //can be changed
-				   			}
-							 break;
-				  case 2:  if(WriteStatus2)
-				   			{
-			 	 				add_char_TCP_buff(TYPE_RUN_OK);
-			  					add_char_TCP_buff(IPBuff[1]);
-			  					add_char_TCP_buff(WRITE_FLASH_COMMAND);
-				   			}
-				   			else
-				   			{
-				    			add_char_TCP_buff(TYPE_RUN_BAD);
-			  					add_char_TCP_buff(IPBuff[1]);
-			 	 				add_char_TCP_buff(LOST_CODE);		  //can be changed
-				   			}
-							 break;
-				  case 3:  if(WriteStatus3)
-				   			{
-			 	 				add_char_TCP_buff(TYPE_RUN_OK);
-			  					add_char_TCP_buff(IPBuff[1]);
-			  					add_char_TCP_buff(WRITE_FLASH_COMMAND);
-				   			}
-				   			else
-				   			{
-				    			add_char_TCP_buff(TYPE_RUN_BAD);
-			  					add_char_TCP_buff(IPBuff[1]);
-				   				add_char_TCP_buff(LOST_CODE);		  //can be changed
-				   			}
-							 break;
-				  case 4:  if(WriteStatus4)
-				   			{
-			 	 				add_char_TCP_buff(TYPE_RUN_OK);
-			  					add_char_TCP_buff(IPBuff[1]);
-			  					add_char_TCP_buff(WRITE_FLASH_COMMAND);
-				   			}
-				   			else
-				   			{
-				    			add_char_TCP_buff(TYPE_RUN_BAD);
-			  					add_char_TCP_buff(IPBuff[1]);
-				 	  			add_char_TCP_buff(LOST_CODE);		  //can be changed
-				   			}
-							 break;
-				  case 5:  if(WriteStatus5)
-				   			{
-			 	 				add_char_TCP_buff(TYPE_RUN_OK);
-			  					add_char_TCP_buff(IPBuff[1]);
-			  					add_char_TCP_buff(WRITE_FLASH_COMMAND);
-				   			}
-				   			else
-				   			{
-				    			add_char_TCP_buff(TYPE_RUN_BAD);
-			  					add_char_TCP_buff(IPBuff[1]);
-				 				add_char_TCP_buff(LOST_CODE);		  //can be changed
-				   			}
-							 break;
-				  case 6:  if(WriteStatus6)
-				   			{
-			 	 				add_char_TCP_buff(TYPE_RUN_OK);
-			  					add_char_TCP_buff(IPBuff[1]);
-			  					add_char_TCP_buff(WRITE_FLASH_COMMAND);
-				   			}
-				   			else
-				   			{
-				    			add_char_TCP_buff(TYPE_RUN_BAD);
-			  		 			add_char_TCP_buff(IPBuff[1]);
-				 	 			add_char_TCP_buff(LOST_CODE);		  //can be changed
-				   			}
-							 break;
-
-
-
-				 default:		add_char_TCP_buff(TYPE_RUN_BAD);
-			  					add_char_TCP_buff(IPBuff[1]);
-				  				add_char_TCP_buff(LOST_CODE);		  //can be changed
-
-
-			  }
-		 //	  add_char_TCP_buff(WRITE_FLASH_COMMAND);
-
-		   }
-		   else
-		   {
-			  add_char_TCP_buff(TYPE_RUN_BAD);
-			  add_char_TCP_buff(IPBuff[1]);
-			  if(device_found(IPBuff[1]))
-			  {
-	 	      add_char_TCP_buff(LOST_CODE);
-			  }
-			  else
-			  {
-			  add_char_TCP_buff(ALARM_CODE);
-			  }
-		   }	
- //		   add_char_TCP_buff(IPBuff[1]);
- //	 	   add_char_TCP_buff(ATT_CODE);
-
- return;
-	 }
-
-
-if((unsigned char)IPBuff[0] == (unsigned char)READ_FLASH_COMMAND)	//write flash
-	 {
-#ifdef TEST_L_61
-	 breakflag = 1;
-	 ReadStatus1[0] = 1;
-     ReadStatus1[1] = 2;
-	 ReadStatus1[2] = 3;
-#endif // TEST_L_61
-
-
-
-	   if(breakflag)
-		   {
-			  switch(IPBuff[1])
-			  {
-				  case 1:  		add_char_TCP_buff(TYPE_RUN_31);
-			  					add_char_TCP_buff(IPBuff[1]);
-			  				//	add_char_TCP_buff(READ_FLASH_COMMAND);
-			  					add_char_TCP_buff(ReadStatus1[0]);
-								add_char_TCP_buff(ReadStatus1[1]);
-								add_char_TCP_buff(ReadStatus1[2]);
-				   	 			break;
-				  case 2:  		add_char_TCP_buff(TYPE_RUN_31);
-			  					add_char_TCP_buff(IPBuff[1]);
-			  				 //	add_char_TCP_buff(READ_FLASH_COMMAND);
-			  					add_char_TCP_buff(ReadStatus2[0]);
-								add_char_TCP_buff(ReadStatus2[1]);
-								add_char_TCP_buff(ReadStatus2[2]);
-				   	 			break;
-				  case 3:  		add_char_TCP_buff(TYPE_RUN_31);
-			  					add_char_TCP_buff(IPBuff[1]);
-			  				//	add_char_TCP_buff(READ_FLASH_COMMAND);
-			  					add_char_TCP_buff(ReadStatus3[0]);
-								add_char_TCP_buff(ReadStatus3[1]);
-								add_char_TCP_buff(ReadStatus3[2]);
-				   	 			break;
-				  case 4:  		add_char_TCP_buff(TYPE_RUN_31);
-			  					add_char_TCP_buff(IPBuff[1]);
-			  				//	add_char_TCP_buff(READ_FLASH_COMMAND);
-			  					add_char_TCP_buff(ReadStatus4[0]);
-								add_char_TCP_buff(ReadStatus4[1]);
-								add_char_TCP_buff(ReadStatus4[2]);
-				   	 			break;
-				  case 5:  		add_char_TCP_buff(TYPE_RUN_31);
-			  					add_char_TCP_buff(IPBuff[1]);
-			  				//	add_char_TCP_buff(READ_FLASH_COMMAND);
-			  					add_char_TCP_buff(ReadStatus5[0]);
-								add_char_TCP_buff(ReadStatus5[1]);
-								add_char_TCP_buff(ReadStatus5[2]);
-				   	 			break;
-				  case 6:  		add_char_TCP_buff(TYPE_RUN_31);
-			  					add_char_TCP_buff(IPBuff[1]);
-			  				//	add_char_TCP_buff(READ_FLASH_COMMAND);
-			  					add_char_TCP_buff(ReadStatus6[0]);
-								add_char_TCP_buff(ReadStatus6[1]);
-								add_char_TCP_buff(ReadStatus6[2]);
-				   	 			break;
-				 
-				 default:		add_char_TCP_buff(TYPE_RUN_BAD);
-			  					add_char_TCP_buff(IPBuff[1]);
-				 				add_char_TCP_buff(LOST_CODE);		  //can be changed
-
-
-			  }
-		  //	  add_char_TCP_buff(READ_FLASH_COMMAND);
-
-		   }
-		   else
-		   {
-			  add_char_TCP_buff(TYPE_RUN_BAD);
-			  add_char_TCP_buff(IPBuff[1]);
-			  if(device_found(IPBuff[1]))
-			  {
-	 	      add_char_TCP_buff(LOST_CODE);
-			  }
-			  else
-			  {
-			  add_char_TCP_buff(ALARM_CODE);
-			  }
-		   }	
- //		   add_char_TCP_buff(IPBuff[1]);
- //	 	   add_char_TCP_buff(ATT_CODE);
- return;
-
-	 }
-
-if((unsigned char)IPBuff[0] == (unsigned char)READ_ATT_COMMAND)	//read att
-	 {
-
-#ifdef TEST_L_61
-	 breakflag = 1;
-	 ReadAtt1[0] = 1;
-     ReadAtt1[1] = 2;
-	 ReadAtt1[2] = 3;
-#endif // TEST_L_61
-
-	   if(breakflag)
-		   {
-			  switch(IPBuff[1])
-			  {
-				  case 1:  		add_char_TCP_buff(TYPE_RUN_32);
-			  					add_char_TCP_buff(IPBuff[1]);
-			  			  //		add_char_TCP_buff(READ_ATT_COMMAND);
-			  					add_char_TCP_buff(ReadAtt1[0]);
-								add_char_TCP_buff(ReadAtt1[1]);
-								add_char_TCP_buff(ReadAtt1[2]);
-				   	 			break;
-				  case 2:  		add_char_TCP_buff(TYPE_RUN_32);
-			  					add_char_TCP_buff(IPBuff[1]);
-			  			  //		add_char_TCP_buff(READ_ATT_COMMAND);
-			  					add_char_TCP_buff(ReadAtt2[0]);
-								add_char_TCP_buff(ReadAtt2[1]);
-								add_char_TCP_buff(ReadAtt2[2]);
-				   	 			break;
-				  case 3:  		add_char_TCP_buff(TYPE_RUN_32);
-			  					add_char_TCP_buff(IPBuff[1]);
-			  			   //		add_char_TCP_buff(READ_ATT_COMMAND);
-			  					add_char_TCP_buff(ReadAtt3[0]);
-								add_char_TCP_buff(ReadAtt3[1]);
-								add_char_TCP_buff(ReadAtt3[2]);
-				   	 			break;
-				  case 4:  		add_char_TCP_buff(TYPE_RUN_32);
-			  					add_char_TCP_buff(IPBuff[1]);
-			  			   //		add_char_TCP_buff(READ_ATT_COMMAND);
-			  					add_char_TCP_buff(ReadAtt4[0]);
-								add_char_TCP_buff(ReadAtt4[1]);
-								add_char_TCP_buff(ReadAtt4[2]);
-				   	 			break;
-				  case 5:  		add_char_TCP_buff(TYPE_RUN_32);
-			  					add_char_TCP_buff(IPBuff[1]);
-			  				//	add_char_TCP_buff(READ_ATT_COMMAND);
-			  					add_char_TCP_buff(ReadAtt5[0]);
-								add_char_TCP_buff(ReadAtt5[1]);
-								add_char_TCP_buff(ReadAtt5[2]);
-				   	 			break;
-				  case 6:  		add_char_TCP_buff(TYPE_RUN_32);
-			  					add_char_TCP_buff(IPBuff[1]);
-			  			   //		add_char_TCP_buff(READ_ATT_COMMAND);
-			  					add_char_TCP_buff(ReadAtt6[0]);
-								add_char_TCP_buff(ReadAtt6[1]);
-								add_char_TCP_buff(ReadAtt6[2]);
-				   	 			break;
-				 
-				 default:		add_char_TCP_buff(TYPE_RUN_BAD);
-			  					add_char_TCP_buff(IPBuff[1]);
-				 				add_char_TCP_buff(LOST_CODE);		  //can be changed
-
-
-			  }
-		 //	  add_char_TCP_buff(READ_FLASH_COMMAND);
-
-		   }
-		   else
-		   {
-			  add_char_TCP_buff(TYPE_RUN_BAD);
-			  add_char_TCP_buff(IPBuff[1]);
-			  if(device_found(IPBuff[1]))
-			  {
-	 	      add_char_TCP_buff(LOST_CODE);
-			  }
-			  else
-			  {
-			  add_char_TCP_buff(ALARM_CODE);
-			  }
-		   }	
- //		   add_char_TCP_buff(IPBuff[1]);
- //	 	   add_char_TCP_buff(ATT_CODE);
- 
- return;
-
-	 }
-   */
-
-//#endif	//prm_pch_c
-
-   
-//#endif //no PROG_PRM_PCH_N
-}
+#endif //PROG_VNV
+ }
 
 
 
@@ -27879,7 +27225,7 @@ while(len1--)
 
 
 #ifdef PROG_BMDN
-
+#ifndef PROG_VNV
 void SetProtObj(unsigned char provnum, unsigned long value)
 {
  if(provnum >= (MODEM_QUANTITY << 1)) return;
@@ -27930,7 +27276,7 @@ for(unsigned char mod = 0; mod < MODEM_QUANTITY; mod++)
 
 
 #endif //PROG_BMDN
-
+#endif
 
 #ifdef PROG_BMDN3
 extern "C" void InitSetConfigFile(unsigned char variant)
@@ -28039,13 +27385,18 @@ extern "C" WriteAis(unsigned int imr)
 
 #ifdef PROG_PU_MSAT5
 #include <pu_msat5_work1.cpp>
+//#include <pu_msat1_work1.cpp>	//t
+
 #endif //  PROG_PU_MSAT  
 #endif
  
-
+#ifndef PROG_VNV
 #ifdef PROG_BMDN4
 #include <bmdn4_work1.cpp>
 #endif //  PROG_PU_MSAT  
+#endif
+
+
 
 #ifdef PROG_PU_M710
 #include <pu_m710_work1.cpp>
@@ -28409,6 +27760,8 @@ if(addr_dest == (XilFileDataAddressD - 0x20))
 	FillConfigFileVersion();
 #endif // PROG_BMDN
 
+#ifndef PROG_VNV
+
 #ifdef PROG_BMDN3
 ScanTxtFiles();
 #endif
@@ -28416,7 +27769,7 @@ ScanTxtFiles();
 #ifdef PROG_BMDN4
 ScanTxtFiles();
 #endif
-
+#endif
 
 	 keep &= ~((uint_32)TFTP_PROCEED);
 	 keep |= (uint_32)FILE_WRITE_OK;
@@ -28651,12 +28004,16 @@ if(addr_dest == (XilFileDataAddressD - 0x20))
 	FillConfigFileVersion();
 #endif // PROG_BMDN
 
+#ifndef PROG_VNV
+
 #ifdef PROG_BMDN3
 ScanTxtFiles();
 #endif
 
 #ifdef PROG_BMDN4
 ScanTxtFiles();
+#endif
+
 #endif
 
 
@@ -28671,6 +28028,8 @@ ScanTxtFiles();
 
 
 #include "my_strtod.cpp"
+
+#ifndef	PROG_VNV
 
 #ifdef 	PROG_PU_MSAT
 
@@ -28687,7 +28046,7 @@ ScanTxtFiles();
 
 #endif //PROG_PU_MSAT
 
-
+#endif
 
 
 #endif //USE_HTTP
@@ -28795,10 +28154,15 @@ extern "C" void CheckOperateFlashx(void)
 #endif
 #endif
 
+
+#ifndef	PROG_VNV
+
 #ifdef PROG_MD310_SAT
 #ifndef PROG_MD310_SATI2
 
 #include "md310_work1.cpp"
+
+
 #else
 #ifndef PROG_ODU1
 #include "md310s2_work1.cpp"
@@ -28808,7 +28172,11 @@ extern "C" void CheckOperateFlashx(void)
 
 #endif
 
+#endif
 
+#else
+
+#include "vnv_work1.cpp"
 
 #endif
 

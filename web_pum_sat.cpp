@@ -58,11 +58,11 @@ if(!(password_state))
 
 if((unsigned)SatSet5.Value == (unsigned)val)
 {
- printfp("\n\r Do not change the SatSet5 rcvfreq");
+ printfpd("\n\r Do not change the SatSet5 rcvfreq %d", val);
  return;
 }
 
-  printfp("\n\r Change the SatSet5 rcvfreq");
+  printfpd("\n\r Change the SatSet5 rcvfreq %d", val);
 
  Par001 = val;
 
@@ -3734,14 +3734,37 @@ printfpd("%c", *workKey++);
 
     if (*(Key + 5) == '1')
        {
-       	  sprintf(NewKey, "%6d",(unsigned long)GetPar001());  // insert AD converter value
+#ifndef PROG_PU_MSAT5
+       	  sprintf(NewKey, "%6d",(unsigned long)GetPar001());  // 
+		    memcpy((Key+15), NewKey, 6);               // channel 7 (P6.7)
+
+#else
+		  sprintf(NewKey, "%7d",(unsigned long)GetPar001());  // 
+		    memcpy((Key+15), NewKey, 7);               // channel 7 (P6.7)
+
+#endif
+
+
 //        sprintf(NewKey, "%08d", GetAD7Val());  // insert AD converter value
-        memcpy((Key+15), NewKey, 6);               // channel 7 (P6.7)
+  //      memcpy((Key+15), NewKey, 6);               // channel 7 (P6.7)
        }
 	if (*(Key + 5) == '2')
        {
-        sprintf(NewKey, "%6d", (unsigned long)GetPar002());  // insert AD converter value
-        memcpy((Key+15), NewKey, 6);               // channel 7 (P6.7)
+
+#ifndef PROG_PU_MSAT5
+       	  sprintf(NewKey, "%6d",(unsigned long)GetPar002());  // 
+		    memcpy((Key+15), NewKey, 6);               // channel 7 (P6.7)
+
+#else
+		  sprintf(NewKey, "%7d",(unsigned long)GetPar002());  // 
+		    memcpy((Key+15), NewKey, 7);               // channel 7 (P6.7)
+
+#endif
+
+
+
+
+    //    memcpy((Key+15), NewKey, 6);               // channel 7 (P6.7)
        }
 	if (*(Key + 5) == '3')
        {

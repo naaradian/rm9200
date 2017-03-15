@@ -702,7 +702,7 @@ errors = 0;
       _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 5, AT91RM9200_PIO_PERIPHERAL_A, 0);   //spi cs2
 
  #endif    
-// BlinkLED(20, 5);  
+ BlinkLED(20, 1);  
   
   
      _at91rm9200_pio_set(AT91RM9200_PIO_PORT_C, 13, AT91RM9200_PIO_PERIPHERAL_IO, 1);
@@ -802,7 +802,9 @@ uint_32 lengthd_485;
 //_______________________________________________________________
 // EmbInitNVRAM(); //081208  
 #ifdef PROG_PU_MSAT	
+#ifndef	PROG_VNV1
    ResetPult();
+#endif   
 #endif  
 
 #ifdef PROG_MD310_SATI	
@@ -812,7 +814,7 @@ uint_32 lengthd_485;
 #endif   
  
  
-// BlinkLED(30, 5); 
+// BlinkLED(100, 2); 
  // for(;;);
 //
   InitClass();  //2
@@ -835,7 +837,7 @@ uint_32 lengthd_485;
        aic_ptr->EOICR = 0xFF; 
       } 
 //___________________________ok      
-// BlinkLED(1000, 1000); 
+// BlinkLED(500, 3); 
 //  for(;;);
 //___________________________     
       
@@ -884,7 +886,9 @@ uint_32 lengthd_485;
 //cashe_off();
 
 #ifdef	PROG_PRM_PCH_DEM_XIL_CHN_DMU4 
+#ifndef PROG_VNV1
  FillDecFileData();
+#endif 
 #endif 
 
 
@@ -913,7 +917,10 @@ uint_32 lengthd_485;
 #endif 
 
 #ifdef	 PROG_PRM_PCH_SPI_XIL_ETH
+#ifndef PROG_VNV1
+
    ReadDevId2(0);
+#endif   
 #endif
 #endif
    
@@ -923,6 +930,7 @@ uint_32 lengthd_485;
 #ifdef PROG_PU_MSAT
 #ifndef MAKET_PLATA
 #ifndef PROG_ODU1
+#ifndef	PROG_VNV1
       
       _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 12, AT91RM9200_PIO_PERIPHERAL_IO, 1); //110222    //line done
          pio_ptrb->MDER = 1<<12;
@@ -941,13 +949,14 @@ delay_mcs(1000000l);
      //     }
 #endif     
 #endif     
+#endif     
 #endif
    
    
  //ok  SetTestMode(0x8e); //t101117
  
 //___________________________ok      
- //BlinkLED(1000, 1000); 
+//BlinkLED(1000, 4); 
  // for(;;);
 //___________________________     
  
@@ -957,7 +966,7 @@ delay_mcs(1000000l);
  FillConfigFileVersion();
 #endif // PROG_BMDN  
 
-// BlinkLED(40, 5); 
+// BlinkLED(50, 5); 
 //___________________________ok      
 // BlinkLED(1000, 1000); 
  // for(;;);
@@ -966,7 +975,10 @@ delay_mcs(1000000l);
 
 #ifdef 	PROG_PU_MSAT
 #ifndef MAKET_PLATA
+#ifndef	PROG_VNV1
+
  FillRadianVersion();
+#endif 
 #endif
 #endif
 
@@ -1152,6 +1164,15 @@ if(GetTestMode() == 0x5D)
    SetTestMode(1l);
   } 
   
+//#ifdef PROG_KAZAH		
+
+//if((ComparePOK(1)))
+//  {
+//     WritePOK(0x1000);
+//  }
+//#endif
+  
+  
   
   
   
@@ -1183,13 +1204,24 @@ if(GetTestMode() == 0x5D)
 #endif     
 #endif
 
+
+
 #endif    //prog_dmu6
+
+
+//#ifdef PROG_KAZAH
+
+//     m_load_xilinx3((char)XILINXPG, 1);
+     
+//#endif
+
 
 #ifdef PROG_DMU6
      pio_ptrb->SODR = 1<<0; //get up line prog for xilinx
 #endif
 
 
+//BlinkLED(1500, 1); 
 
 
 
@@ -1374,7 +1406,7 @@ if (_int_install_isr(AT91RM9200_FIQ_VECTOR,
  
 #ifndef  DISABLE_ETHERNET
 
-
+//BlinkLED(2000, 2);   //ok
 
  
   Set_enet_local0((uchar*)&enet_local0[0]);
@@ -1473,7 +1505,7 @@ RTCS_gate_add(GetNetwork(),0, 0);   //for test
     
     
 //___________________________ok      
-// BlinkLED(1000, 1000); 
+// BlinkLED(50, 4);  //ok
  // for(;;);
 //___________________________ 
     
@@ -1564,8 +1596,9 @@ root_dir[1,1] = 0;
 //___________________________ 
 
 
+//  BlinkLED(100, 3);  //ok
 
- 
+#ifndef PROG_VNV1 
 //#endif//  DISABLE_ETHERNET 
 //_________________________________________________  
    if(!TestCheckSum())//not correct checksum
@@ -1577,7 +1610,15 @@ root_dir[1,1] = 0;
    {
    	SetBufferState((unsigned long)NO_NVRAM);
    }
-//_______________________________________________    
+//_______________________________________________ 
+ 
+#endif
+//___________________________ok      
+ //BlinkLED(100, 3);  //ok
+ // for(;;);
+//___________________________ 
+    
+  
 
 /*
 #ifdef YOURNAL        //before init
@@ -1633,6 +1674,7 @@ root_dir[1,1] = 0;
   Init_BUKC();
   #endif //PROG_BUKC 
   
+//BlinkLED(100, 3); 
   
   #ifdef PROG_PRM_PCH
 //#ifndef	 PROG_PRM_PCH_SPI_ETH_UART  
@@ -1643,7 +1685,7 @@ root_dir[1,1] = 0;
   #endif //PROG_PRM_PCH
   
 
-  
+// BlinkLED(1000, 3); 
   
    
   
@@ -1662,6 +1704,8 @@ root_dir[1,1] = 0;
   #ifdef PROG_PU_M_V
 // if(GetTestMode() != 0x8el)
 // {
+//111
+
   Init_PU_M();
 // }  
   #endif //PROG_PU_M 
@@ -1669,6 +1713,8 @@ root_dir[1,1] = 0;
     #ifdef PROG_PU_M_V_A
 // if(GetTestMode() != 0x8el)
 // {
+
+//222
   Init_PU_M();
 // }  
   #endif //PROG_PU_M 
@@ -1677,8 +1723,10 @@ root_dir[1,1] = 0;
    
   
   
-  #ifdef PROG_PU_M100
-  Init_PU_M();
+  #ifdef PROG_PU_M100  
+  
+// 333 
+    Init_PU_M();
   #endif //PROG_PU_M 
 
 //  #ifdef PROG_PU_MSAT
@@ -1689,6 +1737,9 @@ root_dir[1,1] = 0;
    
   
    #ifdef PROG_PU_M_MUX
+   
+// 4444  
+   
   Init_PU_M();
   #endif //PROG_PU_M_MUX  
   
@@ -1759,7 +1810,7 @@ root_dir[1,1] = 0;
 // BlinkLED(1000, 1000); 
  // for(;;);
 //___________________________ 
-
+// BlinkLED(200, 3);  //ok
 
 
  usart_select(0); //debug uart on  usart0 - off
@@ -1785,6 +1836,7 @@ root_dir[1,1] = 0;
   usart_select(1); //debug uart off usart0 - on
   
   
+//BlinkLED(200, 3);  //ok
   
 //___________________________ ok    
 // BlinkLED(1000, 1000); 
@@ -1844,7 +1896,9 @@ root_dir[1,1] = 0;
   
 #ifndef PROG_TUTS 
 #ifdef USE_PULT 
+#ifndef PROG_VNV1
  m_Test_PKU();
+#endif 
 #endif 
 #endif
  // tChangeTestMode();
@@ -1896,7 +1950,7 @@ SetLink10();
 
 
 //___________________________ ok    
-// BlinkLED(500, 500); 
+// BlinkLED(200, 4); 
 //  for(;;);
 //___________________________ 
 
@@ -2063,8 +2117,7 @@ SetE14();
 //  for(;;);
 //___________________________ 
 
-
-
+//BlinkLED(200, 3);  
 
 #ifdef YOURNAL        //not before init to have only one event to do not rewrite previons
 
@@ -2074,7 +2127,7 @@ SetE14();
 
 
 //___________________________ ok    
-// BlinkLED(100, 500); 
+// BlinkLED(100,3); 
 //  for(;;);
 //___________________________ 
 
@@ -2099,10 +2152,12 @@ SetE14();
 
  
   #ifdef PROG_PRM_PCH_DEM
- //   printfp("\n\r go Init_PRM_PCH();");
-
-  Init_PRM_PCH();
+   printfp("\n\r go Init_PRM_PCH();");
+   OperateBuffers_usart0t();
+     Init_PRM_PCH();
   #endif //PROG_PRM_PCH
+  
+//  BlinkLED(400, 4);
   
   #ifdef	 PROG_PRM_PCH_SPI_ETH_UART  
    printfp("\n\r go Init_PRM_PCH();");
@@ -2126,7 +2181,20 @@ OperateBuffers_usart0t();
 
 
   Init_BMDN();
+  
+  printfp("\n\r Finish Init_BMDN();");
+OperateBuffers_usart0t();
+ 
+  
+  
 #endif //PROG_BMDN 
+
+
+
+
+
+//   BlinkLED(10, 5);
+
 
 // printfp("\n\r finish Init_BMDN();");
 //OperateBuffers_usart0t();
@@ -2544,9 +2612,21 @@ result = bind(socklist[2], &local_sin, sizeof (sockaddr_in));
 //t cashe_on();
  //ok  outportb(0x506, 0x55); //ok
  
+#ifdef PROG_BMDN
+  printfp("\n\r go  step1 BMDN();");
+  OperateBuffers_usart0t();
+#endif //PROG_BMDN 
+
+
+
+//BlinkLED(100, 5); 
+
  
+ 
+#ifndef PROG_VNV
  
 #ifdef XIL_FLASH
+
 #ifndef PROG_MD310_SATI 
   AT91F_DataflashInitx(); 
   
@@ -2570,9 +2650,9 @@ result = bind(socklist[2], &local_sin, sizeof (sockaddr_in));
 
 
 #endif 
+#endif //PROG_VNV 
  
- 
- 
+//BlinkLED(300, 2); 
  
  
 #ifdef START_PRINT 
@@ -2587,7 +2667,11 @@ result = bind(socklist[2], &local_sin, sizeof (sockaddr_in));
 #endif // TESTSTART 
 
 //t150901 AT91F_DataflashPrintInfo ();
-
+#ifdef PROG_BMDN
+  printfp("\n\r go  step2 BMDN();");
+  OperateBuffers_usart0t();
+#endif //PROG_BMDN 
+ BlinkLED(100, 1); 
  
    while (TRUE) 
       {

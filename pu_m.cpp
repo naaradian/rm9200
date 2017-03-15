@@ -5,6 +5,8 @@
 #include "hello7.h"
 #include "embisr.h"
 
+#define UPDOWN_PERIOD	  (30)
+unsigned char modforss;
 
 
 #ifdef PROG_PU_M_V
@@ -567,6 +569,8 @@ unsigned char Modify5A(unsigned char byte)
 // 	unsigned CRC() {	if(Length()<256) return body[Length()+12] + (body[Length()+11]<<8);	else return 0; }
 
 #include "embmsg485.cpp"
+
+
 
 /*
 struct EmbMsg485
@@ -1878,49 +1882,6 @@ extern "C" void SaveParameterToNVRAM(unsigned long current_port, unsigned char p
 
 							  
 
-
-void WritePort()
-{
-	if((embMsgRequest->Body(1)&0xC0)==0x80)
-	{
-		embMsg485Request_1.Init();
-		embMsg485Request_1.SetAddr(0);//0x01);
-		embMsg485Request_1.SetLength(4);//4
-		embMsg485Request_1.SetBody(0,0x07);
-		embMsg485Request_1.SetBody(1,embMsgRequest->Body(0));
-		embMsg485Request_1.SetBody(2,embMsgRequest->Body(1)&0x3F);
-		embMsg485Request_1.SetBody(3,embMsgRequest->Body(4));
-		embMsg485Request_1.CalcCRC();
-		embMsg485Request_1.SetReadyToSend();
-	}
-	else
-	{
-		if((embMsgRequest->Body(1)&0xC0)==0xC0)
-		{
-			embMsg485Request_2.Init();
-			embMsg485Request_2.SetAddr(0);//0x02);
-			embMsg485Request_2.SetLength(4);//4
-			embMsg485Request_2.SetBody(0,0x07);
-			embMsg485Request_2.SetBody(1,embMsgRequest->Body(0));
-			embMsg485Request_2.SetBody(2,embMsgRequest->Body(1)&0x3F);
-			embMsg485Request_2.SetBody(3,embMsgRequest->Body(4));
-			embMsg485Request_2.CalcCRC();
-			embMsg485Request_2.SetReadyToSend();
-		}
-		else
-		{
-			outportb(embMsgRequest->Body(0)+(embMsgRequest->Body(1)<<8), embMsgRequest->Body(4));
-			SaveParameterToNVRAM(embMsgRequest->Body(0)+(embMsgRequest->Body(1)<<8) , embMsgRequest->Body(4));
-			embMsgAns.SetType(0x0A);
-			embMsgAns.SetBody(0,embMsgRequest->Body(0));
-			embMsgAns.SetBody(1,embMsgRequest->Body(1));
-			embMsgAns.SetBody(2,0);
-			embMsgAns.SetBody(3,8);
-			embMsgAns.SetBody(4,embMsgRequest->Body(4));
-			embMsgAns.SetLength(5);
-		}
-	}
-}
  /*
 void ReadPort()
 {
@@ -2123,6 +2084,56 @@ EmbMsg485Buffer tBuffEmbMsg485Request_2;
 
 
 
+void WritePort()
+{
+	if((embMsgRequest->Body(1)&0xC0)==0x80)
+	{
+		embMsg485Request_1.Init();
+		embMsg485Request_1.SetAddr(0);//0x01);
+		embMsg485Request_1.SetLength(4);//4
+		embMsg485Request_1.SetBody(0,0x07);
+		embMsg485Request_1.SetBody(1,embMsgRequest->Body(0));
+		embMsg485Request_1.SetBody(2,embMsgRequest->Body(1)&0x3F);
+		embMsg485Request_1.SetBody(3,embMsgRequest->Body(4));
+		embMsg485Request_1.CalcCRC();
+		embMsg485Request_1.SetReadyToSend();
+		 tBuffEmbMsg485Request_1.Add(embMsg485Request_1);
+
+	}
+	else
+	{
+		if((embMsgRequest->Body(1)&0xC0)==0xC0)
+		{
+			embMsg485Request_2.Init();
+			embMsg485Request_2.SetAddr(0);//0x02);
+			embMsg485Request_2.SetLength(4);//4
+			embMsg485Request_2.SetBody(0,0x07);
+			embMsg485Request_2.SetBody(1,embMsgRequest->Body(0));
+			embMsg485Request_2.SetBody(2,embMsgRequest->Body(1)&0x3F);
+			embMsg485Request_2.SetBody(3,embMsgRequest->Body(4));
+			embMsg485Request_2.CalcCRC();
+			embMsg485Request_2.SetReadyToSend();
+			 tBuffEmbMsg485Request_2.Add(embMsg485Request_2);
+
+		}
+		else
+		{
+			outportb(embMsgRequest->Body(0)+(embMsgRequest->Body(1)<<8), embMsgRequest->Body(4));
+			SaveParameterToNVRAM(embMsgRequest->Body(0)+(embMsgRequest->Body(1)<<8) , embMsgRequest->Body(4));
+			embMsgAns.SetType(0x0A);
+			embMsgAns.SetBody(0,embMsgRequest->Body(0));
+			embMsgAns.SetBody(1,embMsgRequest->Body(1));
+			embMsgAns.SetBody(2,0);
+			embMsgAns.SetBody(3,8);
+			embMsgAns.SetBody(4,embMsgRequest->Body(4));
+			embMsgAns.SetLength(5);
+		}
+	}
+}
+
+
+
+
 
 void ReadPort()
 {
@@ -2178,7 +2189,7 @@ void ReadPort()
 
 #ifdef OP_TRUNKS
 
-
+/*  //170315
 struct ModeTrunk
 {
 // unsigned char lock_pd	: 1;
@@ -2188,6 +2199,21 @@ struct ModeTrunk
  unsigned char lock_pd	: 1;	  //low bit
 
 };
+ */
+struct ModeTrunk
+{
+ unsigned char lock_pd	: 1;
+// unsigned char onpd		: 1;
+ unsigned char lock_pm	: 1;
+ unsigned char onpd		: 1;
+// unsigned char lock_pd	: 1;	 
+
+};
+
+
+
+
+
 
 union uModeTrunk
 {
@@ -3124,6 +3150,9 @@ cnt = 0l;
 	//	unsigned eee;
 
 #ifndef OP_TRUNKS
+//#ifdef OP_TRUNKS
+
+
 
 //#if 1
    
@@ -3176,7 +3205,7 @@ if(GetTestMode() == 0x50)
 
 //  		if(time1-time1old > 30) // 10
  // if(0)	   //test
- 		if(time1-time1old > 100) // 10
+ 		if(time1-time1old > UPDOWN_PERIOD) // 10
 		{
 			time1old = time1;
 			countUD1++;
@@ -3226,8 +3255,7 @@ if(GetTestMode() == 0x50)
 
 		  //				printf(".%0X",embMsgUD_1.Body(i));
 			 }
-
-					switch(embMsg485Request_1.body[i])
+							switch(embMsg485Request_1.body[i])
 					{
 					case 0x5A: embSerialACT155.AddUD1(0x5A); embSerialACT155.AddUD1(0x00); break;
 					case 0x55: embSerialACT155.AddUD1(0x5A); embSerialACT155.AddUD1(0x01); break;
@@ -3235,6 +3263,8 @@ if(GetTestMode() == 0x50)
 					case 0xAA: embSerialACT155.AddUD1(0x5A); embSerialACT155.AddUD1(0x03); break;
 					default: embSerialACT155.AddUD1(embMsg485Request_1.body[i]);
 					}
+
+
 				}
 				embMsg485Request_1.Init();
 			}
@@ -3287,7 +3317,7 @@ if(GetTestMode() == 0x50)
 	 //	if(time1-time2old>10) // 10
  //  if(0)  //test
   // 		if(time1-time2old > 30) //port
-		if(time1-time2old > 100) //port
+		if(time1-time2old > UPDOWN_PERIOD) //port
 		{
 			time2old = time1;
 			countUD2++;

@@ -42,11 +42,19 @@
 				tBuffRS485.Get(embMsgA);
             
 #ifdef RS485E_ENABLED
+#ifdef DEB_ETH_485
+       printfp("\n\r");
+#endif       
 
 				embRS485.TransEC(0x55);	  //EC - RDN!!! in all
 			  	embRS485.TransEC(0xAA);
 				for(i=0; i<embMsgA.FullSize(); i++) 
 							{
+                     
+#ifdef DEB_ETH_485
+       printfpd(" _%02X", embMsgA.body[i]);
+#endif       
+                     
 								switch(embMsgA.body[i])
 								{
 								case 0x5A: embRS485.TransEC(0x5A); embRS485.TransEC(0x00); break;
@@ -205,11 +213,11 @@
 	if(embMsg232.IsEnd())//&&embMsg.ChkCRC())
 			{
 			 //  ParseMsg((unsigned char *)&embMsg232); 
-#ifdef CHECK_CRC           
+//#ifdef CHECK_CRC           
        if(embMsg232.ChkCRC())   
-#else       
-       if(1)
-#endif       
+//#else       
+//       if(1)
+//#endif       
 				{
 				  embMsgRequest = &embMsg232;
 					flagRequest=1;
@@ -1289,12 +1297,15 @@ if(IsEthTransitMode())
 	while(embRS485.UsedReceiveE())
 			{
 				byte = embRS485.ReceiveE();
-				
+	 //			pak_poz++;
 			   	switch(byte)
 				{
 				case 0x55: embMsg485E.Init(); //  printf("\n\r++++");
 				break; 
-				case 0xAA: embMsg485E.Init(); // printf("\n\r++++");
+				case 0xAA: embMsg485E.Init(); mode5A485E=0; // pak_poz = 0;
+#ifdef DEB_ETH_485
+       printfp("\n\r");
+#endif       
 				break; // Iaeao
 					//			case 0xA5: break; // Ia?ea?ia caanu iao!
 		   		case 0x5A: mode5A485E=1; break;
@@ -1303,16 +1314,25 @@ if(IsEthTransitMode())
 					{
 						embMsg485E.Add(Modify5A(byte));
 						mode5A485E=0;
+                //  if((pak_poz == 2) cur_num = Modify5A(byte);
 					}
-					else embMsg485E.Add(byte);
+					else
+               {
+			          
+                embMsg485E.Add(byte);
+               }
 
 				}
+            
+                      
 				 
 			  //	 embMsg485E.Add(byte);	 //1021
 
-
-
-			 //	  	printf(".%X", byte);
+#ifdef DEB_ETH_485
+			 	  	printfpd(".%X", byte);
+#endif              
+               
+               
 			     if(embMsg485E.IsEnd()) 
 			     
 			       {
@@ -1346,11 +1366,11 @@ if(IsEthTransitMode())
 				   // printEthLongHex(tmpl);
                
 //#ifdef CHECK_CRC           
-//       if(embMsg485E.ChkCRC())
-//         {
+       if(embMsg485E.ChkCRC())
+         {
 //       #else       
-       if(1)
-       {
+//       if(1)
+//       {
 //#endif       
 			  
 		           

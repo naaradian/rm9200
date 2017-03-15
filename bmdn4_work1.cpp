@@ -52,6 +52,8 @@ unsigned long timer_oper_prog;
 
 //SetLoopi(unsigned char dev, unsigned char loop,unsigned long milli, unsigned char nearend, unsigned char trib)
 
+
+
 extern "C" void InitOperProg()
 {
 OperateProgramm * pOperProg;

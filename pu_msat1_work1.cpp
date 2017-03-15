@@ -1528,7 +1528,9 @@ tmp3 = 0;
    case 3: M = -1.0; break;
   }
  //160128 DD  = M * 2.048;
+#ifndef PROG_PU_MSAT5
  SatGet8.Value = M;
+#endif
 
  RGsat = ReadIOBus(CHD_ADDR);  //new dop code
 

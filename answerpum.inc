@@ -733,7 +733,7 @@
 					//	embMsgAns.SetAddrI(SelfID());  //t
 					//	embMsgAns.SetAddrS(SelfID());  //t
 
-	//		   	   printEthLongHex(embMsgRequest->Type());
+		   //	   	   printEthLongHex(embMsgRequest->Type());	   //10
 
 				switch(embMsgRequest->Type())
 					{
@@ -979,7 +979,7 @@
 						ReadPort();
 						break;
 					case 0x10:
-			   //		printEthLongHex(0x10);
+			   //		printEthLongHex(0x1010);
 
 							embMsgAns.SetType(0x10);
 							embMsgAns.SetLength(66);
@@ -1244,7 +1244,7 @@
 					}
 //>>>>
 					embMsgAns.SetCycle(cycle++);
-					embMsgAns.CalcCRC();
+  					embMsgAns.CalcCRC();
 
 					if(flagRequest == 1) 
 					{

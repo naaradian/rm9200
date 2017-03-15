@@ -1,6 +1,6 @@
 ;Codewright Project Space File (do not remove or modify this line)
 [State]
-StateWindowFrame=325,72,940,630,0x43897fca
+StateWindowFrame=0,0,940,630,0x43897fca
 _StateHistory=PROJECTS,'.\hello7.pjt'
 _RestoreProject='.\hello7.pjt'
 ProjSpaceFlags=0x00000000, 1

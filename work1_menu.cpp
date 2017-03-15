@@ -5097,6 +5097,9 @@ LogClearItem.Init(&theAnyStrings.cLogClear[0],
 
 #else //PROG_MD310_SATI
 
+#ifndef	PROG_VNV
+
+
 #ifndef PROG_MD310_SATI2
 
 #include menu_310s.cpp
@@ -5105,6 +5108,7 @@ LogClearItem.Init(&theAnyStrings.cLogClear[0],
 #include menu_310s2.cpp
 #endif
 
+#endif
 
 #endif
 
@@ -7178,6 +7182,7 @@ MDataC	ModulSK;
 #endif
 
 #ifdef PROG_BMDN
+#ifndef PROG_VNV
 
 Protect0.Value = (float64)( ((unsigned int)Buf[290] << 24) + ((unsigned int)Buf[291] << 16) 
  	+ ((unsigned int)Buf[292] << 8) +  (unsigned int)Buf[293]);
@@ -7273,7 +7278,7 @@ SetProt(17, Protect17.Value);
 #endif
 
 #endif
-
+#endif
 #ifdef HAVE_GATEWAY
 
  Network.Value = (float64)( ((unsigned int)Buf[362] << 24) + ((unsigned int)Buf[363] << 16) 
@@ -7460,12 +7465,14 @@ WebPassword.Value = (float64)( ((unsigned long)Buf[467] << 24) + ((unsigned long
 WebPassword.ChangingValue =  WebPassword.Value;
 
 #ifdef PROG_PU_MSAT
+#ifndef PROG_VNV
 
   dev1.pum100s1.WebPasswordr0 = 	(unsigned)WebPassword.Value;
  	 dev1.pum100s1.WebPasswordr1 = 	(unsigned)WebPassword.Value>>8;
  	 dev1.pum100s1.WebPasswordr2 = 	(unsigned)WebPassword.Value>>16;
  	 dev1.pum100s1.WebPasswordr3 = 	(unsigned)WebPassword.Value>>24;
 
+#endif
 #endif
 #endif
 
@@ -8587,7 +8594,7 @@ MDataC	ModulSK;
 #endif
 
 #ifdef PROG_BMDN
-
+#ifndef PROG_VNV
 Protect0.Value = (float64)( ((unsigned int)Buf[290] << 24) + ((unsigned int)Buf[291] << 16) 
  	+ ((unsigned int)Buf[292] << 8) +  (unsigned int)Buf[293]);
 Protect0.ChangingValue =  Protect0.Value;
@@ -8680,7 +8687,7 @@ Protect17.ChangingValue =  Protect17.Value;
 SetProt(17, Protect17.Value);
 
 #endif
-
+#endif
 #endif
 
 #ifdef HAVE_GATEWAY
@@ -8869,12 +8876,14 @@ WebPassword.Value = (float64)( ((unsigned long)Buf[467] << 24) + ((unsigned long
 WebPassword.ChangingValue =  WebPassword.Value;
 
 #ifdef PROG_PU_MSAT
+#ifndef PROG_VNV
 
   dev1.pum100s1.WebPasswordr0 = 	(unsigned)WebPassword.Value;
  	 dev1.pum100s1.WebPasswordr1 = 	(unsigned)WebPassword.Value>>8;
  	 dev1.pum100s1.WebPasswordr2 = 	(unsigned)WebPassword.Value>>16;
  	 dev1.pum100s1.WebPasswordr3 = 	(unsigned)WebPassword.Value>>24;
 
+#endif
 #endif
 #endif
 
@@ -9508,6 +9517,7 @@ extern "C" void WriteDevId(void)
 writeid_counter++;
 
 #ifdef MAKET_PLATA	
+BlinkLED(50, 2); 
 printfpd("\n\rWritedevId : %d ", DEV_ID_SIZE);
 #endif
 
@@ -9522,6 +9532,12 @@ printfpd("\n\rWritedevId : %d ", DEV_ID_SIZE);
  unsigned int cnt;
 
  tmp = 	DevId.Value;
+ if(!tmp)
+ {
+ // BlinkLED(50, 2);
+  printfp("\n\r Try writing DevId to zero!!"); 
+  return;   // 170117 devid should be not zero!!!!
+ }
  Buf[0] = (char)(tmp >> 8);	  Buf[1] = (char)(tmp);
  tmp = 	DevYear.Value;
  Buf[2] = (char)(tmp >> 8);	  Buf[3] = (char)(tmp);
@@ -11184,7 +11200,14 @@ extern "C" AnyStrings::Init()
 #ifdef PROG_PU_MSAT
 	  //	 strcpy(cLogoLd,   " PU-MSAT                ");
 
+#ifdef PROG_VNV1
+		 strcpy(cLogoLd,   "          VNV           ");
+
+#else
+
 #ifndef PROG_PU_MSAT5
+
+		 strcpy(cLogoLd,   "SBSL-LinkDoubler        ");
 
 #ifndef PROG_PU_MSAT1
 		 strcpy(cLogoLd,   "SBSL-LinkDoubler1       ");
@@ -11216,8 +11239,8 @@ extern "C" AnyStrings::Init()
 //		 strcpy(cLogoLd1,  "        PU-MSAT         ");
  strcpy(cLogoLd1,  "        SBSL-100        ");
 
-
-#endif // PROG_PU_M100
+#endif  //vnv1
+#endif // pu_msat
 
 
 #ifdef PROG_PU_M_MUX
@@ -12103,7 +12126,10 @@ unsigned long num;
 			 break;
 	case 17: WriteDevId();	//pok
 			 #ifdef PROG_MD310_SAT
+			 #ifndef PROG_VNV
  				OperateACM();
+
+			 #endif
 			 #endif
 	 			break;
 	case 18: embRS232_rcvbuf_Add((unsigned char)(Mf20Data.Value));
@@ -12405,7 +12431,7 @@ case 111:
 #endif //PRM_PCH_DEM	
 
 #ifdef PROG_BMDN
-
+#ifndef PROG_VNV
 case 113:
  			SetProt(0, Protect0.Value);
 			SetParseFlags(0);	 //may be make delayyed - to not waiting
@@ -12500,6 +12526,7 @@ case 130:
 			SetNeedWriteDevId();
 			break;
 
+#endif
 #endif
 #endif // PROG_BMDN
 
@@ -13026,6 +13053,8 @@ break; //	  NamesConfigFiles1
 
 case 258:	  break; //satget8
 
+#ifndef PROG_VNV
+
 case 259:
 //printfp("\n\r ______259__\n\r");
 
@@ -13074,6 +13103,7 @@ case 260:
 break; //	  NamesConfigFiles
 
 #endif
+#endif //prog_vnv
 
 case 261: 
 	  //	printfp("\n\r");
@@ -15860,7 +15890,10 @@ if(State.Reg2.bit.NetMask)  //change ip address
 
 
 #endif
+
+
 #ifdef PROG_BMDN4
+#ifndef PROG_VNV
 if(State.Reg2.bit.OperProg)  //change ip address
 	{
 	  	ParseOperProg();
@@ -15868,10 +15901,12 @@ if(State.Reg2.bit.OperProg)  //change ip address
     	State.Reg2.bit.OperProg = 0;
 	 //	dev_restart(); //to test
 	}
-
+#endif
 #endif
 
 #ifdef PROG_PU_M710
+#ifndef PROG_VNV
+
 if(State.Reg2.bit.OperProg)  //change ip address
 	{
 	  	ParseOperProg();
@@ -15879,7 +15914,7 @@ if(State.Reg2.bit.OperProg)  //change ip address
     	State.Reg2.bit.OperProg = 0;
 	 //	dev_restart(); //to test
 	}
-
+#endif
 #endif
 
 
@@ -16258,13 +16293,16 @@ printfp("\n\r bit.LogClear = 1");
 	{
    	    WriteDevId();
 #ifdef 	PROG_MD310_SATI
+#ifndef PROG_VNV
         KeepParamsInIFModule();
+#endif //prog_vnv
 #endif
     	State.Reg2.bit.WriteId = 0;
 	 //	dev_restart(); //to test
 	}
 
 #ifdef PROG_BMDN3
+#ifndef PROG_VNV
 
 if(State.Reg2.bit.RAConf0)  //
 	{
@@ -16501,9 +16539,12 @@ if(State.Reg2.bit.ProtSt)  //
    	  State.Reg2.bit.ProtSt = 0;
 	}
 
+
+#endif //no VNV
 #endif
 
 #ifdef PROG_BMDN4
+#ifndef PROG_VNV
 
 if(State.Reg2.bit.RAConf0)  //
 	{
@@ -16743,12 +16784,14 @@ if(State.Reg2.bit.ProtSt)  //
    	  State.Reg2.bit.ProtSt = 0;
 	}
 
+
+#endif //no vnv
 #endif
 
 
 
 #ifdef PROG_BMDN
-
+#ifndef PROG_VNV
 if(State.Reg2.bit.ModEth)  //
 	{
   //	   SetOffset();
@@ -16924,11 +16967,12 @@ if(State.Reg2.bit.FillCFV8)  //
 	}
 
 
-
+#endif //no PROG_VNV
 #endif //PROG_BMDN
 
 
 #ifdef PROG_MD310_SATI
+#ifndef PROG_VNV
 
 if(State.Reg2.bit.SatSound)  //
 	{
@@ -16950,7 +16994,12 @@ if(State.Reg2.bit.MAll)  //
 	   //some for make
    //	  CheckRestoringData();  //check all setted data
  //     LoadDDSs(); //need to make at start full loading ddss
+
+  #ifndef PROG_VNV
+
       StartLoadAllM();
+
+#endif
 
 	   State.Reg2.bit.WriteId = 1;
 
@@ -17449,7 +17498,7 @@ if(State.Reg2.bit.IFmoduleData)  //
 	State.Reg2.bit.IFmoduleData = 0;
 	}
 
-
+#endif //no vnv
 #endif
 
 
