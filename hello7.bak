@@ -73,7 +73,7 @@
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>263 need : 
 
 //#define PROG_PU_M		   //pu_m.cpp
-#define PROG_PU_M_MUX	  //pu_m.cpp
+//#define PROG_PU_M_MUX	  //pu_m.cpp
 //#define PROG_PU_M710   //= md34e	  //pu_m710.cpp
 
 //#define PROG_PU_M100	 //pu_m100.cpp	 any maket
@@ -83,7 +83,7 @@
 //#define PROG_PU_MSAT3	// pu_msat.cpp	  linkdoubler 3		2048
 //#define PROG_PU_MSAT4 //pu_msat1.cpp linkdoubler 4 = linkdoubler2(menu with 1024)	 menu	
 
-//#define PROG_PU_MSAT5	 // linkdoubler1 1024 tfs_data.c web interface  file need copy!!!! pu_msat5.cpp  1024
+#define PROG_PU_MSAT5	 // linkdoubler1 1024 tfs_data.c web interface  file need copy!!!! pu_msat5.cpp  1024
 
 
 
@@ -270,7 +270,7 @@
 //#define DEBUG_COUNTERS
 //#define TEMPORARY_DO_NOT_STOP_RECEIVE
 
-//#define NO_USE_WD
+#define NO_USE_WD
 
 //#define CHECK_LOSS_MEM
 //#define KSS_PRINT_LOG
@@ -3965,7 +3965,7 @@ extern "C" void PU_M(void);
 
 #ifdef 	PROG_PU_M_MUX
 
-//t170315 #define OP_TRUNKS
+#define OP_TRUNKS
 
 #define  ALARM_LEVEL_UD (4)
 #define POWER_ALARM		(85 << 1)
