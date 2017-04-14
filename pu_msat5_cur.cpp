@@ -3791,7 +3791,7 @@ EmbInit();	 //embrs232 embrs485
  //______________________________
  //
 
-//170323 not need  LoadDDSs(); //need to make at start full loading ddss
+  LoadDDSs(); //need to make at start full loading ddss
   StartLoadAll();
 
 //ReadDevId(0); //for test
@@ -5937,7 +5937,7 @@ unsigned char cdac;
 
 #define DKOEF_SIZE (13)
 #define FREQ_ODIV  (1425)
-#define FREQ_REF   (80000000) // (10000000)	
+#define FREQ_REF   (10000000)	
 
 
 DKoef dkoef[DKOEF_SIZE];
@@ -6109,42 +6109,6 @@ unsigned long i = Findf(freq);
 unsigned long odiv;
 unsigned long INT_K;
 unsigned long frac;
-
-
-unsigned char DIV4_EN; 
-unsigned char VCO_SEL; 
-unsigned long Fvco;
- 
-if(freq > FREQ_ODIV) { DIV4_EN = 0; Fvco = freq << 1; }
-else { DIV4_EN = 1; Fvco = freq << 2;}
-
-if (4600000 <= (Fvco / 1000))
- {VCO_SEL=0;
- }
-else
-{ if (4020000000 <= Fvco)
-  {VCO_SEL=1;
- }
-else
-{
- if (3500000000 <= Fvco)
- {VCO_SEL=2;
-}
-else 
-{
- VCO_SEL=3;
-}}}
-
-printfpd("D VCO_SEL : % 02X", VCO_SEL);
-printfpd("D DIV4_EN : % 02X", DIV4_EN);
-
-INT_K = (Fvco) / (unsigned long)FREQ_REF;
-
-frac = ((Fvco % (unsigned long)FREQ_REF) << 16) / (unsigned long)FREQ_REF;
-
-printfpd("\n\rD MINT_K : %d", INT_K);
-printfpd(" D frac : %d", frac);
-
   
 
 //_________________________________________________________________________rx adrf 6820
@@ -6158,12 +6122,12 @@ IOSpiSendR(5   , 3,  0,DataDDS, DataDDS);
 	 delay_mcs(10000);  //delay 10ms
 
 pData = DataDDS;
-*pData++ = 0x02;   *pData++ = 0xfe;	 *pData = 0xff; //0x7f;  //addr 20
+*pData++ = 0x02;   *pData++ = 0xf6;	 *pData = 0xff; //0x7f;  //addr 20
 IOSpiSendR(4   , 3,  0,DataDDS, DataDDS);	  //channel C
 IOSpiSendR(5   , 3,  0,DataDDS, DataDDS);	
 
 pData = DataDDS;
-*pData++ = 0x20;   *pData++ = 0xfe;	 *pData = 0x7f;  //addr 20
+*pData++ = 0x20;   *pData++ = 0xf6;	 *pData = 0x7f;  //addr 20
 IOSpiSendR(4   , 3,  0,DataDDS, DataDDS);	  //channel C
 IOSpiSendR(5   , 3,  0,DataDDS, DataDDS);	
 
@@ -6176,7 +6140,7 @@ IOSpiSendR(4   , 3,  0,DataDDS, DataDDS);	  //channel C
 IOSpiSendR(5   , 3,  0,DataDDS, DataDDS);	
 
 pData = DataDDS;
-*pData++ = 0x42;   *pData++ = 0;	 *pData = 0x29;//0x28; //0x09;  //addr 21
+*pData++ = 0x42;   *pData++ = 0;	 *pData = 0x09;  //addr 21
 IOSpiSendR(4   , 3,  0,DataDDS, DataDDS);	  //channel C
 IOSpiSendR(5   , 3,  0,DataDDS, DataDDS);	
 
@@ -6224,60 +6188,6 @@ IOSpiSendR(4   , 3,  0,DataDDS, DataDDS);	  //channel C
 */
 
 
-
-//_________--------t
-pData = DataDDS;
-*pData++ = 0x60;   *pData++ = 0;	 *pData = 0x22;  //addr 30
-IOSpiSendR(4   , 3,  0,DataDDS, DataDDS);	  //channel C
-IOSpiSendR(5   , 3,  0,DataDDS, DataDDS);	
-
-pData = DataDDS;
-*pData++ = 0x62;   *pData++ =5;  *pData = 5;  //addr 31
-IOSpiSendR(4   , 3,  0,DataDDS, DataDDS);	  //channel C
-IOSpiSendR(5   , 3,  0,DataDDS, DataDDS);	
-
-	
- 
-pData = DataDDS;
-*pData++ = 0x44;   *pData++ = 0x2A;	    *pData = 3;
-
-//if(freq > FREQ_ODIV) { *pData++ = 0x03; odiv = 1; } else { *pData++ = 0x0B;	odiv = 2;}
-
-IOSpiSendR(4   , 3,  0,DataDDS, DataDDS);	  //channel C
-IOSpiSendR(5   , 3,  0,DataDDS, DataDDS);	
- 
-
-
-pData = DataDDS;
-*pData++ = 0x04;   	  //addr2
-
-//INT_K = (odiv * freq) / (unsigned long)FREQ_REF;
-
-		 *pData++ =8;    *pData++ = 0x50; 
-IOSpiSendR(4   , 3,  0,DataDDS, DataDDS);	  //channel C
-IOSpiSendR(5   , 3,  0,DataDDS, DataDDS);	
-
-
-pData = DataDDS;
-*pData++ = 0x06;   	   //addr 3
-
-
-
-//frac = (((odiv * freq) % (unsigned long)FREQ_REF) << 16)/ (unsigned long)FREQ_REF;
-
-		 *pData++ = 0;    *pData++ = 0; 
-IOSpiSendR(4   , 3,  0,DataDDS, DataDDS);	  //channel C
-IOSpiSendR(5   , 3,  0,DataDDS, DataDDS);	
-
-pData = DataDDS;
-*pData++ = 0x08;   *pData++ =0;	 *pData = 0;  //addr 4
-IOSpiSendR(4   , 3,  0,DataDDS, DataDDS);	  //channel C
-IOSpiSendR(5   , 3,  0,DataDDS, DataDDS);	
-
-//____________________---t
-
-
-/*
 pData = DataDDS;
 *pData++ = 0x60;   *pData++ = 0;	 *pData = GetDReg (i,602);  //addr 30
 IOSpiSendR(4   , 3,  0,DataDDS, DataDDS);	  //channel C
@@ -6289,25 +6199,15 @@ IOSpiSendR(4   , 3,  0,DataDDS, DataDDS);	  //channel C
 IOSpiSendR(5   , 3,  0,DataDDS, DataDDS);	
 
 pData = DataDDS;
-// *pData++ = 0x44;   *pData++ = 0x2A;
-//if(freq > FREQ_ODIV) { *pData++ = 0x03; odiv = 1; } else { *pData++ = 0x0B;	odiv = 2;}
-
-*pData++ = 0x44;   *pData++ = 0x2A;	    *pData = (VCO_SEL << 1) | DIV4_EN;
-
-//if(freq > FREQ_ODIV) { *pData++ = 0x03; odiv = 1; } else { *pData++ = 0x0B;	odiv = 2;}
-
-//IOSpiSendR(3   , 3,  0,DataDDS, DataDDS);	  //channel C
-
-
-
-
+*pData++ = 0x44;   *pData++ = 0x2A;
+if(freq > FREQ_ODIV) { *pData++ = 0x03; odiv = 1; } else { *pData++ = 0x0B;	odiv = 2;}
 IOSpiSendR(4   , 3,  0,DataDDS, DataDDS);	  //channel C
 IOSpiSendR(5   , 3,  0,DataDDS, DataDDS);	
 
 pData = DataDDS;
 *pData++ = 0x04;   	  //addr2
 
-//INT_K = (odiv * freq) / (unsigned long)FREQ_REF;
+INT_K = (odiv * freq) / (unsigned long)FREQ_REF;
 
 		 *pData++ = (unsigned char)(INT_K >> 8);    *pData++ = (unsigned char)INT_K; 
 IOSpiSendR(4   , 3,  0,DataDDS, DataDDS);	  //channel C
@@ -6319,7 +6219,7 @@ pData = DataDDS;
 
 
 
-//frac = (((odiv * freq) % (unsigned long)FREQ_REF) << 16)/ (unsigned long)FREQ_REF;
+frac = (((odiv * freq) % (unsigned long)FREQ_REF) << 16)/ (unsigned long)FREQ_REF;
 
 		 *pData++ = (unsigned char)(frac >> 8);    *pData++ = (unsigned char)frac; 
 IOSpiSendR(4   , 3,  0,DataDDS, DataDDS);	  //channel C
@@ -6329,7 +6229,7 @@ pData = DataDDS;
 *pData++ = 0x08;   *pData++ = 0xff;	 *pData = 0xff;  //addr 4
 IOSpiSendR(4   , 3,  0,DataDDS, DataDDS);	  //channel C
 IOSpiSendR(5   , 3,  0,DataDDS, DataDDS);	
-	*/
+
 //can be controlled lock after 10 ms
   
 //_________________________________________________________________________rxdds
@@ -6444,9 +6344,9 @@ IOSpiSendR(3 , 3, 0, DataDDS, DataDDS);	  //channel D
 
 
 
-extern void LoadIFMd(unsigned long freq)
+extern "C" void LoadIFMd(unsigned long freq)
 {
-printfpd("\n\r LoadIFMd : %11d \n\r", freq);
+printfp("\n\r LoadIFMd");
 
 unsigned char * pData;
 static unsigned char DataDDS[SENDED_DDS_FREQ_LEN];//
@@ -6458,51 +6358,25 @@ unsigned long frac;
 unsigned char DIV4_EN; 
 unsigned char VCO_SEL; 
 unsigned long Fvco;
-
-printfpd("\n\r M FREQ_ODIV : %d", FREQ_ODIV);
-
-printfpd("\n\r M Fvco : %d",Fvco);
-
  
-if(freq > FREQ_ODIV) { DIV4_EN = 0; Fvco = freq << 1; odiv = 1; }
-else { DIV4_EN = 1; Fvco = freq << 2; odiv = 2;}   
+if(freq > FREQ_ODIV) { DIV4_EN = 0; Fvco = freq >> 1; }
+else { DIV4_EN = 1; Fvco = freq >> 2;}
 
-
-
-if (4600000 <= (Fvco / 1000))
+if (4600 <= Fvco)
  {VCO_SEL=0;
  }
 else
-{ if (4020000000 <= Fvco)
+{ if (4020 <= Fvco)
   {VCO_SEL=1;
  }
 else
 {
- if (3500000000 <= Fvco)
+ if (3500 <= Fvco)
  {VCO_SEL=2;
 }
 else 
-{
  VCO_SEL=3;
 }}}
-
-
-printfpd(" M FREQ_REF : %d ", FREQ_REF);
-
-
-
-INT_K = (Fvco) / (unsigned long)FREQ_REF;
-
-frac = ((Fvco % (unsigned long)FREQ_REF) << 16) / (unsigned long)FREQ_REF;
-
-printfpd("\n\r MINT_K : %d", INT_K);
-printfpd("frac : %d", frac);
-
-
-
-printfpd(" M VCO_SEL : %d", VCO_SEL);
-printfpd(" M DIV4_EN : %d", DIV4_EN);
-
  
 
 //______________________________________________________________________
@@ -6537,11 +6411,11 @@ IOSpiSendR(3 , 3, 0, DataDDS, DataDDS);	  //channel D
 	 delay_mcs(10000);  //delay 10ms
 
 pData = DataDDS;
-*pData++ = 0x02;   *pData++ = 0xf6;	 *pData = 0xff;  //t  0x7f reset  off
+*pData++ = 0x02;   *pData++ = 0xf6;	 *pData = 0xff;  //reset  off
 IOSpiSendR(3 , 3, 0, DataDDS, DataDDS);	  //channel D
 
 pData = DataDDS;
-*pData++ = 0x20;   *pData++ = 0xf6;	 *pData = 0x7f; //  //reset  off
+*pData++ = 0x20;   *pData++ = 0xf6;	 *pData = 0x7f;  //reset  off
 IOSpiSendR(3 , 3, 0, DataDDS, DataDDS);	  //channel D
 
 
@@ -6552,7 +6426,7 @@ pData = DataDDS;
 IOSpiSendR(3  , 3,  0,  DataDDS, DataDDS);	  //channel D
 
 pData = DataDDS;
-*pData++ = 0x42;   *pData++ = 0;	 *pData = 0x29;//t 0x08;  //addr 21
+*pData++ = 0x42;   *pData++ = 0;	 *pData = 0x29;// 0x09;  //addr 21
 IOSpiSendR(3  , 3,  0,  DataDDS, DataDDS);	  //channel D
 
 pData = DataDDS;
@@ -6594,54 +6468,6 @@ IOSpiSend(3  , 3,  0,  DataDDS, DataDDS);	  //channel D
 
 */
 
- //_________--------t
-pData = DataDDS;
-*pData++ = 0x60;   *pData++ = 0;	 *pData = 0;  //addr 30
-IOSpiSendR(3  , 3,  0,  DataDDS, DataDDS);	  //channel C
-
-pData = DataDDS;
-*pData++ = 0x62;   *pData++ =0x11;  *pData = 1;  //addr 31
-IOSpiSendR(3  , 3,  0,  DataDDS, DataDDS);	  //channel C
-
-	
- 
-pData = DataDDS;
-*pData++ = 0x44;   *pData++ = 0x2A;	    *pData = 3;
-
-//if(freq > FREQ_ODIV) { *pData++ = 0x03; odiv = 1; } else { *pData++ = 0x0B;	odiv = 2;}
-
-IOSpiSendR(3   , 3,  0,DataDDS, DataDDS);	  //channel C
-
- 
-
-
-pData = DataDDS;
-*pData++ = 0x04;   	  //addr2
-
-//INT_K = (odiv * freq) / (unsigned long)FREQ_REF;
-
-		 *pData++ =8;    *pData++ = 0x50; 
-IOSpiSendR(3  , 3,  0,  DataDDS, DataDDS);	  //channel C
-
-
-pData = DataDDS;
-*pData++ = 0x06;   	   //addr 3
-
-
-
-//frac = (((odiv * freq) % (unsigned long)FREQ_REF) << 16)/ (unsigned long)FREQ_REF;
-
-		 *pData++ = 0;    *pData++ = 0; 
-IOSpiSendR(3  , 3,  0,  DataDDS, DataDDS);	  //channel C
-
-pData = DataDDS;
-*pData++ = 0x08;   *pData++ =0;	 *pData = 0;  //addr 4
-IOSpiSendR(3  , 3,  0,  DataDDS, DataDDS);	  //channel C
-
-//____________________---t
-
-  /*
-
 pData = DataDDS;
 *pData++ = 0x60;   *pData++ = 0;	 *pData = GetMReg (i,602);  //addr 30
 IOSpiSendR(3  , 3,  0,  DataDDS, DataDDS);	  //channel C
@@ -6665,7 +6491,7 @@ IOSpiSendR(3   , 3,  0,DataDDS, DataDDS);	  //channel C
 pData = DataDDS;
 *pData++ = 0x04;   	  //addr2
 
-//INT_K = (odiv * freq) / (unsigned long)FREQ_REF;
+INT_K = (odiv * freq) / (unsigned long)FREQ_REF;
 
 		 *pData++ = (unsigned char)(INT_K >> 8);    *pData++ = (unsigned char)INT_K; 
 IOSpiSendR(3  , 3,  0,  DataDDS, DataDDS);	  //channel C
@@ -6676,7 +6502,7 @@ pData = DataDDS;
 
 
 
-//frac = (((odiv * freq) % (unsigned long)FREQ_REF) << 16)/ (unsigned long)FREQ_REF;
+frac = (((odiv * freq) % (unsigned long)FREQ_REF) << 16)/ (unsigned long)FREQ_REF;
 
 		 *pData++ = (unsigned char)(frac >> 8);    *pData++ = (unsigned char)frac; 
 IOSpiSendR(3  , 3,  0,  DataDDS, DataDDS);	  //channel C
@@ -6685,7 +6511,7 @@ pData = DataDDS;
 *pData++ = 0x08;   *pData++ = 0xff;	 *pData = 0xff;  //addr 4
 IOSpiSendR(3  , 3,  0,  DataDDS, DataDDS);	  //channel C
 
-   */
+
 
 
 //can be controlled lock after 10 ms

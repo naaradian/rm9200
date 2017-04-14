@@ -171,18 +171,18 @@
 //262 : remove 10 symbols in parse rs232
 
 //#define SOFT_VER (0x509)	 
-#define SOFT_VER (0x1116)    
+#define SOFT_VER (0x1130)    
 #ifndef PROG_PU_MSAT    
 //#define SOFT_VER_STRING    "   14.12.01.1-800 ADESTO"//263 : maked init counter and data for write_buffer_char1()
 //#ifndef PROG_PUPM3_1_ADESTO	
 //#ifndef PROG_PU_MSAT1
-#define SOFT_VER_STRING      "      17.03.15.1-1116    "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING      "      17.04.11.1-1130    "//263 : maked init counter and data for write_buffer_char1()
 #else
 //#define SOFT_VER_STRING "Radian Ver. 01.00        "//263 : maked init counter and data for write_buffer_char1()
 #ifdef	PROG_VNV1
-#define SOFT_VER_STRING      "      17.01.30.2-1116    "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING      "      17.03.30.1-1130    "//263 : maked init counter and data for write_buffer_char1()
 #else
-#define SOFT_VER_STRING   "Radian v1116.70303       "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING   "Radian v1120.70330       "//263 : maked init counter and data for write_buffer_char1()
 #endif
 #endif
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -270,7 +270,11 @@
 //#define DEBUG_COUNTERS
 //#define TEMPORARY_DO_NOT_STOP_RECEIVE
 
+#ifdef PROG_PU_MSAT5
+
 #define NO_USE_WD
+
+#endif
 
 //#define CHECK_LOSS_MEM
 //#define KSS_PRINT_LOG
@@ -3454,6 +3458,10 @@ extern "C" void PU_M(void);
 
 extern "C" unsigned char IOSpiSendR(unsigned char ,  unsigned long , unsigned long ,
 	 unsigned char * , unsigned char * );
+
+extern "C" void  Init_mkoef(void);
+extern "C" void  Init_dkoef(void);
+extern "C" void LoadIFMdt(void);
 
 
 extern "C" void InitLoadIF();

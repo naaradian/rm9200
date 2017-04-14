@@ -13382,6 +13382,16 @@ case 0x33l:
 				StartEth100d();
 				#endif
 
+#ifdef PROG_PU_MSAT5
+for(tm=0;tm<10000;tm++){
+				SetTrFrequency();
+				wd_reset();
+				OperateBuffers_usart0t();
+
+				}
+#endif
+
+
 case 0x34l:  
 		   //	   for(tm = 0; tm <= 1000; tm++)
   			 //	{ 
@@ -13420,6 +13430,18 @@ case 0x35l:
 
 	 // 		}
 			#endif
+
+#ifdef PROG_PU_MSAT5
+  for(tm=0;tm<10000;tm++){
+
+			SetRcvFrequency();
+			wd_reset();
+			OperateBuffers_usart0t();
+
+				}
+
+#endif
+
 				  
 
 	    break;
@@ -14526,7 +14548,10 @@ printfpd("\n\r wr : %d", writeid_counter);
 //printfpd("\n\r h : %02X",unEmb2TypeVer.emb2TypeVer.signature_hardware[i]);
 #ifdef RACM
 #ifndef PROG_KAZAH
+#ifndef PROG_MD310
+
 ACM_DEFAULT_init();
+#endif
 #endif
 #endif
 

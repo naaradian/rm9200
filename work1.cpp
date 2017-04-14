@@ -13361,6 +13361,17 @@ case 0x32l:	  /*
 					wd_reset();
 		 		}
 				*/
+	#ifdef PROG_PU_MSAT5
+for(tm=0;tm<10000;tm++){
+			   LoadIFMdt();
+
+				wd_reset();
+				OperateBuffers_usart0t();
+
+				}
+#endif
+
+
 
                 #ifdef	 PROG_PRM_PCH_SPI_NOXIL_ETH
 				WriteAFRTest();
@@ -13381,6 +13392,16 @@ case 0x33l:
 				#ifdef PROG_MD310
 				StartEth100d();
 				#endif
+
+#ifdef PROG_PU_MSAT5
+for(tm=0;tm<10000;tm++){
+				SetTrFrequency();
+				wd_reset();
+				OperateBuffers_usart0t();
+
+				}
+#endif
+
 
 case 0x34l:  
 		   //	   for(tm = 0; tm <= 1000; tm++)
@@ -13420,6 +13441,18 @@ case 0x35l:
 
 	 // 		}
 			#endif
+
+#ifdef PROG_PU_MSAT5
+  for(tm=0;tm<10000;tm++){
+
+			SetRcvFrequency();
+			wd_reset();
+			OperateBuffers_usart0t();
+
+				}
+
+#endif
+
 				  
 
 	    break;
