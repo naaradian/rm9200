@@ -897,7 +897,7 @@ unsigned char crcud;
 struct Mode15504
 {
  unsigned char mode;
- unsigned char interf;
+ unsigned char interf;	   //&0x3f
 //120203 unsigned long rateEth;
  unsigned char rateEth0;
  unsigned char rateEth1;
@@ -4450,6 +4450,29 @@ union UnBmdState
 	BmdState bmdState;
 };
 
+
+struct Emb2Mux34
+{
+	unsigned char type;
+	unsigned char softVer;
+	unsigned char numE1;
+	unsigned char e3;
+	unsigned short err_e3;
+	unsigned char reserv[2];
+	unsigned char state_e1[16];
+	unsigned char ctrl_e1[16];
+};
+
+union UnEmb2Mux34
+{
+	Emb2Mux34 emb2Mux34;
+	unsigned char byte[40];
+};
+
+	UnEmb2Mux34 unEmb2Mux34;
+
+
+
 //#include "embmsg485.cpp"
 
 /////////////////////
@@ -6052,6 +6075,14 @@ PVG610_API_ComConfigure(0, PVG610_COM_MEDIA_UART_E, 200000000l);
 InitOperProg();
 
 //bad 120608 return;
+unEmb2Mux34.emb2Mux34.numE1 = 16;
+
+for(i=0; i<unEmb2Mux34.emb2Mux34.numE1; i++)
+	{
+		unEmb2Mux34.emb2Mux34.ctrl_e1[i] = 0;
+		unEmb2Mux34.emb2Mux34.state_e1[i] = 0;
+	}
+
 
  if(!MirrorTest())	return;
 
@@ -6594,12 +6625,51 @@ extern "C" void FillLock(unsigned char mod, unsigned char status)
 
 }
 
+extern "C" void ReadE1PM(unsigned char mod, UINT32 e1IndexMask)
+{
+   PVG610_NET_E1_PM_STRUCT  Pm;
+ unsigned char ans;
+ UINT16 OneSecondPeriodCounter = 1;	 //?
+ ans =  PVG610_API_NetE1PmGet(mod, 0,  e1IndexMask, &Pm, &OneSecondPeriodCounter);
+ if(ans) return;
+//hier use Pm
+}
+
+extern "C" unsigned char NetE1Stm1SignalsForce(unsigned char mod, BYTE ifIndex, BYTE  signal, 
+											 BOOLEAN toTheAir)
+{
+ //signal : PVG610_NET_TEST_SIGNAL_ENUM
+// ifIndex : PVG610_NET_TRIB_INDEX_ENUM
+                                                    
+return PVG610_API_NetE1Stm1SignalsForce(mod, 0, ifIndex,	signal,	toTheAir);
+}
+
+extern "C" unsigned char NetE1PrbsMonitorConnect(unsigned char mod,  BOOLEAN connect,
+                                                         BYTE  e1Index,	BOOLEAN fromTheAir)
+{
+ return PVG610_API_NetE1PrbsMonitorConnect( mod, 0, connect,	e1Index,  fromTheAir);
+}
+
+extern "C" unsigned char NetE1PrbsGeneratorConnect(unsigned char mod,  BOOLEAN connect,
+                                                         BYTE  e1Index,	BOOLEAN fromTheAir)
+{
+ return  PVG610_API_NetE1PrbsGeneratorConnect( mod, 0, connect,	e1Index,  fromTheAir);
+}
+
+
+extern "C" unsigned char  NetE1CableConfig(unsigned char mod, BYTE e1Index, BYTE cableConfig)
+{
+ return PVG610_API_NetE1CableConfig(mod, 0, e1Index, cableConfig);
+}
+
+
 extern "C" void ReadErrors(unsigned char mod)
 {
 PVG610_MODEM_FEC_COUNTERS_STRUCT Fc;
 PVG610_MODEM_STATUS_STRUCT	Ms;
 PVG610_MODEM_ACQUIRE_COUNTERS_STRUCT Ac;
 PVG610_NET_E1_ALARMS_STRUCT  Stat[E1_LINES_QUANTITY];
+unsigned char E1LED_LA, E1LED_LB;
 
 //PVG610_API_ModemAcquireCountersGet(0, 0, &Ac);
 unsigned char ans, ans1;
@@ -6650,11 +6720,40 @@ unsigned char ans, ans1;
  ans = PVG610_API_NetE1AlarmsGet(deviceindex,0, 0x1fffffl, &Stat[0]);
 if(ans) return;
 
-for(i = 0; i < E1_LINES_QUANTITY; i++)
+//for(i = 0; i < E1_LINES_QUANTITY; i++)
+//{
+// modemp[deviceindex].netE1Alarms[i] = Stat[i].netE1Alarms;
+//}
+
+
+for(i = 0; i < 8; i++)		 //now 21
 {
  modemp[deviceindex].netE1Alarms[i] = Stat[i].netE1Alarms;
+ if( Stat[i].netE1Alarms & LOSS_BIT) {E1LED_LA |= (1 << i); 
+ unEmb2Mux34.emb2Mux34.state_e1[i] = 1;
+}
+ else  {E1LED_LA &= ~(1 << i);
+ unEmb2Mux34.emb2Mux34.state_e1[i] = 0;
+}
 }
 
+for(i = 8; i < E1_LINES_QUANTITY; i++)		 //now 21
+{
+ modemp[deviceindex].netE1Alarms[i] = Stat[i].netE1Alarms;
+ if( Stat[i].netE1Alarms & LOSS_BIT) {E1LED_LB |= (1 << i);
+  unEmb2Mux34.emb2Mux34.state_e1[i] = 1;
+
+ }
+ else  {E1LED_LB &= ~(1 << i);
+  unEmb2Mux34.emb2Mux34.state_e1[i] = 0;
+
+ }
+}
+
+#ifdef E1_16
+outportb(E1LED_LA_port, E1LED_LA);
+outportb(E1LED_LB_port, E1LED_LB);    
+#endif
 
 
 //____________________________________________________

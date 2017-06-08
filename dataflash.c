@@ -102,7 +102,14 @@ int AT91F_DataflashInit (void)
 		dataflash_info[i].Desc.state = IDLE;
 		dataflash_info[i].id = 0;
 		dataflash_info[i].Device.pages_number = 0;
-		dfcode = AT91F_DataflashProbe (cs[i][1], &dataflash_info[i].Desc);
+     // if(i == 1)
+     // { 
+     //    for(int j = 0; j < 1000; j++ )
+     //		dfcode = AT91F_DataflashProbe (cs[i][1], &dataflash_info[i].Desc);
+     // }
+     // else
+          dfcode = AT91F_DataflashProbe (cs[i][1], &dataflash_info[i].Desc);
+
          if(start_main_loop)
       {
           printfpd(" dfcode = %d ", dfcode);
@@ -111,7 +118,10 @@ int AT91F_DataflashInit (void)
 
 		switch (dfcode) {
 		case AT45DB161:
-   //       printfp("   AT45DB161 ");
+       if(start_main_loop)
+      {
+          printfp("   AT45DB161 ");
+     }          
 
 			dataflash_info[i].Device.pages_number = 4096;
 			dataflash_info[i].Device.pages_size = 528;
@@ -122,6 +132,25 @@ int AT91F_DataflashInit (void)
 			dataflash_info[i].logical_address = cs[i][0];
 			dataflash_info[i].id = dfcode;
 			break;
+         
+		case AT45DB041E:
+       if(start_main_loop)
+      {
+          printfp("   AT45DB041E ");
+     }          
+
+ 	      dataflash_info[i].Device.pages_number = 2048;
+			dataflash_info[i].Device.pages_size = 264;//264;
+			dataflash_info[i].Device.page_offset =9;// ????   9 bits can make byte address in page
+			dataflash_info[i].Device.byte_mask = 0x00;// - one bit in 3 byte used for byte address
+			dataflash_info[i].Device.cs = cs[i][1];
+			dataflash_info[i].Desc.DataFlash_state = IDLE;
+			dataflash_info[i].logical_address = cs[i][0];
+			dataflash_info[i].id = dfcode;
+			break;      
+         
+			break;
+         
 
 		case AT45DB321:
       if(start_main_loop)
@@ -141,6 +170,11 @@ int AT91F_DataflashInit (void)
 
 		case AT45DB642:
    //   printfp("   AT45DB642 ");
+    if(start_main_loop)
+      {
+          printfp("   AT45DB642 ");
+     }
+
 
 			dataflash_info[i].Device.pages_number = 8192;   //32768
 			dataflash_info[i].Device.pages_size = 1056;    //264
@@ -154,6 +188,11 @@ int AT91F_DataflashInit (void)
          
       case AT45DB641E:
    //     printfp("   AT45DB641E ");
+     if(start_main_loop)
+      {
+          printfp("   AT45DB641E ");
+     }
+
 
 			dataflash_info[i].Device.pages_number = 32768;
 			dataflash_info[i].Device.pages_size = 264;//264;
@@ -179,6 +218,11 @@ int AT91F_DataflashInit (void)
 
 		default:
         //          printfp("Flash Is Not Found");
+          if(start_main_loop)
+      {
+        printfp("Flash Is Not Found");
+     }
+
 
       
                    if(!i)

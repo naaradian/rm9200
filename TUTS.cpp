@@ -1154,10 +1154,16 @@ static unsigned char test = 0;
 if(!embMsg485.IsEnd())
 //if(!embMsg485E.IsEnd())	  //t091225
 		{
+
+
+
 			while(embRS485.UsedReceiveE())
 			{
 				byte = embRS485.ReceiveE();
-			 //	printfpd(" %02X", byte);
+#ifdef TUTS_PRINT
+  //			 	printfpd(" %02X", byte);
+#endif
+
 			   	switch(byte)
 				{
 				case 0x55: embMsg485E.Init();//  printf("\n\r++++");
@@ -1190,6 +1196,11 @@ if(!embMsg485.IsEnd())
 ///////////////////////////////
    if(embMsg485E.IsEnd()) 
 				{
+
+#ifdef TUTS_PRINT
+  			 	printfp(" tuts_rcv_msg ");
+#endif
+
 				  
 				//need check!	else //my 090503
 
@@ -1843,6 +1854,11 @@ if(!embMsg485.IsEnd())
 		   //		  static int ecount = 0l;
 		   //		  	printf("\n\r>L %d",++ecount);	   //ttttttt
 		   //			printf("\n\rTR>time1 : %d S :%X R:%X I :%X N:%X >",time1,embMsgAns.AddrS(),embMsgAns.AddrR(),embMsgAns.AddrI(),embMsgAns.body[1]); //090427
+
+#ifdef TUTS_PRINT
+  			 	printfp(" tuts_ans ");
+#endif
+
 		  
 						   embRS485.TransE(0x55);
 		  					embRS485.TransE(0xAA);
@@ -1858,12 +1874,21 @@ if(!embMsg485.IsEnd())
 								case 0xAA: embRS485.TransE(0x5A); embRS485.TransE(0x03); break;
 								default: embRS485.TransE(embMsgAns.body[i]);
 							}
+
+#ifdef TUTS_PRINT
+  			 	printfpd(" %02X", embMsgAns.body[i]);
+#endif
+
 						}
 						embRS485.TransE(0x55);
 				   //		printf("\n\r Used 1");
 					 _int_disable();
 			 			  embRS485.Trans_RDN(embMsgAns.AddrS());
 					 _int_enable();
+#ifdef TUTS_PRINT
+  			 	printfpd("to addr : %X \n\r", embMsgAns.AddrS());
+#endif
+
 
 			 
 						  embRS485.EmptyReceiveE();

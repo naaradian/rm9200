@@ -43,6 +43,7 @@ extern "C" void cashe_on();
 #define AT91C_SPI_PCS3_DATAFLASH_CARD		   0x7     /* Chip Select 3 : NPCS3 %0111 */
 #define AT91C_SPI_PCS1_SERIAL_DATAFLASH		0xD     /* Chip Select 1 : NPCS1 %1101 */
 #define AT91C_SPI_PCS2_SERIAL_DATAFLASH		0xB     /* Chip Select 2 : NPCS2 %1011 */
+#define AT91C_SPI_PCS3_SERIAL_DATAFLASH		0x7     /* Chip Select 3 : NPCS3 %0111 */
 
 
 
@@ -57,8 +58,11 @@ void AT91F_SpiInit(void) {
  _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 0, AT91RM9200_PIO_PERIPHERAL_A, 0); 
  _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 1, AT91RM9200_PIO_PERIPHERAL_A, 0);
  _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 2, AT91RM9200_PIO_PERIPHERAL_A, 0); 
- _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 3, AT91RM9200_PIO_PERIPHERAL_A, 0);
+ _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 3, AT91RM9200_PIO_PERIPHERAL_A, 0);   //cs0
  _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 4, AT91RM9200_PIO_PERIPHERAL_A, 0);   //cs1
+ _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 5, AT91RM9200_PIO_PERIPHERAL_A, 0);   //cs2
+ _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 6, AT91RM9200_PIO_PERIPHERAL_A, 0);   //cs3
+
 
 //	AT91C_BASE_PIOA->PIO_ASR = AT91C_PA3_NPCS0 | AT91C_PA4_NPCS1 | AT91C_PA1_MOSI | AT91C_PA5_NPCS2 |
 //				   AT91C_PA6_NPCS3 | AT91C_PA0_MISO | AT91C_PA2_SPCK;
@@ -82,7 +86,7 @@ void AT91F_SpiInit(void) {
 	*(AT91C_SPI_CSR + 3) = AT91C_SPI_CPOL | (AT91C_SPI_DLYBS & 0x100000) | ((AT91C_MASTER_CLOCK / (2*AT91C_SPI_CLK)) << 8);
 
 #ifndef PROG_PD3
-   *(AT91C_SPI_CSR + 2) = AT91C_SPI_CPOL | (AT91C_SPI_DLYBS & 0x100000) | ((AT91C_MASTER_CLOCK / (2*AT91C_SPI_CLK)) << 8);
+  *(AT91C_SPI_CSR + 2) = AT91C_SPI_CPOL | (AT91C_SPI_DLYBS & 0x100000) | ((AT91C_MASTER_CLOCK / (2*AT91C_SPI_CLK)) << 8);
 #else
    *(AT91C_SPI_CSR + 2) = AT91C_SPI_CPOL | (AT91C_SPI_DLYBS & 0x100000) | ((AT91C_MASTER_CLOCK / (2*AT91C_SPI_CLK2)) << 8);
 //   *(AT91C_SPI_CSR + 2) = AT91C_SPI_CPOL | (AT91C_SPI_DLYBS & 0x100000) | ((AT91C_MASTER_CLOCK / (2*AT91C_SPI_CLK10)) << 8);
@@ -104,6 +108,10 @@ void AT91F_SpiInit(void) {
 /* \brief Enable SPI chip select											  */
 /*----------------------------------------------------------------------------*/
 void AT91F_SpiEnable(int cs) {
+//if(start_main_loop)
+//printfpd("\n\r  AT91F_SpiEnable %d", cs);
+
+
 	switch(cs) {
 	case 0:	/* Configure SPI CS0 for Serial DataFlash AT45DBxx */
 		AT91C_BASE_SPI->SPI_MR &= 0xFFF0FFFF;
@@ -116,8 +124,9 @@ void AT91F_SpiEnable(int cs) {
 		/* Clear Output */
   //not need now		AT91C_BASE_PIOB->PIO_CODR = AT91C_PIO_PB7;
 		/* Configure PCS */
-  //not need now		AT91C_BASE_SPI->SPI_MR &= 0xFFF0FFFF;
-  //not need now		AT91C_BASE_SPI->SPI_MR |= ((AT91C_SPI_PCS3_DATAFLASH_CARD<<16) & AT91C_SPI_PCS);
+  		AT91C_BASE_SPI->SPI_MR &= 0xFFF0FFFF;
+  	//	AT91C_BASE_SPI->SPI_MR |= ((AT91C_SPI_PCS3_DATAFLASH_CARD<<16) & AT91C_SPI_PCS);
+      AT91C_BASE_SPI->SPI_MR |= ((AT91C_SPI_PCS3_SERIAL_DATAFLASH<<16) & AT91C_SPI_PCS);
 		break;
    case 1:	/* Configure SPI CS1 for Serial DataFlash AT45DBxx */
 		AT91C_BASE_SPI->SPI_MR &= 0xFFF0FFFF;
@@ -128,7 +137,7 @@ void AT91F_SpiEnable(int cs) {
 		AT91C_BASE_SPI->SPI_MR &= 0xFFF0FFFF;
 		AT91C_BASE_SPI->SPI_MR |= ((AT91C_SPI_PCS2_SERIAL_DATAFLASH<<16) & AT91C_SPI_PCS);
       
-   
+        break;
       
 	}
 
@@ -2269,6 +2278,7 @@ extern unsigned char start_main_loop;
 /*------------------------------------------------------------------------------*/
 int AT91F_DataflashProbe(int cs, AT91PS_DataflashDesc pDesc)
 {
+//if(start_main_loop)
 //printfpd("\n\r AT91F_DataflashProbe %d", cs);
 
 	AT91F_SpiEnable(cs);
@@ -2292,10 +2302,10 @@ int AT91F_DataflashProbe(int cs, AT91PS_DataflashDesc pDesc)
    
   if(start_main_loop)
   { 
-     printfpd("\n\r 0:%x ", pDesc->command[0]);   //ff
+   printfpd("\n\r 0:%x ", pDesc->command[0]);   //ff
    printfpd(" 1: %x", pDesc->command[1]);      //1f
-  printfpd(" 2: %x", pDesc->command[2]);      //28
-  printfpd(" 3: %x", pDesc->command[3]);      //0
+   printfpd(" 2: %x", pDesc->command[2]);      //28
+   printfpd(" 3: %x", pDesc->command[3]);      //0
    printfpd(" 4: %x\n\r", pDesc->command[4]);   //1 -adesto   0 - 642
  }
  
@@ -2315,6 +2325,8 @@ int AT91F_DataflashProbe(int cs, AT91PS_DataflashDesc pDesc)
 //#else      
   //     	return ((pDesc->command[1] == 0xFF)? 0 : (int)AT45DB641E);	
 //#endif    
+  if(pDesc->command[2] == 0x27) return  pDesc->command[2]; //adeste at45db321e
+
  return ((pDesc->command[2] == 0xFF)? 0: (pDesc->command[2] + pDesc->command[4])); //0x28 - atmel or 0x29 - adesto
      
 }

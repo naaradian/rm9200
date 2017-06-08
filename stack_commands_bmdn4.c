@@ -4,7 +4,12 @@ command_counter++;
 
 ///////////////////////////////////////	UPP /////////////////////////////////////////////
              embMsgAns.SetLength(0); //121023 - if have wrong command - set as default minimum length
-			 	switch(embMsgRequest->Type())
+			
+         
+          // printf("\n\r command : 0x%02X", embMsgRequest->Type());
+                //  	printEthLongHex(embMsgRequest->Type());
+
+          	switch(embMsgRequest->Type())
 					{
                
               
@@ -304,7 +309,18 @@ command_counter++;
 							unEmb2NetStat.emb2NetStat.ready_transit=0;
 							unEmb2NetStat.emb2NetStat.ready_mod=1;
 						break;
-//_______________________________________________________________added
+                  
+                 //_______________________________________________________________added
+#ifdef E1_16
+						case 0x12: // Запрос состояния
+							embMsgAns.SetType(0x12);
+							embMsgAns.SetLength(40);
+							for(i=0; i<42; i++) embMsgAns.SetBody(i,unEmb2Mux34.byte[i]);
+						break;
+#endif //PROG_PU_M_MUX
+
+
+
 //_______________________________________________________________added
 						case 0x13:
 							embMsgAns.SetType(0x13);

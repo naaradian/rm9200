@@ -6078,11 +6078,28 @@ pData = DataADC;
 *pData++ = 0;  *pData++ = 0;  //write 1 byte to addr 0
 *pData = 0x24;  // 	00100100  soft reset
 IOSpiSendR(7 , 3, 0, DataADC, DataADC);	  //soft reset
+IOSpiSendR(8 , 3, 0, DataADC, DataADC);	  //soft reset
+
 delay_mcs(2);
 
 pData = DataADC;
+*pData++ = 0x01;  *pData++ = 0x0C;  //write 1 byte to addr 0x10C
+*pData = 0x00;  // 	00100100  dc correction disable
+IOSpiSendR(7 , 3, 0, DataADC, DataADC);	  //soft reset
+IOSpiSendR(8 , 3, 0, DataADC, DataADC);	  //soft reset
+
+delay_mcs(2);
+
+
+
+
+
+
+/*
+pData = DataADC;
 *pData++ = 0xE0;  *pData = 0;  //read 4 bytes from addr 0
 IOSpiSendR(7 , 2,  4, DataADC, DataADC);	  //read four bytes
+
 delay_mcs(2);
 printfp("\n\r Read from adc 0 - 3 :");
 for(unsigned i = 0; i < 4; i++)
@@ -6090,6 +6107,21 @@ for(unsigned i = 0; i < 4; i++)
  printfpd(" %d : ", i);
  printfpd(" %02X ", DataADC[i]);
 }
+
+pData = DataADC;
+*pData++ = 0xE0;  *pData = 0;  //read 4 bytes from addr 0
+IOSpiSendR(8 , 2,  4, DataADC, DataADC);	  //read four bytes
+
+delay_mcs(2);
+printfp("\n\r Read from adc 0 - 3 :");
+for(unsigned i = 0; i < 4; i++)
+{
+ printfpd(" %d : ", i);
+ printfpd(" %02X ", DataADC[i]);
+}
+
+
+*/
 
 
 }

@@ -596,8 +596,8 @@ extern "C" unsigned char ReadSPIDevR(unsigned char cs,  unsigned char bitsval)
   unsigned char ret = 0;
   unsigned long status;
 
-   pio_ptr->SODR = MASK_BIT_13 ;
-   delay_mcs(2);
+//170327    pio_ptr->SODR = MASK_BIT_13 ;
+//   delay_mcs(2);
  
         for(unsigned j = 0; j < bitsval; j++)
 		{
@@ -612,6 +612,9 @@ extern "C" unsigned char ReadSPIDevR(unsigned char cs,  unsigned char bitsval)
 	       pio_ptr->SODR  = MASK_BIT_13;
 		   delay_mcs(2);
 		}
+
+
+
  return ret;
 }
 
@@ -663,12 +666,15 @@ extern "C" unsigned char IOSpiSendR(unsigned char cs,
    _at91rm9200_pio_set(AT91RM9200_PIO_PORT_C,  3, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //sclk2
    _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 11, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //le4	dac
    _at91rm9200_pio_set(AT91RM9200_PIO_PORT_C, 14, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //le6	adc
-
+   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_C,  2, AT91RM9200_PIO_PERIPHERAL_IO, 1);	  //	adc1
 
 
    pio_ptr->SODR = MASK_BIT_19 |  MASK_BIT_18 |MASK_BIT_17 |MASK_BIT_14 | MASK_BIT_13 | MASK_BIT_15 | MASK_BIT_11;
    pio_ptra->SODR = MASK_BIT_19;
-   pio_ptrc->SODR = MASK_BIT_3 | MASK_BIT_14;
+//   pio_ptrc->SODR = MASK_BIT_3 | MASK_BIT_14;
+   pio_ptrc->SODR = MASK_BIT_3 | MASK_BIT_14 | MASK_BIT_2;
+
+
 	/*
  if(cs < 3) //for filters
  {
@@ -699,6 +705,7 @@ switch (cs)
   case 5 : 	  pio_ptrc->CODR = MASK_BIT_3; break;	 //dmd1
   case 6 : 	  pio_ptr->CODR  = MASK_BIT_11; break;	 //dac
   case 7 : 	  pio_ptrc->CODR = MASK_BIT_14; break;	 //adc
+  case 8 : 	  pio_ptrc->CODR = MASK_BIT_2; break;	 //adc1
 
 
   default :   break;
@@ -741,7 +748,8 @@ delay_mcs(2);
   case 4 : 	  pio_ptra->SODR = MASK_BIT_19; break;
   case 5 : 	  pio_ptrc->SODR = MASK_BIT_3;  break;
   case 6 : 	  pio_ptr->SODR  = MASK_BIT_11; break;	 //dac
-  case 7 : 	  pio_ptrc->SODR = MASK_BIT_14; break;	 //adc
+  case 7 : 	  pio_ptrc->SODR = MASK_BIT_14; break;	 //adc	 
+  case 8 : 	  pio_ptrc->SODR = MASK_BIT_2; break;	 //adc1
 
   default :   break;
 }
@@ -1023,6 +1031,18 @@ extern "C" void CheckRestoringData()
 #ifdef YOURNAL
  LogStr0.ModifyDown(LogStr0.CntNum); //LogStr1 modifed into
 #endif
+ 
+if(LNB15.Value > 1)
+{
+   LNB15.Value = 0;   LNB15.ChangingValue = 0;
+}
+  
+if(LNB10.Value > 1)
+{
+   LNB10.Value = 0;   LNB10.ChangingValue = 0;
+}
+
+   
 
 if ((SatSet0.Value < MIN_SATSET0) || (SatSet0.Value > MAX_SATSET0))	
  {
@@ -2924,6 +2944,11 @@ SetSatExtLockP();
 #endif
 SetSysDelay(); //141216
 
+SetBUC10M();
+SetBUC24V();
+SetLNB15V();
+SetLNB10M();
+
 }
  //#define TEST_DATA_SIZE (256)
 
@@ -4034,6 +4059,117 @@ extern "C"   unsigned char * Get_PROGVER(unsigned long* len)
    //  memcpy((Key+15), &theAnyStrings.cVersion[0], 24);  
 
 }
+
+
+extern "C" void SetBUC24V(void)
+{
+   AT91RM9200_PIO_REG_STRUCT_PTR pio_ptrb;
+   pio_ptrb =  (AT91RM9200_PIO_REG_STRUCT_PTR) AT91RM9200_PIOB_BASE;
+   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 16, AT91RM9200_PIO_PERIPHERAL_IO, 1);
+
+ if(BUC24.Value)
+ {
+   printfp("\n\r Set Buc24v");
+   pio_ptrb->CODR = 1<<16; 
+ }
+ else
+ {
+   printfp("\n\r Clear Buc24v");
+   pio_ptrb->SODR = 1<<16; 
+ }
+}  
+
+extern "C" unsigned char GetBUC24V(void)
+{
+   return (unsigned char)BUC24.Value;
+}
+
+
+extern "C" void SetBUC10M(void)
+{
+   AT91RM9200_PIO_REG_STRUCT_PTR pio_ptrc;
+   pio_ptrc =  (AT91RM9200_PIO_REG_STRUCT_PTR) AT91RM9200_PIOC_BASE;
+   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_C, 0, AT91RM9200_PIO_PERIPHERAL_IO, 1);
+
+ if(BUC10.Value)
+ {
+  printfp("\n\r Set Buc10M");
+
+ 	 pio_ptrc->CODR = 1<<0; 
+ }
+ else
+ {
+  printfp("\n\r Clear Buc10M");
+
+	 pio_ptrc->SODR = 1<<0; 
+ }
+}
+
+extern "C" unsigned char GetBUC10M(void)
+{
+   return (unsigned char)BUC10.Value;
+}
+
+
+extern "C" void SetLNB15V(void)
+{
+    AT91RM9200_PIO_REG_STRUCT_PTR pio_ptrb;
+   pio_ptrb =  (AT91RM9200_PIO_REG_STRUCT_PTR) AT91RM9200_PIOB_BASE;
+   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 22, AT91RM9200_PIO_PERIPHERAL_IO, 1);
+
+    printfpd("\n\r Lnb15 v :%d", (unsigned)LNB15.Value);
+	 printfpd("cv :%d", (unsigned)LNB15.ChangingValue);
+
+
+ if(LNB15.ChangingValue > 0)
+ {
+   printfp("\n\r Set Lnb15V:");
+ 	 pio_ptrb->CODR = 1<<22; 
+ }
+ else
+ {
+	  printfp("\n\r Clear Lnb15V:");
+
+	 pio_ptrb->SODR = 1<<22; 
+ }
+}
+
+extern "C" unsigned char GetLNB15V(void)
+{
+   return (unsigned char)LNB15.Value;
+}
+
+
+extern "C" void SetLNB10M(void)
+{
+   AT91RM9200_PIO_REG_STRUCT_PTR pio_ptrc;
+   pio_ptrc =  (AT91RM9200_PIO_REG_STRUCT_PTR) AT91RM9200_PIOC_BASE;
+   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_C, 1, AT91RM9200_PIO_PERIPHERAL_IO, 1);
+
+ if(LNB10.Value)
+ {
+   printfp("\n\r Set Lnb10M");
+
+ 	 pio_ptrc->CODR = 1<<1; 
+ }
+ else
+ {
+  printfp("\n\r Clear Lnb10M");
+
+	 pio_ptrc->SODR = 1<<1; 
+ }
+
+
+}
+
+extern "C" unsigned char GetLNB10M(void)
+{
+   return (unsigned char)LNB10.Value;
+}
+
+
+
+
 
 
 

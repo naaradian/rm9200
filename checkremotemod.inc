@@ -6,6 +6,8 @@
 
 
 #ifdef RS485_MSG_BUFF
+
+
 		   if(flag_wait_rs485)
 		   {
 		   if(time1 < time_lastsend_rs485) 	time_lastsend_rs485 = time1;
@@ -22,6 +24,11 @@
 				tBuffRS485.Get(embMsgA);
 //- - - - - - - - - -
 
+#ifdef KSS_PRINT_LOG                         
+                         printfp("\n\r Send to tuts 20:\n\r");
+#endif   
+
+
 				embRS485.TransEC(0x55);	  //EC - RDN!!! in all
 			  	embRS485.TransEC(0xAA);
 				for(i=0; i<embMsgA.FullSize(); i++) 
@@ -33,12 +40,24 @@
 								case 0xA5: embRS485.TransEC(0x5A); embRS485.TransEC(0x02); break;
 								case 0xAA: embRS485.TransEC(0x5A); embRS485.TransEC(0x03); break;
 								default: embRS485.TransEC(embMsgA.body[i]);
+
+#ifdef KSS_PRINT_LOG                         
+                         printfpd(" %02X", embMsgA.body[i] );
+#endif   
+
+
+
 								}
 							   //	RS485_receive_reset();
 							}
 						   
 							embRS485.TransEC(0x55);
 						   	embRS485.Trans_RDN(embMsgA.AddrS());
+
+#ifdef KSS_PRINT_LOG                         
+                         printfpd("addr : %X", embMsgA.AddrS() );
+#endif   
+
  
 
 //- - - - - - - - - -

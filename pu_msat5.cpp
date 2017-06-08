@@ -6077,8 +6077,23 @@ static unsigned char DataADC[9];//
 pData = DataADC;
 *pData++ = 0;  *pData++ = 0;  //write 1 byte to addr 0
 *pData = 0x24;  // 	00100100  soft reset
+IOSpiSendR(8 , 3, 0, DataADC, DataADC);	  //soft reset
 IOSpiSendR(7 , 3, 0, DataADC, DataADC);	  //soft reset
+
+delay_mcs(200);
+
+
+pData = DataADC;
+*pData++ = 0x01;  *pData++ = 0x0C;  //write 1 byte to addr 0x10C
+*pData = 0x00;  // 	00100100  dc correction disable
+//*pData = 0xff; 
+IOSpiSendR(8 , 3, 0, DataADC, DataADC);	  //soft reset
+IOSpiSendR(7 , 3, 0, DataADC, DataADC);	  //soft reset
+
+
+/*
 delay_mcs(2);
+
 
 pData = DataADC;
 *pData++ = 0xE0;  *pData = 0;  //read 4 bytes from addr 0
@@ -6091,6 +6106,18 @@ for(unsigned i = 0; i < 4; i++)
  printfpd(" %02X ", DataADC[i]);
 }
 
+pData = DataADC;
+*pData++ = 0xE0;  *pData = 0;  //read 4 bytes from addr 0
+IOSpiSendR(8 , 2,  4, DataADC, DataADC);	  //read four bytes
+delay_mcs(2);
+printfp("\n\r Read from adc 0 - 3 :");
+for(i = 0; i < 4; i++)
+{
+ printfpd(" %d : ", i);
+ printfpd(" %02X ", DataADC[i]);
+}
+
+  */
 
 }
 
@@ -6368,13 +6395,23 @@ printfp("\n\r LoadIFDAC");
 
 unsigned char * pData;
 static unsigned char DataDAC[SENDED_DDS_FREQ_LEN];//
-
+  /*
 pData = DataDAC;
 *pData++ = 0;	//write to addr 0 1 byte
 *pData = 0x24; //00100100;  reset
 
 IOSpiSendR(6 , 2, 0, DataDAC, DataDAC);	  //reset
 delay_mcs(5);
+
+pData = DataDAC;
+*pData++ = 1;	//write to addr 1 1 byte
+*pData = 0; //all zeros
+
+IOSpiSendR(6 , 2, 0, DataDAC, DataDAC);	  //reset
+delay_mcs(5);
+ */
+
+/*
 
 pData = DataDAC;
 *pData = 0xE0; //11100000;  read four bytes from addr 0
@@ -6394,6 +6431,7 @@ for(i = 0; i < 4; i++)
  printfpd(" %d : ", (i + 4));
  printfpd(" %02X ", DataDAC[i]);
 }
+
 pData = DataDAC;
 *pData = 0xE8; //11101000;  read four bytes from addr 8
 IOSpiSendR(6 , 1, 4, DataDAC, DataDAC);	  //read for bytes from addr 0
@@ -6408,7 +6446,7 @@ pData = DataDAC;
 IOSpiSendR(6 , 1, 1, DataDAC, DataDAC);	  //read for bytes from addr 0
 printfp("\n\r Read from dac 12 :");
 printfpd("12 : %02X ", DataDAC[0]);
-
+  */
 
 
 

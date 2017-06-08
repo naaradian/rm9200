@@ -7837,6 +7837,8 @@ char * point = (char *)(TFTP_BUFFER_ADDRESS);
 
 void DeviseData (uchar_ptr data_ptr, uint_32 * data_len)
 {
+printfp("\n\r DeviseData \n\r");
+
     //before change can read address from pointer
     uint_32 addr;
     uint_32 data;
@@ -7881,6 +7883,9 @@ void DeviseData (uchar_ptr data_ptr, uint_32 * data_len)
             if(addr % 4) addr--; 
             if(addr % 4) addr--;  
            } /* Endbody */
+           
+           
+       printfpd(" addr : 0x%X", addr);    
   //____________________________________       
  //      char *strrchr(const char *s, int c);
       setdata_ptr =  strrchr((const char *)locdata_ptr, ':');
@@ -7934,6 +7939,7 @@ void DeviseData (uchar_ptr data_ptr, uint_32 * data_len)
 #endif // PROG_KTVM 
 
 #ifdef PROG_PU_M_MUX   
+printfp("\n\r read cs3\n\r");
                 addr -= cs3_addr;
 //              if(addr < NVRAM_SIZE)
                 _io_fseek(fk_ptr, addr,IO_SEEK_SET);
@@ -8070,7 +8076,9 @@ void DeviseData (uchar_ptr data_ptr, uint_32 * data_len)
                  fputc(setdata, fk_ptr); // }
 #endif // PROG_ktvm  
 
-#ifdef PROG_PU_M_MUX   
+#ifdef PROG_PU_M_MUX  
+printfpd("\n\r write cs3 : 0x%x\n\r", setdata);
+ 
           // *dev_ptr = setdata;
                  addr -= cs3_addr;
                 _io_fseek(fk_ptr, addr,IO_SEEK_SET);    
@@ -8853,6 +8861,8 @@ AT91RM9200_MC_REG_STRUCT_PTR mc_ptr;   //memory controller
 #endif // PROG_DTVM   
 
 #ifdef PROG_PU_M  
+#ifndef PROG_PU_M710_MUX  
+
 //t    mc_ptr->EBI.SMC.CSR[2] = 0x12014384l;
   //  mc_ptr->EBI.SMC.CSR[2] = 0x22014384l;
   
@@ -8862,7 +8872,7 @@ AT91RM9200_MC_REG_STRUCT_PTR mc_ptr;   //memory controller
 #else
     mc_ptr->EBI.SMC.CSR[2] = 0x27014304l; //without ready
 #endif
-
+#endif
 #endif // PROG_PU_M
 
  
@@ -8903,6 +8913,8 @@ AT91RM9200_MC_REG_STRUCT_PTR mc_ptr;   //memory controller
 
 
 #ifdef PROG_PU_M_MUX  
+#ifndef PROG_PU_M710_MUX  
+
 //t    mc_ptr->EBI.SMC.CSR[2] = 0x12014384l;
   //  mc_ptr->EBI.SMC.CSR[2] = 0x22014384l;
     mc_ptr->EBI.SMC.CSR[2] = 0x27014384l;
@@ -8913,7 +8925,7 @@ AT91RM9200_MC_REG_STRUCT_PTR mc_ptr;   //memory controller
  
   _io_mem_install("xil2", XIL2_BASE, XIL2_SIZE);
     fk_ptr = (pointer)_io_fopen1("xil2", 0); //0 - not block mode
-   
+#endif   
 #endif // PROG_PU_M_MUX   
 
 #ifdef PROG_PU_M_V  
@@ -8947,6 +8959,8 @@ AT91RM9200_MC_REG_STRUCT_PTR mc_ptr;   //memory controller
 
 
 #ifdef PROG_PU_M710    //md34e
+#ifndef PROG_PU_M710_MUX  
+
 //t    mc_ptr->EBI.SMC.CSR[2] = 0x12014384l;
   //  mc_ptr->EBI.SMC.CSR[2] = 0x22014384l;
  //121115   mc_ptr->EBI.SMC.CSR[2] = 0x27014384l;
@@ -8960,8 +8974,23 @@ AT91RM9200_MC_REG_STRUCT_PTR mc_ptr;   //memory controller
  
 //  _io_mem_install("xil2", XIL2_BASE, XIL2_SIZE);
 //    fk_ptr = (pointer)_io_fopen1("xil2", 0); //0 - not block mode
-   
+#endif   
 #endif // PROG_PU_M710   
+
+#ifdef PROG_PU_M710_MUX  
+//t    mc_ptr->EBI.SMC.CSR[2] = 0x12014384l;
+  //  mc_ptr->EBI.SMC.CSR[2] = 0x22014384l;
+    mc_ptr->EBI.SMC.CSR[2] = 0x77014384l;
+//     mc_ptr->EBI.SMC.CSR[2] = 0x77034384l;  //t130804
+
+    mc_ptr->EBI.SMC.CSR[3] = 0x77014384l;   //8 bit wide 8 bit access nwait disable
+      
+ 
+  _io_mem_install("xil2", XIL2_BASE, XIL2_SIZE);
+    fk_ptr = (pointer)_io_fopen1("xil2", 0); //0 - not block mode
+   
+#endif // PROG_PU_M_MUX   
+
  
 
 #ifdef PROG_COMMUTATOR  
@@ -8991,9 +9020,9 @@ AT91RM9200_MC_REG_STRUCT_PTR mc_ptr;   //memory controller
    
 #endif // PROG_UPS   
 
-
-
-  
+//#ifdef	PROG_VNV1
+//   mc_ptr->EBI.SMC.CSR[2] = 0x27014304l; //without ready
+//#endif  
 
 #ifdef MAKET_PLATA
       mc_ptr->EBI.SMC.CSR[2] = 0x27014304l;   //NWAIT diasable

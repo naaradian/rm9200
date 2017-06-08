@@ -38,7 +38,7 @@
 //#define PROG_BMDN4	 //act15505 1+1 use PVG710 maked mode 1+1  bmdn4.cpp!!!+ pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 //#define PROG_BMDN5	 //act155051 1+0 use PVG710 maked mode 1+1  bmdn5.cpp!!!+ pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 //#define PROG_BMDN6		// 155052 //try md310e.cpp+ filters act155051 1+0 use PVG710 maked mode 1+1 + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
-//#define PROG_MD310	  //+ filters act155051 1+0 use PVG710 maked mode 1+1  md310e.cpp!!!+ pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
+#define PROG_MD310	  //+ filters act155051 1+0 use PVG710 maked mode 1+1  md310e.cpp!!!+ pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 //#define PROG_KAZAH			// 155052 //try md310e.cpp => kazah.cpp + filters act155051 1+0 use PVG710 maked mode 1+1 + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 
 
@@ -66,6 +66,7 @@
 //#define PROG_ACT155N		//nazemnaja - 10 ms fast 485 packets	//need recompile mib   bmdn3
 //#define PROG_COMMUTATOR	  //commutator.cpp
 //#define PROG_COMMUTATOR1	  //commutator2.cpp		 do not hangt
+//#define PROG_COMMUTATOR3	  //commutator3.cpp		 do not hangt
 
 
 //#define PROG_BUKC			 //need recompile mib buk - registers
@@ -75,6 +76,8 @@
 //#define PROG_PU_M		   //pu_m.cpp
 //#define PROG_PU_M_MUX	  //pu_m.cpp
 //#define PROG_PU_M710   //= md34e	  //pu_m710.cpp
+//#define PROG_PU_M710_MUX   //= md34e_16	  //pu_m710_mux.cpp
+
 
 //#define PROG_PU_M100	 //pu_m100.cpp	 any maket
 
@@ -83,7 +86,7 @@
 //#define PROG_PU_MSAT3	// pu_msat.cpp	  linkdoubler 3		2048
 //#define PROG_PU_MSAT4 //pu_msat1.cpp linkdoubler 4 = linkdoubler2(menu with 1024)	 menu	
 
-#define PROG_PU_MSAT5	 // linkdoubler1 1024 tfs_data.c web interface  file need copy!!!! pu_msat5.cpp  1024
+//#define PROG_PU_MSAT5	 // linkdoubler1 1024 tfs_data.c web interface  file need copy!!!! pu_msat5.cpp  1024
 
 
 
@@ -164,28 +167,33 @@
 //#define	PROG_PRM_PCH_DEM_XIL_CHN_DMU4  //prm_pch_dem_chn_dmu4.cpp
 //#define	PROG_PRM_PCH_DEM_XIL_CHN_DMU5  //prm_pch_dem_chn_dmu5.cpp  dmu + 10G
 //#define	PROG_DMU6  //  dmu5.1 dmu6.cpp + dmu6plus.cpp ( provingent + demodulator)	 + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
-//#define	PROG_VNV1 //vnosvinos vnv.cpp
+
+//#define	PROG_VNV1 //vnosvinos vnv1.cpp	=> vnv1.cpp (from pum.cpp)
 
 
 //#define PROG_PROV  //prov.cpp PVG610_API.c  hostDriverForPc.cpp	utils.c	  endian.c	basic.cpp
 //262 : remove 10 symbols in parse rs232
 
 //#define SOFT_VER (0x509)	 
-#define SOFT_VER (0x1130)    
+#define SOFT_VER (0x1150)    
 #ifndef PROG_PU_MSAT    
 //#define SOFT_VER_STRING    "   14.12.01.1-800 ADESTO"//263 : maked init counter and data for write_buffer_char1()
 //#ifndef PROG_PUPM3_1_ADESTO	
 //#ifndef PROG_PU_MSAT1
-#define SOFT_VER_STRING      "      17.04.11.1-1130    "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING      "      17.06.07.1-1150    "//263 : maked init counter and data for write_buffer_char1()
 #else
 //#define SOFT_VER_STRING "Radian Ver. 01.00        "//263 : maked init counter and data for write_buffer_char1()
 #ifdef	PROG_VNV1
-#define SOFT_VER_STRING      "      17.03.30.1-1130    "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING      "      17.06.07.1-1150    "//263 : maked init counter and data for write_buffer_char1()
 #else
-#define SOFT_VER_STRING   "Radian v1120.70330       "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING   "Radian v1150.70607       "//263 : maked init counter and data for write_buffer_char1()
 #endif
 #endif
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//#define TUTS_PRINT
+
+//#define PUM_TEMP_NO_EXCH	 //for md34e_16 = pum710_mux
+
 //#define OP_TRUNKS
 //#define DEB_ETH_485
 
@@ -536,6 +544,10 @@ extern "C" void Parse_PD3(char *, unsigned long );
 #define	 PROG_PRM_PCH_SPI_NOXIL_ETH
 #define	ADESTO 
 #endif
+
+
+
+
 
 
 #ifdef	 PROG_PRM_PCH_SPI_NOXIL_ETH
@@ -979,7 +991,8 @@ extern unsigned char NeedRunCommand;
 #define WAITING_COMMAND (2)
 #define RECEIVE_COMMAND (3)
 //#define MAX_DATA_SIZE1 (10)
-#define MAX_DATA_SIZE1 (20)
+//#define MAX_DATA_SIZE1 (20)
+#define MAX_DATA_SIZE1 (255)
 void MClearPB19(void);
 
 #define COMMANDS_QUANTITY (0x80)
@@ -1378,7 +1391,10 @@ extern unsigned char NeedRunCommand;
 #define RUN_COMMAND (1)
 #define WAITING_COMMAND (2)
 #define RECEIVE_COMMAND (3)
-#define MAX_DATA_SIZE1  (20)
+
+//170502 to make calibrating #define MAX_DATA_SIZE1  (20)
+#define MAX_DATA_SIZE1  (255)
+
 void MClearPB19(void);
 
 #define COMMANDS_QUANTITY (0x80)
@@ -1441,6 +1457,8 @@ extern  unsigned char  MY_ADDRESS_XIL;
 #define	COMM21_LEN		(2)
 #define	COMM22_LEN		(2)
 #define	COMM23_LEN		(2)
+#define	COMM29_LEN		(2)
+
 
 #define	COMM9_LEN		(2)
 #define	COMMB_LEN		(2)
@@ -1472,6 +1490,8 @@ extern  unsigned char  MY_ADDRESS_XIL;
 #define COMMANDN21 (0x21)
 #define COMMANDN22 (0x22)
 #define COMMANDN23 (0x23)
+#define COMMANDN29 (0x29)
+
 
 
 
@@ -1828,6 +1848,10 @@ extern "C" void PU_M(void);
 extern "C" void Init_PU_M(void);
 extern "C" void PU_M(void);
 #endif // PROG_PU_M_V
+
+#ifdef PROG_COMMUTATOR3
+#define PROG_COMMUTATOR1
+#endif
 
 
 
@@ -3294,6 +3318,18 @@ extern "C" void Remote_PRM_PCH(void);
 
 #endif //PROG_PRM_PCH
 
+
+#ifdef PROG_PU_M710_MUX	  //pu_m710_mux.cpp
+
+#define  SIZE_MEMP	(177)
+extern char MEMP[SIZE_MEMP];
+extern int cnt; 
+
+#define PROG_PU_M710
+#define PROG_PU_M_MUX	
+
+#endif
+
 #ifdef PROG_PU_M710	  //pu_m710.cpp
 
 #define CHECK_CRC
@@ -3391,9 +3427,10 @@ extern "C"unsigned long GetNetMaskRem(void);
 #define IncEmbSerialACT155
 #define IncEmbSerialPU_M
 //101001#define XilSizeToDownloadD    (180000)   // t  have BIT files for all xilinxes
-//120916#define XilSizeToDownloadD    (350000)   // t  have BIT files for all xilinxes
-//#define XilSizeToDownloadD    (455000) //120916  // t  have BIT files for all xilinxes
-#define XilSizeToDownloadD	  (800000)	//140418
+//120916#define XilSizeToDownloadD    (350000)   // t  have BIT files for allinxes
+//120916#define XilSizeToDownloadD    (350000)   // t  have BIT files for alfor all xilinxes
+//#define XilSizeToDownloadD	  (800000)	//140418
+#define XilSizeToDownloadD	  (860000)	//140418
 #define XilSizeToDownloadD2   (285000)   // to can Spartan3 500
 #define XilSizeToDownloadD3   (285000)  
 #define XILINXPG  				(1)
@@ -3401,6 +3438,69 @@ extern "C"unsigned long GetNetMaskRem(void);
 extern "C" void Init_PU_M(void);
 extern "C" void PU_M(void);
 #endif //PROG_PU_M
+
+
+
+
+
+
+
+#ifdef	PROG_VNV1
+
+extern "C" void TestWriteFlash6(void);
+//#define	PROG_DMU6
+//#define	PROG_PU_MSAT5
+#define PROG_PU_M
+
+
+#define HAVE_GATEWAY
+
+extern "C"char* SpiWriteReadCS3(unsigned long len, char * pData);
+
+
+extern "C" void SetNetworkRem(unsigned long NewNetwork);
+extern "C"unsigned long GetNetworkRem(void);
+
+extern "C" void SetNetMaskRem(unsigned long NewNetMask);
+
+extern "C"unsigned long GetNetMaskRem(void);
+
+
+#define FULL_TEST_TRANZIT
+
+#define DPD_ADDRESS (0xC0400000)   //temporary
+#define DPD_SIZE 	(40000)
+
+#define cs_last_addr          0x30000000
+//#define INTERRUPT_WAIT (2000000)//now so	 //i enable no more 200000 interrupts irq 0 in 1 ms - not many?
+//#define INTERRUPT_WAIT (200000)	 //i enable no more 200000 interrupts irq 0 in 1 ms - not many?
+#define XIL_LOAD_FREQ         2000000
+#define IncEmbRS232
+#define IncEmbRS485
+#define IncEmbTimer
+#define IncEmbSerialACT155
+#define IncEmbSerialPU_M
+//101001#define XilSizeToDownloadD    (180000)   // t  have BIT files for all xilinxes
+//120916#define XilSizeToDownloadD    (350000)   // t  have BIT files for allinxes
+//120916#define XilSizeToDownloadD    (350000)   // t  have BIT files for alfor all xilinxes
+//#define XilSizeToDownloadD	  (800000)	//140418
+
+#define XilSizeToDownloadD_VNV   (4194304)   
+#define XilSizeToDownloadD_VNV1   (235858) //for debug   
+
+
+#define XilSizeToDownloadD	  (860000)	//140418
+#define XilSizeToDownloadD2   (285000)   // to can Spartan3 500
+#define XilSizeToDownloadD3   (285000)  
+#define XILINXPG  				(1)
+#define UPD_BUFFER_SIZE 128
+extern "C" void Init_PU_M(void);
+extern "C" void PU_M(void);
+
+
+
+#endif
+
 
 #ifdef 	PROG_PU_M100
 #define FULL_TEST_TRANZIT
@@ -3445,13 +3545,25 @@ extern "C" void PU_M(void);
 #define	PROG_PU_MSAT
 #endif
 
-#ifdef	PROG_VNV1
-//#define	PROG_DMU6
-#define	PROG_PU_MSAT5
-#endif
 
 
 #ifdef 	PROG_PU_MSAT5
+
+extern "C" void SetBUC24V(void);
+
+extern "C" void SetBUC10M(void);
+
+extern "C" void SetLNB15V(void);
+
+extern "C" void SetLNB10M(void);
+
+extern "C" unsigned char GetBUC24V(void);
+extern "C" unsigned char GetBUC10M(void);
+extern "C" unsigned char GetLNB15V(void);
+extern "C" unsigned char GetLNB10M(void);
+
+
+
 #define	PROG_PU_MSAT
 //extern "C" unsigned char IOSpiSend(unsigned char ,  unsigned long ,
 //	 unsigned char * , unsigned char * );
@@ -4045,7 +4157,7 @@ extern "C" void SetNeedWriteDevId();
 #define IncEmbSerialACT155
 #define IncEmbSerialPU_M
 //130801 #define XilSizeToDownloadD    (350000)   // 101001t  have BIT files for all xilinxes
-#define XilSizeToDownloadD    (650000)   //130801 101001t  have BIT files for all xilinxes
+#define XilSizeToDownloadD    (860000)   //130801 101001t  have BIT files for all xilinxes
 #define XilSizeToDownloadD2   (285000)   // to can Spartan3 500
 #define XilSizeToDownloadD3   (285000)  
 #define XILINXPG  				(1)
@@ -4354,7 +4466,7 @@ extern "C" void	BusTestFar();
 extern "C" void	ReleTest();
 
 #define TX_FAULT_S	(0x10)
-#define E1_LINES_QUANTITY (21)
+#define E1_LINES_QUANTITY (16)
 #define FAR_LOOP (0x4)
 #define OLD_FAR_LOOP (0x8)
 #define NEAR_LOOP (0x2)
@@ -5374,6 +5486,19 @@ extern "C" void ConfigFileDestroy(unsigned long);
 
 
 #ifdef 	PROG_MD310
+
+#define E1_16
+
+#ifdef E1_16
+#define E1LED_LA_port	(0x32)
+#define E1LED_LB_port	(0x33)
+#define E1LED_RA_port	(0x34)
+#define E1LED_RB_port	(0x35)
+
+#define LOSS_BIT		(1)
+#endif
+
+
 #define RS485E_ENABLED
 
 
@@ -5735,7 +5860,7 @@ extern "C" void	BusTestFar();
 extern "C" void	ReleTest();
 
 #define TX_FAULT_S	(0x10)
-#define E1_LINES_QUANTITY (21)
+#define E1_LINES_QUANTITY (16)
 #define FAR_LOOP (0x4)
 #define OLD_FAR_LOOP (0x8)
 #define NEAR_LOOP (0x2)
@@ -5879,7 +6004,7 @@ extern "C" void	BusTest();
 
 
 #define TX_FAULT_S	(0x10)
-#define E1_LINES_QUANTITY (21)
+#define E1_LINES_QUANTITY (16)
 #define FAR_LOOP (0x4)
 #define OLD_FAR_LOOP (0x8)
 #define NEAR_LOOP (0x2)
@@ -6867,7 +6992,8 @@ extern "C" void RDN_Start_Transmit1(char *, char*);
 //#define DEV_ID_SIZE				   (766)  //RACMOnOffT
 //#define DEV_ID_SIZE				   (770)  //RACMOffset
 //#define DEV_ID_SIZE				   (771) //ten_mhz 
-#define DEV_ID_SIZE				   (775) //ipaddressudp 
+//#define DEV_ID_SIZE				   (775) //ipaddressudp 
+#define DEV_ID_SIZE				   (779) //pu_msat5
 
 
 
@@ -8236,10 +8362,8 @@ extern "C" char CheckDoneShort8();
 
 extern "C" void LoadBaud(unsigned long,unsigned char);
 extern "C" void LoadBand(unsigned long , unsigned char, unsigned long);
-extern "C" unsigned long GetFreqPCh2(void);
-extern "C" unsigned long GetFreqPCh(void);
-
-extern "C" unsigned char SetSelectorToProv(void);
+extern "C" unsigned long GetFadBand(unsigned long , unsigned char, unsigned long);
+extern "C" unsigned long GetFar SetSelectorToProv(void);
 extern "C" unsigned char SetSelectorToDMU(void);
 
 
@@ -8912,3 +9036,9 @@ unsigned long l_udpt_inc_485(void);
 #endif
 
 extern "C" unsigned char ReadDevId_utest(unsigned char);
+
+
+extern "C" void AT91F_SpiInit(void);
+extern "C" void AT91F_SpiEnable(int);
+
+extern "C" void printfpd(char *, unsigned long);

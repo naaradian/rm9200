@@ -1,6 +1,86 @@
 
 
 
+extern "C" void SetPar041(unsigned char val)
+{
+//if(!(password_state)) return;
+if(val > 1) return;
+
+if((unsigned)BUC24.Value == (unsigned)val)
+{
+ printfp("\n\r Do not change the BUC24V");
+ return;
+}
+ printfp("\n\r Change the BUC24V");
+
+BUC24.Value = val;
+BUC24.ChangingValue = val;
+SetBUC24V();
+UsedExp.State.Reg2.bit.WriteId = 1;
+UsedExp.State.Reg2.bit.Some = 1;
+}
+
+extern "C" void SetPar042(unsigned char val)
+{
+//if(!(password_state)) return;
+if(val > 1) return;
+
+if((unsigned)BUC10.Value == (unsigned)val)
+{
+ printfp("\n\r Do not change the BUC10M");
+ return;
+}
+ printfp("\n\r Change the BUC10M");
+
+BUC10.Value = val;
+BUC10.ChangingValue = val;
+SetBUC10M();
+UsedExp.State.Reg2.bit.WriteId = 1;
+UsedExp.State.Reg2.bit.Some = 1;
+}
+
+extern "C" void SetPar043(unsigned char val)
+{
+//if(!(password_state)) return;
+if(val > 1) return;
+
+if((unsigned)LNB15.Value == (unsigned)val)
+{
+ printfp("\n\r Do not change the LNB15V");
+ return;
+}
+ printfp("\n\r Change the LNB15V");
+
+LNB15.Value = val;
+LNB15.ChangingValue = val;
+SetLNB15V();
+UsedExp.State.Reg2.bit.WriteId = 1;
+UsedExp.State.Reg2.bit.Some = 1;
+}
+
+extern "C" void SetPar044(unsigned char val)
+{
+//if(!(password_state)) return;
+if(val > 1) return;
+
+if((unsigned)LNB10.Value == (unsigned)val)
+{
+ printfp("\n\r Do not change the LNB10M");
+ return;
+}
+ printfp("\n\r Change the LNB10M");
+
+LNB10.Value = val;
+LNB10.ChangingValue = val;
+SetLNB10M();
+UsedExp.State.Reg2.bit.WriteId = 1;
+UsedExp.State.Reg2.bit.Some = 1;
+}
+
+
+
+
+
 
 
 
@@ -1602,7 +1682,10 @@ extern "C" void	  SetAD7Val(unsigned long val){AD7Val = val;}
 extern "C" unsigned  GetAD7Val(){return AD7Val;}//0x87654321;}
 
 #define LENGTH_CODE (5)
-#define WEB_PARAMS_QUANTITY	(0x3f)
+//#define WEB_PARAMS_QUANTITY	(0x3f)
+#define WEB_PARAMS_QUANTITY	(0x4f)
+
+
 #define WRONG_CODE (0x99999)
 
 class Web_prm
@@ -1755,7 +1838,11 @@ strcpy(web_prm[61].code,"03d=");
 strcpy(web_prm[62].code,"03e=");
 strcpy(web_prm[63].code,"03f=");
 
-
+strcpy(web_prm[64].code,"040=");
+strcpy(web_prm[65].code,"041=");
+strcpy(web_prm[66].code,"042=");
+strcpy(web_prm[67].code,"043=");
+strcpy(web_prm[68].code,"044=");
 }
 
 
@@ -2456,6 +2543,9 @@ else
 
 extern "C" void parse_page_update(char * buf)
 {
+printfp("\n\r Parse Page update");
+
+
  char *cp;
  char *cp1;
  float par0, par1;
@@ -2499,8 +2589,83 @@ else
 }
 
 
+extern "C" void parse_page_ext(char * buf)
+{
+printfp("\n\r Parse Page Ext");
+
+ char *cp;
+ char *cp1;
+ float par0, par1;
+ float par2;
+ float par3, par4, par5;
+ float par6;
+ unsigned char par7;
+// float par8;
+ double par8;
+ unsigned char para;
+ unsigned char parb;
+ unsigned char parc;
+ unsigned char pard;
+ unsigned long ret;
+ unsigned char flag_have8 = 0;
+
+ char *pEnd;
+ char * keepbuf = buf;
+
+printfp("\n\r____________>");
+printfp(buf);
+printfp("\n\r<____________");
+
+//_____________________________________________________>
+ //buf++;
+//__________________________________________________________________
 
 
+
+
+buf = strchr(buf, '&');
+if(buf) buf++;
+if (strncmp(buf, "041=", 4) == 0)	 //change programm
+ {
+printfp("\n\rfound 041 \n\r"); 	parb = 1;	SetPar041(parb);
+ 	buf = strchr(buf, '&');	 if(buf) buf++;
+ }  
+else
+ {
+  printfp("\n\r not found 041"); parb = 0; SetPar041(parb);
+ }
+if (strncmp(buf, "042=", 4) == 0) 	  //change xilinx
+{
+  printfp("\n\rfound 042 \n\r"); parc = 1; SetPar042(parc);
+   buf = strchr(buf, '&');	 if(buf) buf++;
+}  
+else
+{
+  printfp("\n\r not found 042");  parc = 0;	 SetPar042(parc);
+}
+if (strncmp(buf, "043=", 4) == 0)	 //restart
+ {
+ printfp("\n\rfound 043 \n\r");	pard = 1;  SetPar043(pard);
+  buf = strchr(buf, '&'); if(buf) buf++;
+}  
+else
+{
+  printfp("\n\r not found 043");  pard = 0;	 SetPar043(pard);
+}
+if (strncmp(buf, "044=", 4) == 0)	 //restart
+ {
+ printfp("\n\rfound 044 \n\r");	pard = 1;  SetPar044(pard);
+  buf = strchr(buf, '&'); if(buf) buf++;
+}  
+else
+{
+  printfp("\n\r not found 044");  pard = 0;	 SetPar044(pard);
+}
+
+
+
+
+}
 
 
 extern "C" void httpd_set_device_params(char * buf, int* plen)
@@ -2572,6 +2737,9 @@ ret = CheckCode(buf);
   case	0x24: page_number = 4; parse_page_system(buf); return;	  //code 1d
  // case	0x2a: page_number = 6; parse_page_log(buf); return;	  //code 1d
   case	0x2b: page_number = 6; parse_page_log(buf); return;	  //code 1d
+
+  case	64: page_number = 7; parse_page_ext(buf); return;	  //code 1d
+
 
 
   default : page_number = 0;
@@ -4469,6 +4637,68 @@ if (*(Key + 4) == '2')
 
 
     }	  //=3
+   if (*(Key + 4) == '4')  //04
+    {
+		  if (*(Key + 5) == '0')
+       {
+
+        sprintf(NewKey, "%s"," Enabled");  // insert AD converter value
+        memcpy((Key+15), NewKey, 8);               // channel 7 (P6.7)
+	   }
+
+     if (*(Key + 5) == '1')
+       {
+//        sprintf(NewKey, "% 5.3f", GetPar006());  // insert AD converter value
+//         memcpy((Key+15), NewKey, 7);               // channel 7 (P6.7)
+		if (GetBUC24V())	 //sattestmode
+		{
+        sprintf(NewKey, "%s", "checked");  // insert AD converter value
+         memcpy((Key - 11), NewKey, 7);               // channel 7 (P6.7)
+
+ 		}
+       }
+    if (*(Key + 5) == '2')
+       {
+//        sprintf(NewKey, "% 5.3f", GetPar006());  // insert AD converter value
+//         memcpy((Key+15), NewKey, 7);               // channel 7 (P6.7)
+		if (GetBUC10M())	 //sattestmode
+		{
+        sprintf(NewKey, "%s", "checked");  // insert AD converter value
+         memcpy((Key - 11), NewKey, 7);               // channel 7 (P6.7)
+
+ 		}
+       }
+	  if (*(Key + 5) == '3')
+       {
+//        sprintf(NewKey, "% 5.3f", GetPar006());  // insert AD converter value
+//         memcpy((Key+15), NewKey, 7);               // channel 7 (P6.7)
+		if (GetLNB15V())	 //sattestmode
+		{
+        sprintf(NewKey, "%s", "checked");  // insert AD converter value
+         memcpy((Key - 11), NewKey, 7);               // channel 7 (P6.7)
+
+ 		}
+       }
+	  if (*(Key + 5) == '4')
+       {
+//        sprintf(NewKey, "% 5.3f", GetPar006());  // insert AD converter value
+//         memcpy((Key+15), NewKey, 7);               // channel 7 (P6.7)
+		if (GetLNB10M())	 //sattestmode
+		{
+        sprintf(NewKey, "%s", "checked");  // insert AD converter value
+         memcpy((Key - 11), NewKey, 7);               // channel 7 (P6.7)
+
+ 		}
+       }
+
+
+
+
+
+
+
+
+   }
 
 
 

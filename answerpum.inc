@@ -21,6 +21,9 @@
 				embMsgA.Init();
 				tBuffRS485.Get(embMsgA);
 //- - - - - - - - - -
+#ifdef KSS_PRINT_LOG                         
+                         printfp("\n\r Send to tuts 1:\n\r");
+#endif     
 
 				embRS485.TransEC(0x55);	  //EC - RDN!!! in all
 			  	embRS485.TransEC(0xAA);
@@ -33,6 +36,9 @@
 								case 0xA5: embRS485.TransEC(0x5A); embRS485.TransEC(0x02); break;
 								case 0xAA: embRS485.TransEC(0x5A); embRS485.TransEC(0x03); break;
 								default: embRS485.TransEC(embMsgA.body[i]);
+#ifdef KSS_PRINT_LOG                         
+                         printfpd("_%02X", embMsgA.body[i]);
+#endif    
 								}
 							   //	RS485_receive_reset();
 							}
@@ -88,6 +94,10 @@
 							embMsg485E.SetAddrS(aI);
 							embMsg485E.SetAddrR(aS);
 							  */
+
+#ifdef KSS_PRINT_LOG                         
+                         printfp("\n\r Send from tuts 2:\n\r");
+#endif   
 
 							embRS232.TransEC(0x55);
 							embRS232.TransEC(0xAA);
@@ -166,7 +176,9 @@
 							embMsg485.SetAddrS(aR);	 //t 091019
 							embMsg485.SetAddrR(aI);	 //t 091019
 
-
+ #ifdef KSS_PRINT_LOG                         
+                         printfp("\n\r Send to tuts 3:\n\r");
+#endif   
 
 
 							embRS232.TransEC(0x55);
@@ -261,6 +273,10 @@
 						{
 							if(embMsgA.AddrS()==SelfID())//eee ?aaai 0000 eee FFFF
 							{
+
+#ifdef KSS_PRINT_LOG                         
+                         printfp("\n\r Send to tuts 4:\n\r");
+#endif   
 											
 								embRS232.TransEC(0x55);
 								embRS232.TransEC(0xAA);
@@ -330,6 +346,10 @@
 					  //		 printf(" p4");
 //______________________________________________________________________
 #ifdef CAN_ETHERNET_ASU
+
+#ifdef KSS_PRINT_LOG                         
+                         printfp("\n\r Send to tuts 5:\n\r");
+#endif   
 											
 								embRS232.TransEC(0x55);
 								embRS232.TransEC(0xAA);
@@ -440,6 +460,10 @@
 					 //		 printf(" p4");
 //______________________________________________________________________
 #ifdef CAN_ETHERNET_ASU
+
+#ifdef KSS_PRINT_LOG                         
+                         printfp("\n\r Send to tuts 6:\n\r");
+#endif   
 											
 								embRS232.TransEC(0x55);
 								embRS232.TransEC(0xAA);
@@ -547,6 +571,10 @@
 				  //	 		 printf(" p4");
 //______________________________________________________________________
 #ifdef CAN_ETHERNET_ASU
+
+#ifdef KSS_PRINT_LOG                         
+                         printfp("\n\r Send to tuts 7:\n\r");
+#endif   
 											
 								embRS232.TransEC(0x55);
 								embRS232.TransEC(0xAA);
@@ -1343,6 +1371,9 @@
 			 
 	if(flagRequest == 4) 
 			   	{ 
+#ifdef KSS_PRINT_LOG                         
+                         printfp("\n\r Send to tuts 8:\n\r");
+#endif   
 						   embRS485.TransE(0x55);
 		  					embRS485.TransE(0xAA);
 		  				for(i=0; i<embMsgAns.FullSize(); i++) 

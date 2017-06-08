@@ -203,6 +203,11 @@ class EmbRS485 : public EmbCOM
     int Init(unsigned rate);
     void IsrXX();
     void Trans(unsigned char ch);
+#ifdef USE_USART2
+	 void Trans2(unsigned char);
+	 void Trans2EC(unsigned char);
+#endif //USE_USART2
+
     void TransE(unsigned char ch);
     void TransEC(unsigned char ch);
    	void Trans_RDN(unsigned int); // transmit to ethernet
@@ -233,6 +238,7 @@ class EmbRS232 : public EmbCOM
 
 #ifdef USE_USART2
 	 void Trans2(unsigned char);
+	 void Trans2EC(unsigned char);
 #endif //USE_USART2
 //    void TransInit();
 	void TransE(unsigned char);

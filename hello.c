@@ -701,7 +701,27 @@ errors = 0;
   //    pio_ptrb->SODR = 1<<0; // set to one   160915
       _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 5, AT91RM9200_PIO_PERIPHERAL_A, 0);   //spi cs2
 
+ #endif  
+ 
+ 
+ #ifdef	PROG_VNV1 
+
+ //   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 0, AT91RM9200_PIO_PERIPHERAL_IO, 1);
+ //   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 6, AT91RM9200_PIO_PERIPHERAL_IO, 1);
+
+  //    pio_ptrb->SODR = 1<<6; //temporary!!! set to zero
+  //    pio_ptrb->SODR = 1<<6; // set to one   160915
+   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 4, AT91RM9200_PIO_PERIPHERAL_A, 0);   //spi cs1
+   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 5, AT91RM9200_PIO_PERIPHERAL_A, 0);   //spi cs2
+    _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 6, AT91RM9200_PIO_PERIPHERAL_A, 0);   //spi cs3
+
  #endif    
+  
+ 
+ 
+ 
+ 
+ 
  BlinkLED(20, 1);  
   
   
@@ -879,6 +899,15 @@ uint_32 lengthd_485;
    //   pio_ptrb->CODR = 1<<0; //temporary!!! set to zero
       pio_ptrb->SODR = 1<<0; // set to one
 #endif    
+
+//#ifdef PROG_VNV1 
+
+   // _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 0, AT91RM9200_PIO_PERIPHERAL_IO, 1);
+  //    pio_ptrb->CODR = 1<<0; //temporary!!! set to zero
+    //  delay_mcs(100);
+   //   pio_ptrb->SODR = 1<<0; // set to one
+//#endif    
+
 
 //to not view  AT91F_DataflashPrintInfo ();
  //AT91F_DataflashCheck ();
@@ -2623,7 +2652,7 @@ result = bind(socklist[2], &local_sin, sizeof (sockaddr_in));
 
  
  
-#ifndef PROG_VNV
+#ifndef PROG_VNV1
  
 #ifdef XIL_FLASH
 

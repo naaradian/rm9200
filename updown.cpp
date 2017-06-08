@@ -5,6 +5,7 @@
 			byte = embSerialACT155.GetUD1(0);
 			if(GetTestMode() == 0x50)
 			{
+			    printfp("\n\r$");
 	    		printfpd("(1:0x%02X)",byte);
 	        }
 

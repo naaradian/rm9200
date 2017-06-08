@@ -800,6 +800,16 @@ char cMACMMRes[26];
    char cSatGet8[26];
 #endif
 
+#ifdef PROG_PU_MSAT5
+	char cExtDev[26];
+	char cBuc[26];
+    char cBuc24[26];
+	char cBuc10[26];
+	char cLnb[26];
+	char cLnb15[26];
+	char cLnb10[26];
+#endif
+
    char cMACData[26];
 
 

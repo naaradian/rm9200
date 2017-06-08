@@ -3299,6 +3299,101 @@ SatGet8.Init(
 
 #endif
 
+
+//__________________
+#ifdef PROG_PU_MSAT5
+	
+BUC24.Init( &theAnyStrings.cs[0], 
+					19, 2, //x,y
+				    1 , //changable
+					ZeroStorage,		//hier is zero - not saved
+					&theAnyStrings.cSatSoundV[0], //variants
+					0, //init value
+					3,//4, //chars in one on indikator
+					2, //variants? 
+					&theCntFunc, //pControl
+					352,//161, //cntnum control of value
+					352,//161, //oprnum - operation if setted nev value
+					&theAnyStrings.cmes0[0],  //messages to error setted value
+					&theAnyStrings.cmes1[0]	//two line of message
+					 , &theAnyStrings.cRemSatExtLock[0] //pointer of prefix for remote command premote
+					 , &theAnyStrings.c1d[0], //format remote
+					1, //remchars //chars in celling pole of remote command 
+					352//161  //remnum //selector for operation if receive remote command
+										,0
+);
+
+BUC10.Init( &theAnyStrings.cs[0], 
+					19, 2, //x,y
+				    1 , //changable
+					ZeroStorage,		//hier is zero - not saved
+					&theAnyStrings.cSatSoundV[0], //variants
+					0, //init value
+					3,//4, //chars in one on indikator
+					2, //variants? 
+					&theCntFunc, //pControl
+					353,//161, //cntnum control of value
+					353,//161, //oprnum - operation if setted nev value
+					&theAnyStrings.cmes0[0],  //messages to error setted value
+					&theAnyStrings.cmes1[0]	//two line of message
+					 , &theAnyStrings.cRemSatExtLock[0] //pointer of prefix for remote command premote
+					 , &theAnyStrings.c1d[0], //format remote
+					1, //remchars //chars in celling pole of remote command 
+					353//161  //remnum //selector for operation if receive remote command
+										,0
+);
+
+
+LNB15.Init( &theAnyStrings.cs[0], 
+					19, 2, //x,y
+				    1 , //changable
+					ZeroStorage,		//hier is zero - not saved
+					&theAnyStrings.cSatSoundV[0], //variants
+					0, //init value
+					3,//4, //chars in one on indikator
+					2, //variants? 
+					&theCntFunc, //pControl
+					354,//161, //cntnum control of value
+					354,//161, //oprnum - operation if setted nev value
+					&theAnyStrings.cmes0[0],  //messages to error setted value
+					&theAnyStrings.cmes1[0]	//two line of message
+					 , &theAnyStrings.cRemSatExtLock[0] //pointer of prefix for remote command premote
+					 , &theAnyStrings.c1d[0], //format remote
+					1, //remchars //chars in celling pole of remote command 
+					354//161  //remnum //selector for operation if receive remote command
+										,0
+);
+
+LNB10.Init( &theAnyStrings.cs[0], 
+					19, 2, //x,y
+				    1 , //changable
+					ZeroStorage,		//hier is zero - not saved
+					&theAnyStrings.cSatSoundV[0], //variants
+					0, //init value
+					3,//4, //chars in one on indikator
+					2, //variants? 
+					&theCntFunc, //pControl
+					355,//161, //cntnum control of value
+					355,//161, //oprnum - operation if setted nev value
+					&theAnyStrings.cmes0[0],  //messages to error setted value
+					&theAnyStrings.cmes1[0]	//two line of message
+					 , &theAnyStrings.cRemSatExtLock[0] //pointer of prefix for remote command premote
+					 , &theAnyStrings.c1d[0], //format remote
+					1, //remchars //chars in celling pole of remote command 
+					355//161  //remnum //selector for operation if receive remote command
+										,0
+);
+
+	
+
+#endif
+
+
+//__________________
+
+
+
+
 SatTestMode.Init( &theAnyStrings.cs[0], 
 					11, 2, //x,y
 				    1 , //changable
@@ -4289,7 +4384,6 @@ IPAddressUDP.Init( &theAnyStrings.c08X[0],  //format
 #endif
 
 
-
 #ifndef PROG_MD310_SATI
 
   LogoItem.Init(&theAnyStrings.cLogoLd[0], 
@@ -4313,6 +4407,14 @@ IPAddressUDP.Init( &theAnyStrings.c08X[0],  //format
    //	NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);	//t
 #endif
 //___________________________________________
+
+#ifdef PROG_PU_MSAT5
+#include pu_msat5_menu.cpp
+#endif
+
+
+
+
 #ifndef PROG_PU_MSAT
   ConfigItem.Init(&theAnyStrings.cLogoLd[0], 
 #else
@@ -4330,7 +4432,16 @@ IPAddressUDP.Init( &theAnyStrings.c08X[0],  //format
 
 #else
 //	  &SatSystemItem, &SatIndicationItem, &LogoItem, &TestItem,
- &SatSystemItem, &SatIndicationItem, &LogoItem, &XilinxItem,
+
+#ifdef PROG_PU_MSAT5
+// &SatSystemItem, &ExtDevItem, &LogoItem, &XilinxItem,
+   &SatSystemItem, &SatIndicationItem, &LogoItem, &XilinxItem,
+
+#else
+  &SatSystemItem, &SatIndicationItem, &LogoItem, &XilinxItem,
+
+#endif
+
 	  NULL, NULL, NULL, NULL, NULL,   NULL, NULL, NULL,  NULL,  NULL, NULL);
 
 #endif
@@ -5045,11 +5156,31 @@ SatIndicationItem.Init(&theAnyStrings.cLogoLd1[0],
  	1,
 //t 	 &LossItem, &CommandItem, &LogoItem, &ConfClkItem,
 //    &ConfigItem, &SatSystemItem, &LogoItem, &SatGet0Item,
+
+#ifdef PROG_PU_MSAT5
+#ifndef YOURNAL
+ //   &ExtDevItem, &SatSystemItem, &LogoItem, &SatGet1Item,
+	    &ConfigItem, &ExtDevItem, &LogoItem, &SatGet1Item,
+
+#else
+  //  &ExtDevItem, &SatLogItem, &LogoItem, &SatGet1Item,
+     &ConfigItem, &ExtDevItem, &LogoItem, &SatGet1Item,
+#endif
+#else
 #ifndef YOURNAL
     &ConfigItem, &SatSystemItem, &LogoItem, &SatGet1Item,
 #else
     &ConfigItem, &SatLogItem, &LogoItem, &SatGet1Item,
 #endif
+
+
+
+#endif
+
+
+
+
+
     NULL, NULL, NULL, NULL, NULL,   NULL, NULL, NULL,  NULL,  NULL, NULL);
 
 
@@ -5074,7 +5205,12 @@ SatSystemItem.Init(&theAnyStrings.cLogoLd1[0],
 SatLogItem.Init(&theAnyStrings.cLogoLd1[0], 
   	&theAnyStrings.cSatLog[0],
  	1,
+#ifdef PROG_PU_MSAT5
+	&ExtDevItem	, &SatSystemItem, &LogoItem, &SatLogViewItem,
+#else
     &SatIndicationItem, &SatSystemItem, &LogoItem, &SatLogViewItem,
+#endif
+
   	 NULL, NULL, NULL, NULL, NULL,   NULL, NULL, NULL,  NULL,  NULL, NULL);
 
 SatLogViewItem.Init(&theAnyStrings.cEmpty[0], 
@@ -8074,6 +8210,16 @@ RACMOffset.ChangingValue =  RACMOffset.Value;
 
 #endif
 
+#ifdef PROG_PU_M710_MUX
+
+for (cnt = 592; cnt < 769; cnt++)
+{
+   MEMP[cnt - 592] =  Buf[cnt];
+}
+
+#endif
+
+
 
 #ifdef PROG_ODU1
  ten_mhz =  Buf[769];
@@ -8086,6 +8232,20 @@ IPAddressUDP.ChangingValue =  IPAddressUDP.Value;
 
 
 #endif
+
+#ifdef PROG_PU_MSAT5
+  
+ BUC24.Value = Buf[774]; 
+ BUC24.ChangingValue = Buf[774];
+ BUC10.Value = Buf[775]; 
+ BUC10.ChangingValue = Buf[775]; 
+ LNB15.Value = Buf[776]; 
+ LNB15.ChangingValue = Buf[776]; 
+ LNB10.Value = Buf[777]; 
+ LNB10.ChangingValue = Buf[777]; 
+ 
+#endif
+
 
 
 
@@ -10575,6 +10735,15 @@ Buf[cnt++] = (char)(RACMOnOffT.Value);
 
 #endif
 
+#ifdef PROG_PU_M710_MUX
+for (cnt = 592; cnt < 769; cnt++)
+{
+   Buf[cnt] = MEMP[cnt - 592];
+}
+
+#endif
+
+
 #ifdef PROG_ODU1
  Buf[769] = ten_mhz;
 #endif
@@ -10586,6 +10755,17 @@ Buf[cnt++] = (char)(RACMOnOffT.Value);
  Buf[773] = (char)(tmp);
 
 #endif
+
+
+#ifdef PROG_PU_MSAT5
+   	 
+ Buf[774] =  BUC24.Value;
+ Buf[775] = BUC10.Value; 
+ Buf[776] = LNB15.Value; 
+ Buf[777] = LNB10.Value; 
+   
+#endif
+
 
 
 //__________________________________________________crc
@@ -11186,8 +11366,13 @@ extern "C" AnyStrings::Init()
 
 #ifdef PROG_PU_M
 #ifndef PROG_PU_M710
-		 strcpy(cLogoLd,   "         PU-M           ");
+#ifdef PROG_VNV1
+		 strcpy(cLogoLd,   "          VNV           ");
 #else
+		 strcpy(cLogoLd,   "         PU-M           ");
+#endif
+#else
+
 		 strcpy(cLogoLd,   "         MD-34E         ");
 
 #endif
@@ -11200,10 +11385,10 @@ extern "C" AnyStrings::Init()
 #ifdef PROG_PU_MSAT
 	  //	 strcpy(cLogoLd,   " PU-MSAT                ");
 
-#ifdef PROG_VNV1
-		 strcpy(cLogoLd,   "          VNV           ");
+//#ifdef PROG_VNV1
+ //		 strcpy(cLogoLd,   "          VNV           ");
 
-#else
+//#else
 
 #ifndef PROG_PU_MSAT5
 
@@ -11239,17 +11424,26 @@ extern "C" AnyStrings::Init()
 //		 strcpy(cLogoLd1,  "        PU-MSAT         ");
  strcpy(cLogoLd1,  "        SBSL-100        ");
 
-#endif  //vnv1
+//#endif  //vnv1
 #endif // pu_msat
 
 
 #ifdef PROG_PU_M_MUX
+#ifdef PROG_PU_M710_MUX
+        strcpy(cLogoLd,   "         MD-34E-16      ");
+#else
 		 strcpy(cLogoLd,   "         PU-M-MUX       ");
+#endif
 #endif // PROG_PUM
 
 #ifdef PROG_PU_M_V
 #ifdef PROG_COMMUTATOR1
-		 strcpy(cLogoLd,   "       COMMUTATOR1      ");
+#ifdef PROG_COMMUTATOR3
+		 strcpy(cLogoLd,   "       COMMUTATOR3      ");
+#else
+	     strcpy(cLogoLd,   "       COMMUTATOR1      ");
+#endif
+
 #else
 
 		 strcpy(cLogoLd,   "         PU-M-V         ");
@@ -11474,6 +11668,19 @@ extern "C" AnyStrings::Init()
 #ifdef PROG_PU_MSAT1
   	    strcpy(cSatGet8   ,"                    (  )");
 #endif
+
+#ifdef PROG_PU_MSAT5
+		 
+  	    strcpy(cExtDev    ,"    External Devices    ");
+  	    strcpy(cBuc    	  ,"          BUC           ");
+  	    strcpy(cBuc24 	  ," BUC 24V                ");
+  	    strcpy(cBuc10  	  ," BUC 10M                ");
+  	    strcpy(cLnb       ,"          LNB           ");
+  	    strcpy(cLnb15     ," LNB 15V                ");
+  	    strcpy(cLnb10     ," LNB 10M                ");
+		   
+#endif
+
 
 		strcpy(cSatGet3   ,"    IF-Balance (dB):    ");
 		strcpy(cSatGet4   ,  "       SatGet4  :       ");
@@ -13249,8 +13456,8 @@ case 350:  //offset
 case 351:	 
 			//need call function to set
 
-			printfpd("\n\r >%08X ", (unsigned long)IPAddressUDP.Value);
-			printfpd("cv : %08X ", (unsigned long)IPAddressUDP.ChangingValue);
+	 //		printfpd("\n\r >%08X ", (unsigned long)IPAddressUDP.Value);
+	  //		printfpd("cv : %08X ", (unsigned long)IPAddressUDP.ChangingValue);
 
 #ifndef PROG_PUM	
 			SetNeedWriteDevId();
@@ -13260,6 +13467,38 @@ case 351:
 			break;
 
 #endif
+
+#ifdef PROG_PU_MSAT5
+
+case 352:	SetBUC24V();  UsedExp.State.Reg2.bit.WriteId = 1; UsedExp.State.Reg2.bit.Some = 1;
+			break;
+
+case 353:	SetBUC10M(); UsedExp.State.Reg2.bit.WriteId = 1; UsedExp.State.Reg2.bit.Some = 1;
+			break;
+
+case 354:	//   printfpd("\n\r run Value : %d", LNB15.Value);
+		   	//    printfpd("\n\r run Value : %d", LNB15.ChangingValue);
+
+
+			SetLNB15V(); UsedExp.State.Reg2.bit.WriteId = 1; UsedExp.State.Reg2.bit.Some = 1;
+			break;
+
+case 355:	SetLNB10M(); UsedExp.State.Reg2.bit.WriteId = 1; UsedExp.State.Reg2.bit.Some = 1;
+			break;
+
+	 
+		  
+
+	   //		SetNeedWriteDevId();
+
+
+
+			break;
+
+#endif
+
+
+
 
 
 
@@ -15364,6 +15603,30 @@ printfpd("\n\r control>%08X ", (unsigned long)IPAddressUDP.Value);
 
 
 	   break;
+
+#ifdef PROG_PU_MSAT5
+	 
+case 352:
+case 353:
+case 354:
+case 355:
+
+ 
+ #ifdef LOCK_ENABLED
+    	 	 if((LockMode.Value != 3 )&& (LockMode.Value != 1 )) ret = 0;
+			 else
+ #endif //LOCK_ENABLED
+			  if((CValue < MIN_SATEXTLOCK) || (CValue > MAX_SATEXTLOCK)) ret = 0;
+			 else ret = 1;
+
+		//   printfpd("\n\r cValue : %d", CValue);
+		//    printfpd(" ret : %d", ret);
+
+
+	      break;
+	  
+#endif
+
 
 
 

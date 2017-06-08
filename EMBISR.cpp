@@ -443,6 +443,8 @@ extern "C" void outportb(unsigned int a1, unsigned char a2)
   }
 } //
 
+//#ifndef PROG_PU_M710_MUX
+
 extern "C" void outportb3(unsigned int a1, unsigned char a2)
 {
  //  write_xil_char(((uint_32)(a1)), (char) a2);
@@ -453,6 +455,7 @@ extern "C" void outportb3(unsigned int a1, unsigned char a2)
    *port = a2;
   }
 } //
+//#endif
 
 	  
 extern "C" unsigned char inportb(unsigned int a1)
@@ -466,6 +469,9 @@ extern "C" unsigned char inportb(unsigned int a1)
 	return *port;
 }
 
+//#ifndef PROG_PU_M710_MUX
+
+
 extern "C" unsigned char inportb3(unsigned int a1)
 {
    char* port;
@@ -476,6 +482,8 @@ extern "C" unsigned char inportb3(unsigned int a1)
   //   return read_xil_char((uint_32)(a1));
 	return *port;
 }
+
+//#endif
 
 
 extern "C" unsigned short  inport(unsigned int a1)
@@ -800,6 +808,28 @@ void EmbRS232::Trans2(unsigned char ch)
  //	printfpd(":%02X", ch);
    Transmit2c(ch); //port
 };
+
+void EmbRS232::Trans2EC(unsigned char ch)
+{
+ //	printfpd(":%02X", ch);
+   Transmit2c(ch); //port
+
+
+   if(cur_tbuffE >= RDN_BUFFER_SIZE)
+   {
+ //t	cur_tbuffE = 2;
+ 	cur_tbuffE = 3;
+
+   }
+   tbuffE[cur_tbuffE++] = ch;
+
+};
+
+
+
+
+
+
 #endif
 
 
@@ -906,6 +936,10 @@ void EmbRS232::Trans_RDN(unsigned int dest)
 {
   //__________________________________
   //hier need call transmit to ethernet;
+
+//    printfpd("Trans_RDN %08X", dest);
+
+
   static char netdest[6];
   netdest[0] = RDN_MAC0;
   netdest[1] = RDN_MAC1;
@@ -1727,6 +1761,31 @@ void EmbRS485::IsrXX()
  port	*/				
 }
 
+#ifdef USE_USART2
+void EmbRS485::Trans2(unsigned char ch)
+{
+ //	printfpd(":%02X", ch);
+   Transmit2c(ch); //port
+};
+
+void EmbRS485::Trans2EC(unsigned char ch)
+{
+ //	printfpd(":%02X", ch);
+   Transmit2c(ch); //port
+
+
+   if(cur_tbuffE >= RDN_BUFFER_SIZE)
+   {
+ //t	cur_tbuffE = 2;
+ 	cur_tbuffE = 3;
+
+   }
+   tbuffE[cur_tbuffE++] = ch;
+
+};
+
+#endif
+
 void EmbRS485::Trans(unsigned char ch)
 {
 //port  asm{ cli }
@@ -1755,6 +1814,9 @@ void EmbRS485::Trans(unsigned char ch)
  //  }
  //  tbuffE[cur_tbuffE++] = ch;
 };
+
+
+
 
 void EmbRS485::TransE(unsigned char ch)
 {
@@ -1858,6 +1920,9 @@ cur_tbuffS2	= 0;
 void EmbRS485::Trans_RDN(unsigned int dest)
 {
 //printf("\n\r Used");
+//#ifdef KSS_PRINT_LOG                         
+             //     printfpd("Trans_RDN %08X", dest);
+//#endif           
   //__________________________________
   //hier need call transmit to ethernet;
   static char netdest[6];
@@ -4331,7 +4396,7 @@ extern "C" void embMsgWestE_Add( char *);
 extern "C" void RDN_receive(char * pData) 
 {
 // return; //for test 091210
-//  printfp("\n\r RDN_receive\n\r ");
+//  printfp("\n\r RDN_receive  ");
  // pRDN_BufferR = RDN_BufferR;
  unsigned long len;
  char type; //new 0 - 485; 1 - 232
@@ -4343,7 +4408,9 @@ extern "C" void RDN_receive(char * pData)
   len = (unsigned long)*pData++;
  len <<= 8;
  len +=  (unsigned long)*pData++;
- //  printfpd("type : %02X \n\r", *pData);
+//  printfpd("type : %02X ", *pData);
+//   printfpd(" len : %d \n\r", len);
+
 
  type =  *pData++; //new
 // printf("\n\r %X", type);
@@ -4354,6 +4421,8 @@ extern "C" void RDN_receive(char * pData)
  //t for(long i = 0; i < RDN_BUFFER_SIZE; i++)	//now all packet
   if(type == ETH_485)
   {
+
+
  //  send485_enabled = 1;
 
  //  printEthLongHex(0x1234);
@@ -4371,8 +4440,12 @@ extern "C" void RDN_receive(char * pData)
  */
 //_______________________________________________test
 
-
+#ifndef PROG_COMMUTATOR3	
  	  embRS485.rcvbufE.Add((unsigned char)*pData++);
+#else //PROG_COMMUTATOR3	
+	  embRS232S.rcvbufE.Add((unsigned char)*pData++);
+#endif
+
 
   }
  }

@@ -305,8 +305,7 @@
 				}  //rbufembmsg
 //========================================================================            
 //======================================================== 
-           if(!flagRequest)
-				if(rBuffEmbMsgEast.Used())
+           if((!flagRequest) && rBuffEmbMsgEast.Used())
 				{
 #ifdef FIND_CONF_ERR
 		printfp("2");

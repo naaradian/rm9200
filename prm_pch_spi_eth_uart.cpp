@@ -5,8 +5,8 @@
 #include <mqx.h>
 #include <bsp.h>
 
-#define MIN_FREQ (20)	//20 MHz with step 1MHz
-#define MAX_FREQ (7000)
+#define MIN_FREQ  (0)//(20)	//20 MHz with step 1MHz
+#define MAX_FREQ (18000) //(7000)
 
 #define MIN_ATT (0)	//20 MHz with step 1MHz
 #define MAX_ATT (60)
@@ -1320,6 +1320,9 @@ struct EmbMsgN
 	void RunCommandNB(unsigned char);
 	void RunCommandNC(void);
 	void RunCommandND(void);
+	void RunCommandN29(unsigned long);
+
+
 
 
 	void RunCommandN80(unsigned short, unsigned short,unsigned short,unsigned short,unsigned short);
@@ -2335,6 +2338,129 @@ AddToAns(curcrc+1);
 #endif
 
 
+void WriteByteEd(unsigned char addrh,unsigned char addrl,unsigned char data)
+{
+
+ToPdcTu1(0xAA);
+OperateBuffers_usart1t();
+delay_mcs(UART_DELAY<<3);
+
+ToPdcTu1(0x50);
+OperateBuffers_usart1t();
+delay_mcs(UART_DELAY<<3);
+//printfp(" 50");
+
+ToPdcTu1(addrh);
+OperateBuffers_usart1t();
+delay_mcs(UART_DELAY<<5);
+//printfpd(" %02x", addrh);
+
+
+ToPdcTu1(0xAA);
+OperateBuffers_usart1t();
+delay_mcs(UART_DELAY<<3);
+
+ToPdcTu1(0x51);
+OperateBuffers_usart1t();
+delay_mcs(UART_DELAY<<3);
+//printfp(" 51");
+
+
+ToPdcTu1(addrl);
+OperateBuffers_usart1t();
+delay_mcs(UART_DELAY<<5);
+//printfpd(" %02x", addrl);
+
+
+
+ToPdcTu1(0xAA);
+OperateBuffers_usart1t();
+delay_mcs(UART_DELAY<<3);
+
+ToPdcTu1(0x52);
+OperateBuffers_usart1t();
+delay_mcs(UART_DELAY<<3);
+//printfp(" 52");
+
+
+ToPdcTu1(data);
+OperateBuffers_usart1t();
+delay_mcs(UART_DELAY<<5);
+//printfpd(" %02x", data);
+
+if(!(((unsigned)addrl + (unsigned)(addrh << 8))%1024))
+{
+// printfp("\n\r addr % 1024 ");
+//  printfpd(" addrl %x ", addrl);
+ //  printfpd(" addrh %x ", addrh);
+
+
+
+ delay_mcs(50000);
+}
+
+
+return;
+}
+
+
+void EmbMsgN::RunCommandN29(unsigned long pos)
+{
+ unsigned char curcrc = 0; 
+ unsigned short addr;
+ unsigned long size;
+ unsigned char data;
+
+  addr = (GetBody(pos)) + (GetBody(pos+1) << 8);
+  size = GetBody(pos+2);
+
+// printfpd("\n\r pos : > %d ",pos);
+
+
+//  printfpd("\n\rGetBody pos : > 0x%X ",GetBody(pos));
+  //  printfpd("\n\rGetBody pos + 1: > 0x%X ",GetBody(pos + 1));
+
+
+
+ // printfpd("\n\r addr > 0x%X ", addr);
+//   printfpd("size : %d ", size);
+
+
+if(size <= 200 )
+{
+ for(unsigned i = 0; i < size; i++)
+ {
+ // printfpd("\n\r addr > %x", addr);
+ 
+
+  data = GetBody(pos + 3 + i);
+  //  printfpd("    data > %x ", data);
+
+  WriteByteEd((unsigned char)(addr >> 8),  (unsigned char)addr, (unsigned char)data);
+
+  addr++; 
+  }
+time_request = time1;
+NeedRunCommand |= MASK_BIT_2;
+}  //if
+
+AddToAnsDirect(START_ANS);
+AddToAns(GetAddrN());
+curcrc += GetAddrN();
+AddToAns(COMM20_LEN);
+curcrc += COMM20_LEN;
+AddToAns(COMMANDN20);
+curcrc += COMMANDN20;
+ breakflag = 1;
+AddToAns(RUN_OK);
+curcrc += RUN_OK;
+AddToAns(curcrc+1);
+
+}
+
+
+
+
 //_________________________________________________________
 /*
 void RunCommandN2(unsigned short freq)
@@ -2817,13 +2943,15 @@ void EmbMsgN::SetCommandN(unsigned long pos)
   case 0xB	: RunCommandNB(body[pos]); break;
   case 0xC	: RunCommandNC(); break;
   case 0xD	: RunCommandND(); break;
+  case 0x20	: RunCommandN29(pos); break;
+
 
 
 
   case 0x80	: RunCommandN80(body[pos],body[pos+1],body[pos+2],body[pos+3],body[pos+4]); break;
 #ifdef USE_ATT_TABLE
 #ifndef PRM_PCH_SPI_STEND
-  case 0x20	: RunCommandN20(pos); break;
+//  case 0x20	: RunCommandN20(pos); break;
   case 0x21	: RunCommandN21(pos); break;
 #ifdef TWO_RECEIVERS
   case 0x22	: RunCommandN22(pos); break;
@@ -4956,18 +5084,18 @@ if(GetTestMode() == MODE_CHECK_PINS)
 }
 
 
-#ifdef MAKET_PLATA   
+//#ifdef MAKET_PLATA   
  static unsigned long cntt1;
 cntt1++;
 if((cntt1 > 10000l))
 {
  cntt1 = 0;
-//printfpd("\n\r %d", GetFreqN());   //rate 115200
+printfpd("\n\r0> %d", GetFreqN());   //rate 115200
 //printfpd("\n\r %d", CheckFreq(GetFreqN()));
 //SetNeedWriteDevId2();
 //ReadDevId2(0);
 // printfpd("\n\r _psp_get_cpsr(): %x", _psp_get_cpsr()); 
-//printfpd2("\n\r> %d", GetFreqN());
+//printfpd2("\n\r2> %d", GetFreqN());
 //cntt1 = 0;
 // AT91F_SPI_IRQ0_Handler();
 //#ifdef TEST_PRINT_SPI
@@ -4996,7 +5124,7 @@ if((cntt1 > 10000l))
 
 }
 
-#endif
+//#endif
  
 
 //return;
@@ -7689,33 +7817,24 @@ void SetFreqN()
 {
 unsigned char * pData;
 static unsigned char DataDDS[LEN_DATA_DDS];//
-/*
-#ifdef PRM_N_KEEP_FREQ
-DelayWriteTime = time1;
-SetNeedWriteDevId2();
-#endif
- */
-//printfpd("\n\r SetFreqN : %d", Filtr);
-
-//if(Filtr ==1 ) {Filtr = 2;}
-//else if(Filtr == 2 ) {Filtr = 3;}
-//else {Filtr = 0;}
 
 
-/*
+if(emb5CommandRecieverSetFrequ1.emb5commandrecieversetfrequ.frequ == 0)
+{
+
 ToPdcTu1(0xAA);
-ToPdcTu1(0x45);
-ToPdcTu1(Filtr);
 OperateBuffers_usart1t();
-delay_mcs(UART_DELAY);
- */
+delay_mcs(UART_DELAY<<2);
 
-#ifdef MAKET_PLATA
-printfpd("\n\r frequ: %d",emb5CommandRecieverSetFrequ1.emb5commandrecieversetfrequ.frequ);
-#endif
+ToPdcTu1(0x05);
+OperateBuffers_usart1t();
+delay_mcs(UART_DELAY<<2);
 
+ToPdcTu1(0x00);
+OperateBuffers_usart1t();
+delay_mcs(UART_DELAY<<2);
 
-
+}
 
 ToPdcTu1(0xAA);
 OperateBuffers_usart1t();
@@ -7731,26 +7850,6 @@ ToPdcTu1((unsigned char)emb5CommandRecieverSetFrequ1.emb5commandrecieversetfrequ
 OperateBuffers_usart1t();
 delay_mcs(UART_DELAY<<4);
 
-
-//____________________________________
-/*
- ToPdcTu1(0);
-OperateBuffers_usart1t();
-delay_mcs(UART_DELAY);
-
-ToPdcTu1(0x0B);
-OperateBuffers_usart1t();
-delay_mcs(UART_DELAY);
-
-//printfpd("\n\r SetFreqN 0B : %02X", (unsigned char)emb5CommandRecieverSetFrequ1.emb5commandrecieversetfrequ.frequ);
-
-ToPdcTu1(0);
-OperateBuffers_usart1t();
-delay_mcs(UART_DELAY<<3);
-
-   */
-
-//___________________________________
 
 
 ToPdcTu1(0xAA);
@@ -7787,160 +7886,6 @@ delay_mcs(UART_DELAY<<4);
 
 
 return;
-
-
-
-//unsigned char * b = Formula0(emb5CommandRecieverSetFrequ1.emb5commandrecieversetfrequ.frequ ,Rej,Filtr);
-//unsigned char * b = Formula1(emb5CommandRecieverSetFrequ1.emb5commandrecieversetfrequ.frequ ,Filtr);
-//unsigned char * b = Formula2(emb5CommandRecieverSetFrequ1.emb5commandrecieversetfrequ.frequ ,Filtr);
-//unsigned char * b = Formula3nov(emb5CommandRecieverSetFrequ1.emb5commandrecieversetfrequ.frequ ,Filtr);
-//unsigned char * b = Formula5nov(emb5CommandRecieverSetFrequ1.emb5commandrecieversetfrequ.frequ ,Filtr);
-unsigned char * b = Formula8fsb(emb5CommandRecieverSetFrequ1.emb5commandrecieversetfrequ.frequ ,Filtr);
-
-//					Formula3nov
-			   /* prm_pch_N_1!!!!
-
-				embMsgUDRequest_1.Init();
-				embMsgUDRequest_1.SetAddr(0);//emgUDRequest_1.Init();
- 		     	embMsgUDRequest_1.SetLength(FORMULA_LEN); //em
-			    for(long i = 0; i < FORMULA_LEN; i++)
-				{
-				 embMsgUDRequest_1.SetBody(i , b[i]);	//temporary
-				}
-		  		embMsgUDRequest_1.CalcCRC();
-				embMsgUDRequest_1.SetReadyToSend();
-				*/
- emb5CommandRecieverSetAtt1.emb5commandrecieversetatt.stepAtt3 = b[16];//MakeAtt(att);
-
-//______________________________________________
-#ifdef USE_ATT_TABLE
-  if(emb5CommandRecieverSetFrequ1.emb5commandrecieversetfrequ.frequ	< AFR_SIZE)
-  {
- 	emb5CommandRecieverSetAtt1.emb5commandrecieversetatt.stepAtt3 = AFR[emb5CommandRecieverSetFrequ1.emb5commandrecieversetfrequ.frequ];
-#ifdef TWO_RECEIVERS
-	emb5CommandRecieverSetAtt1.emb5commandrecieversetatt.stepAtt4 = AFR1[emb5CommandRecieverSetFrequ1.emb5commandrecieversetfrequ.frequ];
-#endif
-  }
-#endif 
-//______________________________________________
-   
-
-
- // printfp("\n\r freq :");
-//  printfpd("%ld", emb5CommandRecieverSetFrequ1.emb5commandrecieversetfrequ.frequ);
- // printfp("att :");
- // printfpd("%ld", b[16]);
-
-//  printEthLongHex(b[16]); //t
-#ifdef USE_ATT_TABLE
-   SetAtt8N();
-#endif
-
-
-		  SetUpr(b); //att
-
-
-     //     for(long i = 0; i < START_LEN; i ++)
-	   //		{
-			  b++;
-			  b++;
-		  SetSynt(b); //prm_pch_n_2 : synt	   //was only b
-
-#ifdef	 TEST_PRM_PCH_N_2
-		 //  printf("\n\r Synt : 0x%02X", *b );
-		   	  
-#endif
-//________________________________________ Set command and address
-// #ifndef	 TEST_PRM_PCH_N_2
-
-
-				b--;
-				*b++ = 0x61;
-				*b = 0xAB; //position to synt
-				b--;   //st to 0x61
-// #endif
-//________________________________________
-
-
-
-//________________________________________
-
-//#ifdef	 TEST_PRM_PCH_N_2
-
-//unsigned char * pData;
-//static unsigned char DataDDS[LEN_DATA_DDS];//
-/*
-pData = DataDDS;
-// *pData++ = 1;   *pData++ = 0xAB;	 *pData = 0x45; b++;  b++;
-*pData++ = 1;   *pData++ = 0xAB;	 *pData =  b++;
-SendToDDS(LEN_DATA_DDS,  (unsigned long)&DataDDS[0]);
-
-pData = DataDDS;
-*pData++ = 1;   *pData++ = 0xAA;	 *pData = *b++;
-SendToDDS(LEN_DATA_DDS,  (unsigned long)&DataDDS[0]);
-
-pData = DataDDS;
-*pData++ = 1;   *pData++ = 0xA9;	 *pData = *b++;
-SendToDDS(LEN_DATA_DDS,  (unsigned long)&DataDDS[0]);
-
-pData = DataDDS;
-*pData++ = 1;   *pData++ = 0xA8;	 *pData = *b++;
-SendToDDS(LEN_DATA_DDS,  (unsigned long)&DataDDS[0]);
-
-pData = DataDDS;
-*pData++ = 1;   *pData++ = 0xA7;	 *pData = *b++;
-SendToDDS(LEN_DATA_DDS,  (unsigned long)&DataDDS[0]);
-
-pData = DataDDS;
-*pData++ = 1;   *pData++ = 0xA6;	 *pData = *b;
-SendToDDS(LEN_DATA_DDS,  (unsigned long)&DataDDS[0]);
-
-pData = DataDDS;
-*pData++ = 0;   *pData++ = 5;	 *pData = 1;
-SendToDDS(LEN_DATA_DDS,  (unsigned long)&DataDDS[0]);
- */
-
-//#else
-
-//______________________140513
-  ResetDDS();
-  LoadDDSN2();
-//______________________140513
-
-
-
-
-
-		  SendToDDS(SENDED_DDS_FREQ_LEN, (unsigned long)b);
-
-pData = DataDDS;
-*pData++ = 0;   *pData++ = 5;	 *pData = 1;
-SendToDDS(LEN_DATA_DDS,  (unsigned long)&DataDDS[0]);
-
-
-//#endif
-
-
-	 	 //	}
-
-
-	 //  		printf("\n\r");
-	  //		printf(" %02X", *b);
-
-/*
-//prm_pch_n_2 - not need!!
-
-			for(i = 0; i < MESSAGE_LEN; i ++)
-			{
-	  //	 	printf(" %02X", *b);
-	  	 	  SSC1_BUFFER[i] = *b++;
-	  	 	  //		  SSC1_BUFFER[i] = 0xA0 + i+1;		 //t
-			}
-			need_to_sended =  MESSAGE_LEN;
-
-   		OperateSynt(0);
-   */
-
 }
 
 
@@ -9599,6 +9544,7 @@ printfpd(":%d ",current_command_type);
   case 0xB	: embMsgSSC2N.RunCommandNB(current_command_data[0]); break;
   case 0xC	: embMsgSSC2N.RunCommandNC(); break;
   case 0xD	: embMsgSSC2N.RunCommandND(); break;
+  case 0x20	: embMsgSSC2N.RunCommandN29(3); break;
 
 
 

@@ -3,7 +3,11 @@
 	while(embSerialACT155.UsedUD1(0))
 		{
 			byte = embSerialACT155.GetUD1(0);
-	   //		printf("_%c",byte);
+			if(GetTestMode() == 0x50)
+			{
+	    		printfpd("(1:0x%02X)",byte);
+	        }
+
 			switch(byte)
 			{
 				case 0xAA: embMsg485_1.Init(); stemp++; break; // Пакет
@@ -191,6 +195,11 @@ if(GetTestMode() == 0x50)
 		while(embSerialACT155.UsedUD2(0))
 		{
 			byte = embSerialACT155.GetUD2(0);
+			if(GetTestMode() == 0x50)
+			{
+	    		printfpd("(2:0x%02X)",byte);
+	        }
+
 	  //		printf(".%c",byte);
 
 			switch(byte)

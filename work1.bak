@@ -750,12 +750,36 @@ MDataC	AttData;
 
 
 
+#ifdef PROG_PU_MSAT5
+MDataV	BUC24;
+MDataV	BUC10;
+MDataV	LNB15;
+MDataV	LNB10;
+#endif
+
+
+
 
 Pult UsedPult;
 ExDt UsedExp;
 
 //MDataI  VolNumber;
 //MDataV  CommandData;
+
+//#ifdef PROG_PU_MSAT5
+
+MDataV	BUC24V;
+MDataV	BUC10M;
+MDataV	LNB15V;
+MDataV	LNB10M;
+
+//#include pu_msta5_items.cpp
+
+//#endif	
+
+
+
+
 #ifdef PROG_PU_MSAT	 
 
 Item  SatSet0Item;
@@ -841,6 +865,17 @@ Item  NetworkItem;
 
 #endif
 
+#ifdef PROG_PU_MSAT5
+
+Item  ExtDevItem;
+Item  BucItem;
+Item  Buc24VItem;
+Item  Buc10MItem;
+Item  LnbItem;
+Item  Lnb15VItem;
+Item  Lnb10MItem;
+
+#endif
 
 
 #ifdef CLOCK_ENABLED
@@ -857,11 +892,11 @@ Item  WebPasswordItem;
 #ifdef PROG_MD310_SATI
 
 #ifndef PROG_MD310_SATI2
-
+   
 #include "md100se.cpp"
 #include md310s_items.cpp
 #else
-
+	 
 #include "md100se2.cpp"
 #include md310s2_items.cpp
 
@@ -873,6 +908,12 @@ Item  WebPasswordItem;
 
 Menu UsedMenu;
 MDataV  RestartData;
+
+
+#ifdef	PROG_VNV1
+#include "vnv_work1.cpp"
+#endif
+
 
 
 
@@ -5460,6 +5501,8 @@ extern "C" void EnableInterrupts()
 
 
  #ifdef PROG_BMD34
+#ifndef PROG_PU_M710_MUX
+
      if(CheckDone())
      { 
         _at91rm9200_int_enable(AT91RM9200_IRQ0_VECTOR, IRQ, 
@@ -5470,7 +5513,7 @@ extern "C" void EnableInterrupts()
                    					      AT91RM9200_AIC_SMR_PRIO_MIN );  
                //    		 			      AT91RM9200_AIC_SMR_PRIO_MAX ); 
      }                                       
-                                       
+#endif                                       
 #endif //PROG_BMD34 
 
 #ifdef PROG_BMD35
@@ -5745,6 +5788,8 @@ extern "C" void EnableInterrupts()
 
 
 #ifdef PROG_PU_M
+#ifndef PROG_PU_M710_MUX
+
 
 //     if(CheckDone())
 //ppp
@@ -5754,6 +5799,7 @@ extern "C" void EnableInterrupts()
    				 	 //t     AT91RM9200_AIC_SMR_SRCTYPE_PET,   //positive edge triggered 
                //           AT91RM9200_AIC_SMR_SRCTYPE_HLS, //high level sensitive
 #ifndef PROG_PU_M710
+
                         AT91RM9200_AIC_SMR_SRCTYPE_HLS, //high level sensitive
 			    //      AT91RM9200_AIC_SMR_SRCTYPE_LLS, //high level sensitive   //t
 #else
@@ -5765,7 +5811,7 @@ extern "C" void EnableInterrupts()
                    					      AT91RM9200_AIC_SMR_PRIO_MIN );  
                //    		 			      AT91RM9200_AIC_SMR_PRIO_MAX ); 
      }                                       
-                                     
+#endif                                     
 #endif //PROG_PU_M 
 
 #ifdef PROG_PU_M_V
@@ -5852,6 +5898,8 @@ extern "C" void EnableInterrupts()
 
 
 #ifdef PROG_PU_M_MUX
+#ifndef PROG_PU_M710_MUX
+
   // ppp
   //   if(CheckDone())
   	 if(MirrorTest())
@@ -5864,7 +5912,7 @@ extern "C" void EnableInterrupts()
                    					      AT91RM9200_AIC_SMR_PRIO_MIN );  
                //    		 			      AT91RM9200_AIC_SMR_PRIO_MAX ); 
      }                                       
-                                     
+#endif                                     
 #endif //PROG_PU_M_MUX 
 
 
@@ -5893,6 +5941,8 @@ extern "C" void EnableInterrupts()
 #endif //PROG_BUKU 
 
 #ifdef PROG_PUM
+#ifndef PROG_PU_M710_MUX
+
 //rrr
   //    if(CheckDone())
 	   if(MirrorTest())
@@ -5905,7 +5955,7 @@ extern "C" void EnableInterrupts()
                    					      AT91RM9200_AIC_SMR_PRIO_MIN );  
                   // 		 			      AT91RM9200_AIC_SMR_PRIO_MAX ); 
      }                                       
-                                     
+#endif                                     
 #endif //PROG_PUM  
 
 
@@ -5956,6 +6006,21 @@ extern "C" void EnableInterrupts()
  //1f
 //  m_load_xilinx_IO(); 
 //for(;;)
+
+#ifdef PROG_PU_M710_MUX
+
+
+	 if(MirrorTest())
+     { 
+        _at91rm9200_int_enable(AT91RM9200_IRQ0_VECTOR, IRQ, 
+                      AT91RM9200_AIC_SMR_SRCTYPE_LLS, //low level sensitive
+                   					      AT91RM9200_AIC_SMR_PRIO_MIN );  
+     }                                       
+                                     
+#endif 
+
+
+
  //___________________________________
 
 }
@@ -7319,6 +7384,12 @@ extern "C" void PackCfg()
 
 #endif
   */
+#ifdef	PROG_VNV1
+
+#include operatefile_vnv.cpp
+
+#else
+
 extern "C" void OperateFile()
 {
 //printfp("\n\r Operate File");
@@ -7428,6 +7499,13 @@ unsigned char config_flag = 0;
     BuffSize[cnt] =  '\0';
 
    size =  strtoll(&BuffSize[0], &stopstring,10);
+
+// printfpd("\n\r send size = %d \n\r", size);	
+
+//#ifdef PROG_PU_M710
+//    size = XilSizeToDownloadD;
+//#endif
+
 
 #ifdef PROG_ODU4
     size = BIG_PROG_SIZE;
@@ -9188,6 +9266,9 @@ ScanTxtFiles();
 
 }
 
+
+#endif
+
 extern "C" char IsXilWrited(void)
 {
   char ret = 0;
@@ -9218,6 +9299,11 @@ extern "C" void FillXilFileData(char pg)
 #else
 	source_addr = (unsigned int)XilFileDataAddressD7;
 #endif
+
+#ifdef PROG_VNV1
+	source_addr = (unsigned int)XilFileDataAddressD7;
+#endif
+
 
 // unsigned int XilDataAddress = XilFileDataAddressD; //
 //t unsigned int XilAddressToDownload = XilAddressToDownloadD;// 0x21000000; //upper 16Mx32 +1
@@ -9332,6 +9418,25 @@ extern "C" void FillXilFileData(char pg)
    */
 #endif
 
+#ifdef PROG_VNV1
+ read_dataflash ((unsigned int)XilFileDataAddressD7,(unsigned int)TBUFF1_VALUE, (char *)(&TFTP_Buffer[0]));
+ pData =  (char *)(&TFTP_Buffer[0]);
+ for(i = 0; i < TBUFF1_VALUE; i++)
+ {
+ XilFileData.Value[i] = *pData++;
+ }
+
+
+  read_dataflash ((unsigned int)XilFileDataAddressD7A,(unsigned int)TBUFF1_VALUE, (char *)(&TFTP_Buffer[0]));
+ pData =  (char *)(&TFTP_Buffer[0]);
+ for(i = 0; i < TBUFF1_VALUE; i++)
+ {
+ XilFileData2.Value[i] = *pData++;
+ }
+ 
+#endif
+
+
 
 
 
@@ -9361,6 +9466,86 @@ if(pg > 3)
 
 //}
 }
+
+extern "C" void FillXilFileData2(char pg)
+{
+ char * pData;
+ int i;
+
+  unsigned int source_addr;
+
+
+#ifdef PROG_VNV1
+	source_addr = (unsigned int)XilFileDataAddressD7;
+#endif
+
+
+// unsigned int XilDataAddress = XilFileDataAddressD; //
+//t unsigned int XilAddressToDownload = XilAddressToDownloadD;// 0x21000000; //upper 16Mx32 +1
+// unsigned int XilAddressToDownload = (unsigned int)(&TFTP_Buffer[0]);// 0x21000000; //upper 16Mx32 +1
+// unsigned int XilSizeToDownload = TBUFF1_VALUE; //0x1ffff;
+//t read_dataflash (XilDataAddress, XilSizeToDownload, (char *)(XilAddressToDownload));
+//140704 read_dataflash ((unsigned int)XilFileDataAddressD,(unsigned int)TBUFF1_VALUE, (char *)(&TFTP_Buffer[0]));
+ read_dataflash (source_addr,(unsigned int)TBUFF1_VALUE, (char *)(&TFTP_Buffer[0]));
+ pData =  (char *)(&TFTP_Buffer[0]);
+// for(i = 0; i < TBUFF1_VALUE; i++)
+ #ifndef PROG_MD310 
+ #ifndef PROG_TUTS
+ for(i = 0; i < DISP_LEN; i++)
+ {
+// #ifndef PROG_TUTS
+ XilFileData.Value[i] = *pData++;
+// #endif
+ }
+ #endif
+ #endif
+
+ #ifdef PROG_TUTS
+ strcpy(XilFileData.Value,"Not Used");
+ #endif
+
+//#ifndef PROG_MD310_SAT
+ #ifdef PROG_MD310
+//#endif
+#ifndef PROG_MD310_SAT
+
+ strcpy(XilFileData.Value,"Not Used");
+#endif
+//#ifndef PROG_MD310_SAT
+ #endif
+//#endif
+
+
+
+#ifdef PROG_VNV1
+ read_dataflash ((unsigned int)XilFileDataAddressD7,(unsigned int)TBUFF1_VALUE, (char *)(&TFTP_Buffer[0]));
+ pData =  (char *)(&TFTP_Buffer[0]);
+ for(i = 0; i < TBUFF1_VALUE; i++)
+ {
+ XilFileData.Value[i] = *pData++;
+ }
+
+
+  read_dataflash ((unsigned int)XilFileDataAddressD7A,(unsigned int)TBUFF1_VALUE, (char *)(&TFTP_Buffer[0]));
+ pData =  (char *)(&TFTP_Buffer[0]);
+ for(i = 0; i < TBUFF1_VALUE; i++)
+ {
+ XilFileData2.Value[i] = *pData++;
+ }
+
+#endif
+
+
+
+
+
+//}
+}
+
+
+
+
+
 #ifdef XIL_FLASH
 
 
@@ -13361,6 +13546,21 @@ case 0x32l:	  /*
 					wd_reset();
 		 		}
 				*/
+#ifdef PROG_PU_MSAT5
+#ifndef	PROG_VNV1
+
+for(tm=0;tm<10000;tm++){
+			   LoadIFMdt();
+
+				wd_reset();
+				OperateBuffers_usart0t();
+
+				}
+
+#endif
+#endif
+
+
 
                 #ifdef	 PROG_PRM_PCH_SPI_NOXIL_ETH
 				WriteAFRTest();
@@ -13510,6 +13710,24 @@ case 0x37l:
  #endif
  #endif
       break;
+case 0x38l: 
+		  #ifdef PROG_VNV1
+		//   pio_ptrb->CODR = 1<<0; //temporary!!! set to zero
+
+		 TestWriteFlash6();
+		     break;
+
+		  #endif
+
+case 0x39l: 
+		  #ifdef PROG_VNV1
+		//   pio_ptrb->CODR = 1<<0; //temporary!!! set to zero
+
+		 TestWriteFlash7();
+		     break;
+
+		  #endif
+
 case 0x41l:  
  	   for(tm = 0; tm <= 50; tm++)
   			 	{ 
@@ -17681,6 +17899,7 @@ extern "C" void Menu::StopChanging()
 	 Control(CurrentItem->pDataP0->CntNum, 
 	 CurrentItem->pDataP0->ChangingValue))
 	 {
+ //	 printfp("\n\r  po cv : %d",  (unsigned)CurrentItem->pDataP0->ChangingValue);
 	 CurrentItem->pDataP0->Value = CurrentItem->pDataP0->ChangingValue;
 //	 WriteStorageV(CurrentItem->pDataP0->StorageAddr, (volatile char*)&CurrentItem->pDataP0->Value);
  //	 CurrentItem->pDataP0->WriteStorageV(CurrentItem->pDataP0->StorageAddr, (volatile char*)&CurrentItem->pDataP0->Value);
@@ -23216,6 +23435,7 @@ extern "C" void add_char_TCP_buff(unsigned char tch)
 //ChkFrq(&IPBuff[0]
 
 #ifdef PROG_PRM_PCH_L_61
+#ifndef	 PROG_PRM_PCH_SPI_ETH_UART
 
 extern "C" unsigned char GetType(char *);
 extern "C" unsigned long GetFrq(char *);
@@ -23272,6 +23492,8 @@ extern "C" unsigned char ChkFrq(char *IPBuff)
  return ret;
 }
 
+
+#endif
 #endif
 
 
@@ -28177,7 +28399,8 @@ extern "C" void CheckOperateFlashx(void)
 #endif
 
 
-#ifndef	PROG_VNV
+
+
 
 #ifdef PROG_MD310_SAT
 #ifndef PROG_MD310_SATI2
@@ -28194,17 +28417,18 @@ extern "C" void CheckOperateFlashx(void)
 
 #endif
 
-#endif
+//#endif
 
-#else
+//#else
 
-#include "vnv_work1.cpp"
-
+//#include "vnv_work1.cpp"
 #endif
 
 extern "C" unsigned short GetDevId(void)
 {
 return (unsigned short) DevId.Value;
 }
+
+
 
 

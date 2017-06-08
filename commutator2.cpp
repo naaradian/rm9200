@@ -2826,7 +2826,10 @@ struct StateDev
 };
 
 StateDev statedev[DEVCONFIG_QUANTITY];
-EmbRS232 embRS232S;
+//t170530 EmbRS232 embRS232S;
+ EmbRS485 embRS232S;    //t170530
+
+
 
 #ifndef CHANGE_USART12
 EmbMsg485 embMsg232S;
