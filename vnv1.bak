@@ -2305,7 +2305,7 @@ extern "C" unsigned long GetModForSS()
  extern "C" void Init_PU_M()
 {
 
-//return; //t
+return; //t
 
 #ifdef OP_TRUNKS
  DelayWriteTime = 0l;
@@ -2737,7 +2737,7 @@ EmbInit();	 //embrs232 embrs485
 extern "C" void PU_M()
 {
 
- // return;
+ 
 	long err_tmp_now = 0l;
 	static long err_tmp_prev1 = 0l;
 	static long err_tmp_prev3 = 0l;
@@ -2746,7 +2746,7 @@ extern "C" void PU_M()
 static unsigned long cnt;
 cnt++;
 
-SpiMirrrorTest();//for test
+//SpiMirrrorTest();//for test
 
 
 #ifdef OP_TRUNKS

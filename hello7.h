@@ -38,7 +38,9 @@
 //#define PROG_BMDN4	 //act15505 1+1 use PVG710 maked mode 1+1  bmdn4.cpp!!!+ pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 //#define PROG_BMDN5	 //act155051 1+0 use PVG710 maked mode 1+1  bmdn5.cpp!!!+ pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 //#define PROG_BMDN6		// 155052 //try md310e.cpp+ filters act155051 1+0 use PVG710 maked mode 1+1 + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
-#define PROG_MD310	  //+ filters act155051 1+0 use PVG710 maked mode 1+1  md310e.cpp!!!+ pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
+//#define PROG_MD310	  //+ filters act155051 1+0 use PVG710 maked mode 1+1  md310e.cpp!!!+ pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
+ #define PROG_MD310E16	   //e_16 sets as pragma + filters act155051 1+0 use PVG710 maked mode 1+1  md310e.cpp!!!+ pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
+
 //#define PROG_KAZAH			// 155052 //try md310e.cpp => kazah.cpp + filters act155051 1+0 use PVG710 maked mode 1+1 + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 
 
@@ -175,18 +177,18 @@
 //262 : remove 10 symbols in parse rs232
 
 //#define SOFT_VER (0x509)	 
-#define SOFT_VER (0x1150)    
+#define SOFT_VER (0x1154)    
 #ifndef PROG_PU_MSAT    
 //#define SOFT_VER_STRING    "   14.12.01.1-800 ADESTO"//263 : maked init counter and data for write_buffer_char1()
 //#ifndef PROG_PUPM3_1_ADESTO	
 //#ifndef PROG_PU_MSAT1
-#define SOFT_VER_STRING      "      17.06.07.1-1150    "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING      "      17.06.16.2-1154    "//263 : maked init counter and data for write_buffer_char1()
 #else
 //#define SOFT_VER_STRING "Radian Ver. 01.00        "//263 : maked init counter and data for write_buffer_char1()
 #ifdef	PROG_VNV1
-#define SOFT_VER_STRING      "      17.06.07.1-1150    "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING      "      17.06.16.1-1154    "//263 : maked init counter and data for write_buffer_char1()
 #else
-#define SOFT_VER_STRING   "Radian v1150.70607       "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING   "Radian v1154.70616       "//263 : maked init counter and data for write_buffer_char1()
 #endif
 #endif
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -3447,6 +3449,8 @@ extern "C" void PU_M(void);
 
 #ifdef	PROG_VNV1
 
+#define WITHOUT_INTERRUPTS 	   //temporary
+
 extern "C" void TestWriteFlash6(void);
 //#define	PROG_DMU6
 //#define	PROG_PU_MSAT5
@@ -5484,8 +5488,9 @@ extern "C" void ConfigFileDestroy(unsigned long);
 
 #endif
 
+#ifdef 	PROG_MD310E16
 
-#ifdef 	PROG_MD310
+#define PROG_MD310
 
 #define E1_16
 
@@ -5497,6 +5502,13 @@ extern "C" void ConfigFileDestroy(unsigned long);
 
 #define LOSS_BIT		(1)
 #endif
+
+
+#endif
+
+#ifdef 	PROG_MD310
+
+
 
 
 #define RS485E_ENABLED

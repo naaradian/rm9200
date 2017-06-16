@@ -5984,9 +5984,11 @@ dkoef[12].fin=2100;dkoef[12].cin=1;dkoef[12].cout=0;dkoef[12].bias=2;dkoef[12].r
 extern "C" unsigned long Findf(unsigned long freq)
 {
 unsigned long i;
-for(i = 0; i < DKOEF_SIZE; i++)
+printfpd("freq : %d", freq);
+freq /= 1000000l;
+for(i = 1; i < DKOEF_SIZE; i++)
 {
-if(dkoef[i].fin < freq) break;
+if(dkoef[i].fin > freq) break;
 }
 return i;
 }
@@ -6009,9 +6011,10 @@ mkoef[8].fin=1730; mkoef[8].cin=0; mkoef[8].cout=0; mkoef[8].rsel=11;mkoef[8].cs
 extern "C" unsigned long Finmf(unsigned long freq)
 {
 unsigned long i;
-for(i = 0; i < MKOEF_SIZE; i++)
+freq /= 1000000l;
+for(i = 1; i < MKOEF_SIZE; i++)
 {
-if(mkoef[i].fin < freq) break;
+if(mkoef[i].fin > freq) break;
 }
 return i;
 }
@@ -6025,11 +6028,18 @@ return i;
 extern "C" unsigned char GetDReg (unsigned long i, unsigned  r)
 {
 unsigned char ret = 0;
+// printfpd("\n\r getdreg i : %d ", i);
+// printfpd("\n\r dkoef[i].rdac << 5: %02X ", dkoef[i].rdac <<5);
+// printfpd("\n\r dkoef[i].cdac: %02X ", dkoef[i].cdac);
+
+
+
 switch(r)
 {
-case 602: ret = (dkoef[i].cout << 5) + (dkoef[0].cin << 1);	break;
-case 621: ret = (dkoef[i].bias << 1) +  (dkoef[i].rdac >> 3);  	break;
-case 622: ret = (dkoef[i].rdac << 5) + dkoef[0].cdac;	break;
+
+case 602: ret = (dkoef[i].cout << 5) + (dkoef[i].cin << 1);	 break;
+case 621: ret = (dkoef[i].bias << 2) +  (dkoef[i].rdac >> 3);  	break;
+case 622: ret = (dkoef[i].rdac << 5) + dkoef[i].cdac; 	break;
 
 
 default: break;
@@ -6043,9 +6053,9 @@ extern "C" unsigned char GetMReg (unsigned long i, unsigned r)
 unsigned char ret = 0;
 switch(r)
 {
-case 602: ret = (mkoef[i].cout << 4) + mkoef[0].cin ;	break;
+case 602: ret = (mkoef[i].cout << 4) + mkoef[i].cin ;	break;
 case 621: ret = mkoef[i].rsel >> 2;	break;
-case 622: ret = (mkoef[i].rsel << 6) + mkoef[0].csel;	break;
+case 622: ret = (mkoef[i].rsel << 6) + mkoef[i].csel;	break;
 
 
 default: break;
@@ -6129,7 +6139,7 @@ for(i = 0; i < 4; i++)
 
 extern "C" void LoadIFDmd(unsigned long freq)
 {
-printfp("\n\r LoadIFDmd");
+printfpd("\n\r LoadIFDmd %d ", freq);
 unsigned char * pData;
 static unsigned char DataDDS[SENDED_DDS_FREQ_LEN];//
 unsigned long i = Findf(freq);
@@ -6140,9 +6150,9 @@ unsigned long frac;
 
 unsigned char DIV4_EN; 
 unsigned char VCO_SEL; 
-unsigned long Fvco;
+long long Fvco;
  
-if(freq > FREQ_ODIV) { DIV4_EN = 0; Fvco = freq << 1; }
+if((freq / 1000000)> FREQ_ODIV) { DIV4_EN = 0; Fvco = freq << 1; }
 else { DIV4_EN = 1; Fvco = freq << 2;}
 
 if (4600000 <= (Fvco / 1000))
@@ -6162,15 +6172,16 @@ else
  VCO_SEL=3;
 }}}
 
-printfpd("D VCO_SEL : % 02X", VCO_SEL);
-printfpd("D DIV4_EN : % 02X", DIV4_EN);
+printfpd("D VCO_SEL : % 02X ", VCO_SEL);
+printfpd("D DIV4_EN : % 02X ", DIV4_EN);
 
-INT_K = (Fvco) / (unsigned long)FREQ_REF;
+INT_K = (Fvco) / (long long)FREQ_REF;
 
-frac = ((Fvco % (unsigned long)FREQ_REF) << 16) / (unsigned long)FREQ_REF;
+frac = ((Fvco % (long long)FREQ_REF) << 16) / (unsigned long)FREQ_REF;
 
-printfpd("\n\rD MINT_K : %d", INT_K);
-printfpd(" D frac : %d", frac);
+printfpd("\n\rD MINT_K : %d ", INT_K);
+printfpd(" D frac : %d ", frac);
+printfpd(" Fvco / 1000000 : %d ", Fvco / 1000000);
 
   
 
@@ -6304,11 +6315,17 @@ IOSpiSendR(5   , 3,  0,DataDDS, DataDDS);
 //____________________---t
 
 
-/*
+//________________________________uncomment
 pData = DataDDS;
 *pData++ = 0x60;   *pData++ = 0;	 *pData = GetDReg (i,602);  //addr 30
+printfpd("\n\r 602 need 22 : %02X ", GetDReg (i,602));
+
 IOSpiSendR(4   , 3,  0,DataDDS, DataDDS);	  //channel C
-IOSpiSendR(5   , 3,  0,DataDDS, DataDDS);	
+IOSpiSendR(5   , 3,  0,DataDDS, DataDDS);
+
+printfpd("\n\r 621 need 5 : %02X ", GetDReg (i,621));
+printfpd("\n\r 622 need 5 : %02X ", GetDReg (i,622));
+	
 
 pData = DataDDS;
 *pData++ = 0x62;   *pData++ = GetDReg (i,621);  *pData = GetDReg (i,622);  //addr 31
@@ -6319,14 +6336,15 @@ pData = DataDDS;
 // *pData++ = 0x44;   *pData++ = 0x2A;
 //if(freq > FREQ_ODIV) { *pData++ = 0x03; odiv = 1; } else { *pData++ = 0x0B;	odiv = 2;}
 
-*pData++ = 0x44;   *pData++ = 0x2A;	    *pData = (VCO_SEL << 1) | DIV4_EN;
+*pData++ = 0x44;   *pData++ = 0x2A;	    *pData = (DIV4_EN << 3) | VCO_SEL;  // (VCO_SEL << 1) | DIV4_EN;
+
+
+printfpd("\n\r 44 need 3 : %02X ", (DIV4_EN << 3) | VCO_SEL);
+
 
 //if(freq > FREQ_ODIV) { *pData++ = 0x03; odiv = 1; } else { *pData++ = 0x0B;	odiv = 2;}
 
 //IOSpiSendR(3   , 3,  0,DataDDS, DataDDS);	  //channel C
-
-
-
 
 IOSpiSendR(4   , 3,  0,DataDDS, DataDDS);	  //channel C
 IOSpiSendR(5   , 3,  0,DataDDS, DataDDS);	
@@ -6336,7 +6354,11 @@ pData = DataDDS;
 
 //INT_K = (odiv * freq) / (unsigned long)FREQ_REF;
 
-		 *pData++ = (unsigned char)(INT_K >> 8);    *pData++ = (unsigned char)INT_K; 
+printfpd("\n\r 4 need 8 : %02X ",  (unsigned char)(INT_K >> 8));
+printfpd("\n\r 4-1 need 0x50 : %02X ", (unsigned char)(INT_K));
+
+
+		 *pData++ =  (unsigned char)(INT_K >> 8);    *pData++ = (unsigned char)INT_K; 
 IOSpiSendR(4   , 3,  0,DataDDS, DataDDS);	  //channel C
 IOSpiSendR(5   , 3,  0,DataDDS, DataDDS);	
 
@@ -6344,6 +6366,8 @@ IOSpiSendR(5   , 3,  0,DataDDS, DataDDS);
 pData = DataDDS;
 *pData++ = 0x06;   	   //addr 3
 
+ printfpd("\n\r 6 need 8 : %02X ",(unsigned char)(frac >> 8));
+printfpd("\n\r 6-1 need 8 : %02X ",(unsigned char)frac);
 
 
 //frac = (((odiv * freq) % (unsigned long)FREQ_REF) << 16)/ (unsigned long)FREQ_REF;
@@ -6356,7 +6380,7 @@ pData = DataDDS;
 *pData++ = 0x08;   *pData++ = 0xff;	 *pData = 0xff;  //addr 4
 IOSpiSendR(4   , 3,  0,DataDDS, DataDDS);	  //channel C
 IOSpiSendR(5   , 3,  0,DataDDS, DataDDS);	
-	*/
+//______________________________uncomment	
 //can be controlled lock after 10 ms
   
 //_________________________________________________________________________rxdds
@@ -6395,7 +6419,7 @@ printfp("\n\r LoadIFDAC");
 
 unsigned char * pData;
 static unsigned char DataDAC[SENDED_DDS_FREQ_LEN];//
-
+  /*
 pData = DataDAC;
 *pData++ = 0;	//write to addr 0 1 byte
 *pData = 0x24; //00100100;  reset
@@ -6409,7 +6433,7 @@ pData = DataDAC;
 
 IOSpiSendR(6 , 2, 0, DataDAC, DataDAC);	  //reset
 delay_mcs(5);
-
+ */
 
 /*
 
@@ -6495,14 +6519,14 @@ unsigned long frac;
 
 unsigned char DIV4_EN; 
 unsigned char VCO_SEL; 
-unsigned long Fvco;
+long long Fvco;
 
 printfpd("\n\r M FREQ_ODIV : %d", FREQ_ODIV);
 
 printfpd("\n\r M Fvco : %d",Fvco);
 
  
-if(freq > FREQ_ODIV) { DIV4_EN = 0; Fvco = freq << 1; odiv = 1; }
+if((freq /1000000l) > FREQ_ODIV) { DIV4_EN = 0; Fvco = freq << 1; odiv = 1; }
 else { DIV4_EN = 1; Fvco = freq << 2; odiv = 2;}   
 
 
@@ -6678,7 +6702,7 @@ IOSpiSendR(3  , 3,  0,  DataDDS, DataDDS);	  //channel C
 
 //____________________---t
 
-  /*
+//______________________________uncomment  
 
 pData = DataDDS;
 *pData++ = 0x60;   *pData++ = 0;	 *pData = GetMReg (i,602);  //addr 30
@@ -6691,7 +6715,9 @@ IOSpiSendR(3  , 3,  0,  DataDDS, DataDDS);	  //channel C
 	
  
 pData = DataDDS;
-*pData++ = 0x44;   *pData++ = 0x2A;	    *pData = (VCO_SEL << 1) | DIV4_EN;
+//*pData++ = 0x44;   *pData++ = 0x2A;	    *pData = (VCO_SEL << 1) | DIV4_EN;
+*pData++ = 0x44;   *pData++ = 0x2A;	    *pData = (DIV4_EN << 3) | VCO_SEL;  // (VCO_SEL << 1) | DIV4_EN;
+
 
 //if(freq > FREQ_ODIV) { *pData++ = 0x03; odiv = 1; } else { *pData++ = 0x0B;	odiv = 2;}
 
@@ -6705,7 +6731,7 @@ pData = DataDDS;
 
 //INT_K = (odiv * freq) / (unsigned long)FREQ_REF;
 
-		 *pData++ = (unsigned char)(INT_K >> 8);    *pData++ = (unsigned char)INT_K; 
+		 *pData++ =  (unsigned char)(INT_K >> 8);    *pData++ = (unsigned char)INT_K; 
 IOSpiSendR(3  , 3,  0,  DataDDS, DataDDS);	  //channel C
 
 
@@ -6723,7 +6749,7 @@ pData = DataDDS;
 *pData++ = 0x08;   *pData++ = 0xff;	 *pData = 0xff;  //addr 4
 IOSpiSendR(3  , 3,  0,  DataDDS, DataDDS);	  //channel C
 
-   */
+  //ucomment
 
 
 //can be controlled lock after 10 ms

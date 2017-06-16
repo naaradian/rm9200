@@ -5,22 +5,34 @@ ProjSetConfigFlags=0x04110940
 
 [State]
 SysSetCwd='C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7'
-SrchSetFlags=0x001e600b
-SrchSetAgainFlags=0x04076005,0
+SrchSetFlags=0x0018600b
+SrchSetAgainFlags=0x04096005,0
 SrchSetAgainFlags=0x0200600b,1
 FileSortMode=0x0
-_StateView='C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\pu_m710_mux.cpp',0,0,849,430,-1,-1,2421,2,2421,1,2,'',0x00100008,0,83,0,0,''
-_StateView='C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello7.h',60,60,819,425,-1,-1,79,3,76,1,1,'',0x00100018,0,83,0,0,''
-_StateView='C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\EMBISR.cpp',30,30,849,430,-1,-1,458,3,441,1,3,'',0x00100008,0,83,0,0,''
+_StateView='C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\vnv1.cpp',120,120,863,368,-1,-1,2308,3,2303,1,7,'',0x00100008,0,83,0,0,''
+_StateView='C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\operatefile_vnv.cpp',0,0,893,273,-1,-1,389,30,379,1,8,'',0x00100008,0,83,0,0,''
+_StateView='C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\pu_m710_mux.cpp',0,0,849,430,-1,-1,2421,2,2421,1,9,'',0x00100008,0,83,0,0,''
+_StateView='C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello7.h',60,60,819,425,-1,-1,347,1,330,1,2,'',0x00100008,0,83,0,0,''
+_StateView='C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\work.c',60,60,871,261,-1,-1,8147,3,8147,1,5,'',0x00100008,0,83,0,0,''
+_StateView='C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello.c',90,90,867,262,-1,-1,2621,36,2621,1,6,'',0x00100008,0,83,0,0,''
+_StateView='C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\EMBISR.cpp',30,30,849,430,-1,-1,1620,19,1619,1,4,'',0x00100008,0,83,0,0,''
+_StateView='C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\pu_msat5.cpp',60,60,931,313,-1,-1,6033,55,6006,1,1,'',0x00100018,0,83,0,0,''
+_StateView='C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\work1.cpp',90,90,970,245,-1,-1,13553,16,13545,1,3,'',0x00100008,0,83,0,0,''
 _StateBuffer='C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\pu_m710_mux.cpp',0x0400048e,2421,2,25,'5 9','',0x0,'',1,72,0,0
-_StateBuffer='C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello7.h',0x0400048e,79,3,25,'5 9','',0x0,'',1,72,1,0
-_StateBuffer='C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\EMBISR.cpp',0x0400048e,458,3,25,'5 9','',0x0,'',1,72,0,0
-_StateHistory=FILELIST,'C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\commutator3.bak','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\mpc34.cpp','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\stack_commands_bmdn4.c','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\stack_commands_ups.c','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\md310_work1.cpp','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\work1_menu.bak','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\pu_m710_mux.cpp','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\EMBISR.cpp','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello7.h'
-_StateHistory=SEARCH,'LNB','SetLNB15V','CheckRestoringData','External Devices','cExtDev','SatIndicationItem','cLOgoLd1','PUM_TEMP_NO_EXCH','pu_m(','inportb3'
+_StateBuffer='C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello7.h',0x0400048e,347,1,25,'5 9','',0x0,'',1,72,0,0
+_StateBuffer='C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\work.c',0x04000498,8147,3,25,'4 7 10 13 16 19 22 25 28 31','',0x101,'',1,72,0,0
+_StateBuffer='C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello.c',0x0c000498,2621,36,25,'4 7 10 13 16 19 22 25 28 31','',0x101,'',1,72,0,0
+_StateBuffer='C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\EMBISR.cpp',0x0400048e,1620,19,25,'5 9','',0x0,'',1,72,0,0
+_StateBuffer='C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\pu_msat5.cpp',0x0400048e,6033,55,25,'5 9','',0x0,'',1,72,1,0
+_StateBuffer='C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\work1.cpp',0x0400048e,13553,16,25,'5 9','',0x0,'',1,72,0,0
+_StateBuffer='C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\vnv1.cpp',0x0400048e,2308,3,25,'5 9','',0x0,'',1,72,0,0
+_StateBuffer='C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\operatefile_vnv.cpp',0x0400048e,396,30,25,'5 9','',0x0,'',1,72,0,0
+_StateHistory=FILELIST,'C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\EMBISR.cpp','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello7.h','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello.c','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\vnv1.cpp','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\operatefile_vnv.cpp','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\work.bak','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\work.c','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\pu_msat5.cpp','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\work1.cpp'
+_StateHistory=SEARCH,'pu_m(','PROG_VNV1','DEViseData','freq','LoadIF','Init_mkoef','LoadIFDmd','DKOEF_SIZE','FREQ_ODIV','FREQ_REF'
 _StateHistory=REPLACE,'BASE_DECODER_FILES','IOSpiSend','IOSpiSend(3 ','IOSpiSend(4  ','IOSpiSend(3  , 3,  0,','IOSpiSendR','IOSpiSendR(3  , 3,  0,','IOSpiSendR(4   , 3,  0,','IOSpiSendR(5   , 3,  0,','IOSpiSendR(6   , 3,  0,'
 _StateHistory=XSYMBOL,'PROG_PRM_PCH_DEM_XIL','PROG_PRM_PCH_N_1','PROG_PRM_PCH','PROG_UPS','PROG_PRM_PCH_S'
-_StateHistory=EDITFILE,'C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\PVG610_API.c','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\updown','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\kazah','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\pu_msat5','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\pu_m710_mux','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\PVG610_API.c','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\utils.c','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\endian.c','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hostDriverForPc.cpp','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\md310e.cpp'
-_StateHistory=DOCUMENTVISIT,'778         9           C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\operatefile_vnv.cpp','716         95          C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello.c','865         17          C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\vnv.cpp','11674       23          C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\work1_menu.cpp','2749        3           C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\vnv1.cpp','9025        3           C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\work.c','193         3           C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello7.h','2398        2           C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\pu_m710_mux.cpp','458         3           C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\EMBISR.cpp','2421        2           C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\pu_m710_mux.cpp'
+_StateHistory=EDITFILE,'C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\pu_msat5','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\pu_m710_mux','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\PVG610_API.c','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\utils.c','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\endian.c','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hostDriverForPc.cpp','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\md310e.cpp','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\commutator3','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\vnv1','C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\pu_msat5'
+_StateHistory=DOCUMENTVISIT,'1443        25          C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello.c','344         1           C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello7.h','1483        1           C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello.c','344         3           C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello7.h','2308        3           C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\vnv1.cpp','3450        43          C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello7.h','2621        36          C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\hello.c','7840        15          C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\work.bak','8147        3           C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\work.c','6359        55          C:\ARC\mqx2.50_atevbrm9200.met\examples\hello7\pu_msat5.cpp'
 _StateHistory=XOBJECTS,'PVG610_API_NetE1PmGet'
 _StateDocumentVisit=10
 
@@ -88,11 +100,12 @@ VCSSetCmd=VCS_REMOVE_ID,'del /f "%b%{??v|___}e"',0x8000040
 .\hello7.h
 .\spi_pol.c
 .\hello7.bin
-.\PVG610_API.c
 .\utils.c
 .\endian.c
 .\hostDriverForPc.cpp
+.\PVG610_API.c
 .\md310e.cpp
+.\commutator3.cpp
 
 [Editor]
 FilterProjDeleteList 

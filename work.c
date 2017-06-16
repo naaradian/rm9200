@@ -7837,7 +7837,7 @@ char * point = (char *)(TFTP_BUFFER_ADDRESS);
 
 void DeviseData (uchar_ptr data_ptr, uint_32 * data_len)
 {
-printfp("\n\r DeviseData \n\r");
+//printfp("\n\r DeviseData \n\r");
 
     //before change can read address from pointer
     uint_32 addr;
@@ -7885,7 +7885,7 @@ printfp("\n\r DeviseData \n\r");
            } /* Endbody */
            
            
-       printfpd(" addr : 0x%X", addr);    
+   //    printfpd(" addr : 0x%X", addr);    
   //____________________________________       
  //      char *strrchr(const char *s, int c);
       setdata_ptr =  strrchr((const char *)locdata_ptr, ':');
@@ -7939,7 +7939,7 @@ printfp("\n\r DeviseData \n\r");
 #endif // PROG_KTVM 
 
 #ifdef PROG_PU_M_MUX   
-printfp("\n\r read cs3\n\r");
+//printfp("\n\r read cs3\n\r");
                 addr -= cs3_addr;
 //              if(addr < NVRAM_SIZE)
                 _io_fseek(fk_ptr, addr,IO_SEEK_SET);
@@ -8077,7 +8077,7 @@ printfp("\n\r read cs3\n\r");
 #endif // PROG_ktvm  
 
 #ifdef PROG_PU_M_MUX  
-printfpd("\n\r write cs3 : 0x%x\n\r", setdata);
+//printfpd("\n\r write cs3 : 0x%x\n\r", setdata);
  
           // *dev_ptr = setdata;
                  addr -= cs3_addr;

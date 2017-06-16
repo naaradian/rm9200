@@ -770,13 +770,14 @@ extern "C" void LoadFiltersO (unsigned char baud, unsigned char chnl)
 //unsigned long length_of_data;
 unsigned char * BufferData;
 unsigned char Buff[2]; // =  (0x81, 0xFD); 
-unsigned char BL = 0x81;
 //unsigned char BL = 0x81;
+unsigned char BL = 0x80;
 
 
 //unsigned char BH = 0xFD;
 
 if(baud > 63) baud = 63;
+if(baud > 31) BL |= 1;
 BL |= (baud << 1);
 Buff[0] = BL;
 //Buff[1] = 0xBD;
@@ -1041,6 +1042,18 @@ if(LNB10.Value > 1)
 {
    LNB10.Value = 0;   LNB10.ChangingValue = 0;
 }
+
+if(BUC24.Value > 1)
+{
+   BUC24.Value = 0;   BUC24.ChangingValue = 0;
+}
+
+if(BUC10.Value > 1)
+{
+   BUC10.Value = 0;   BUC10.ChangingValue = 0;
+}
+
+
 
    
 

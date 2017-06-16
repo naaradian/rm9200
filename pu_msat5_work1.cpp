@@ -754,6 +754,7 @@ delay_mcs(2);
   default :   break;
 }
 
+    printfp("\n\r");
 
  return 0;
 }
@@ -770,13 +771,14 @@ extern "C" void LoadFiltersO (unsigned char baud, unsigned char chnl)
 //unsigned long length_of_data;
 unsigned char * BufferData;
 unsigned char Buff[2]; // =  (0x81, 0xFD); 
-unsigned char BL = 0x81;
 //unsigned char BL = 0x81;
+unsigned char BL = 0x80;
 
 
 //unsigned char BH = 0xFD;
 
 if(baud > 63) baud = 63;
+if(baud > 31) BL |= 1;
 BL |= (baud << 1);
 Buff[0] = BL;
 //Buff[1] = 0xBD;

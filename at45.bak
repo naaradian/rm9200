@@ -58,8 +58,11 @@ void AT91F_SpiInit(void) {
  _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 0, AT91RM9200_PIO_PERIPHERAL_A, 0); 
  _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 1, AT91RM9200_PIO_PERIPHERAL_A, 0);
  _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 2, AT91RM9200_PIO_PERIPHERAL_A, 0); 
- _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 3, AT91RM9200_PIO_PERIPHERAL_A, 0);
+ _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 3, AT91RM9200_PIO_PERIPHERAL_A, 0);   //cs0
  _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 4, AT91RM9200_PIO_PERIPHERAL_A, 0);   //cs1
+ _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 5, AT91RM9200_PIO_PERIPHERAL_A, 0);   //cs2
+ _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 6, AT91RM9200_PIO_PERIPHERAL_A, 0);   //cs3
+
 
 //	AT91C_BASE_PIOA->PIO_ASR = AT91C_PA3_NPCS0 | AT91C_PA4_NPCS1 | AT91C_PA1_MOSI | AT91C_PA5_NPCS2 |
 //				   AT91C_PA6_NPCS3 | AT91C_PA0_MISO | AT91C_PA2_SPCK;
@@ -2450,7 +2453,12 @@ pDesc->DataFlash_state = IDLE;
      
      
 #ifndef PROG_ODU1000     
-     	return ((pDesc->command[1] == 0xFF)? 0: (pDesc->command[1] & 0x3C)); //size
+ //keep old    	return ((pDesc->command[1] == 0xFF)? 0: (pDesc->command[1] & 0x3C)); //size
+      
+        if(pDesc->command[2] == 0x27) return  pDesc->command[2]; //adeste at45db321e
+
+// return ((pDesc->command[2] == 0xFF)? 0: (pDesc->command[2] + pDesc->command[4])); //0x28 - atmel or 0x29 - adesto
+
 #else      
        return ((pDesc->command[2] == 0xFF)? 0: (pDesc->command[2] + pDesc->command[4])); //0x28 - atmel or 0x29 - adesto
 

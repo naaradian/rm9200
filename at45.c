@@ -2453,7 +2453,12 @@ pDesc->DataFlash_state = IDLE;
      
      
 #ifndef PROG_ODU1000     
-     	return ((pDesc->command[1] == 0xFF)? 0: (pDesc->command[1] & 0x3C)); //size
+ //keep old    	return ((pDesc->command[1] == 0xFF)? 0: (pDesc->command[1] & 0x3C)); //size
+      
+        if(pDesc->command[2] == 0x27) return  pDesc->command[2]; //adeste at45db321e
+
+ return ((pDesc->command[2] == 0xFF)? 0: (pDesc->command[2] + pDesc->command[4])); //0x28 - atmel or 0x29 - adesto
+
 #else      
        return ((pDesc->command[2] == 0xFF)? 0: (pDesc->command[2] + pDesc->command[4])); //0x28 - atmel or 0x29 - adesto
 

@@ -2737,7 +2737,7 @@ EmbInit();	 //embrs232 embrs485
 extern "C" void PU_M()
 {
 
- // return;
+ 
 	long err_tmp_now = 0l;
 	static long err_tmp_prev1 = 0l;
 	static long err_tmp_prev3 = 0l;

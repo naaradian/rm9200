@@ -502,6 +502,28 @@ int AT91F_DataflashInitx (void)
 			dataflash_infox[i].logical_address = csx[i][0];
 			dataflash_infox[i].id = dfcode;
 			break;
+         
+         
+         
+		case AT45DB041E:
+       if(start_main_loop)
+      {
+          printfp("   AT45DB041E ");
+     }          
+
+ 	      dataflash_info[i].Device.pages_number = 2048;
+			dataflash_info[i].Device.pages_size = 264;//264;
+			dataflash_info[i].Device.page_offset =9;// ????   9 bits can make byte address in page
+			dataflash_info[i].Device.byte_mask = 0x00;// - one bit in 3 byte used for byte address
+			dataflash_info[i].Device.cs = cs[i][1];
+			dataflash_info[i].Desc.DataFlash_state = IDLE;
+			dataflash_info[i].logical_address = cs[i][0];
+			dataflash_info[i].id = dfcode;
+			break;      
+         
+			break;
+         
+         
 
 		case AT45DB321:
    //     printfp("\n\r AT45DB321");
@@ -514,6 +536,21 @@ int AT91F_DataflashInitx (void)
 			dataflash_infox[i].logical_address = csx[i][0];
 			dataflash_infox[i].id = dfcode;
 			break;
+         
+    case AT45DB641E:
+   //     printfp("   AT45DB641E ");
+
+			dataflash_info[i].Device.pages_number = 32768;
+			dataflash_info[i].Device.pages_size = 264;//264;
+			dataflash_info[i].Device.page_offset =9;// ????   9 bits can make byte address in page
+			dataflash_info[i].Device.byte_mask = 0x00;// - one bit in 3 byte used for byte address
+			dataflash_info[i].Device.cs = cs[i][1];
+			dataflash_info[i].Desc.DataFlash_state = IDLE;
+			dataflash_info[i].logical_address = cs[i][0];
+			dataflash_info[i].id = dfcode;
+			break;      
+         
+         
 
 		case AT45DB642:
     //    printfp("\n\r AT45DB642");

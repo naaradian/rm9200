@@ -695,21 +695,23 @@ errors = 0;
 //________________________________________________________________________________________toggle_io
 // 
 #ifdef	PROG_DMU6 
-
+ //#ifndef	PROG_VNV1 
+ 
+ //hhhh
     _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 0, AT91RM9200_PIO_PERIPHERAL_IO, 1);
       pio_ptrb->CODR = 1<<0; //temporary!!! set to zero
   //    pio_ptrb->SODR = 1<<0; // set to one   160915
       _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 5, AT91RM9200_PIO_PERIPHERAL_A, 0);   //spi cs2
-
+// #endif
  #endif  
  
  
  #ifdef	PROG_VNV1 
 
- //   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 0, AT91RM9200_PIO_PERIPHERAL_IO, 1);
+ //t   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 0, AT91RM9200_PIO_PERIPHERAL_IO, 1);
  //   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 6, AT91RM9200_PIO_PERIPHERAL_IO, 1);
 
-  //    pio_ptrb->SODR = 1<<6; //temporary!!! set to zero
+ //t    pio_ptrb->SODR = 1<<6; //temporary!!! set to zero
   //    pio_ptrb->SODR = 1<<6; // set to one   160915
    _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 4, AT91RM9200_PIO_PERIPHERAL_A, 0);   //spi cs1
    _at91rm9200_pio_set(AT91RM9200_PIO_PORT_A, 5, AT91RM9200_PIO_PERIPHERAL_A, 0);   //spi cs2
@@ -722,7 +724,7 @@ errors = 0;
  
  
  
- BlinkLED(20, 1);  
+ BlinkLED(20, 20);  
   
   
      _at91rm9200_pio_set(AT91RM9200_PIO_PORT_C, 13, AT91RM9200_PIO_PERIPHERAL_IO, 1);
@@ -900,12 +902,9 @@ uint_32 lengthd_485;
       pio_ptrb->SODR = 1<<0; // set to one
 #endif    
 
-//#ifdef PROG_VNV1 
-
-   // _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 0, AT91RM9200_PIO_PERIPHERAL_IO, 1);
-  //    pio_ptrb->CODR = 1<<0; //temporary!!! set to zero
-    //  delay_mcs(100);
-   //   pio_ptrb->SODR = 1<<0; // set to one
+//ok #ifdef PROG_VNV1 
+//   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 0, AT91RM9200_PIO_PERIPHERAL_IO, 1);
+//    pio_ptrb->CODR = 1<<0; //temporary!!! set to zero
 //#endif    
 
 
@@ -921,12 +920,24 @@ uint_32 lengthd_485;
 #endif 
 
 
+//#ifndef PROG_VNV1
 
 #ifndef 	PROG_PRM_PCH_DEM_XIL
    FillXilFileData((char)XILINXPG);   //after init flsh make this
 #else
    FillXilFileData((char)XILINXPG1);   //after init flsh make this
-#endif   
+#endif  
+
+
+//ok#ifdef PROG_VNV1 
+//   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 0, AT91RM9200_PIO_PERIPHERAL_IO, 1);
+//    pio_ptrb->CODR = 1<<0; //temporary!!! set to zero
+//#endif    
+
+
+ 
+
+//#endif
    
    FillProgVersion();
    
@@ -995,7 +1006,7 @@ delay_mcs(1000000l);
  FillConfigFileVersion();
 #endif // PROG_BMDN  
 
-// BlinkLED(50, 5); 
+ BlinkLED(50, 5); 
 //___________________________ok      
 // BlinkLED(1000, 1000); 
  // for(;;);
@@ -1014,13 +1025,19 @@ delay_mcs(1000000l);
 #ifdef 	PROG_PRM_PCH_DEM
 #ifndef	PROG_PRM_PCH_DEM_XIL_CHN_DMU3
 #ifndef	PROG_PRM_PCH_DEM_XIL_CHN_DMU4
-
-   LoadDDSs();
+     LoadDDSs();
 #endif   
 #endif    
-#endif   
+#endif 
+
+//ok#ifdef PROG_VNV1 
+//   _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 0, AT91RM9200_PIO_PERIPHERAL_IO, 1);
+//    pio_ptrb->CODR = 1<<0; //temporary!!! set to zero
+//#endif    
+
    
 //__________________________________________
+#ifndef PROG_VNV1
 #ifndef PROG_DMU6
 #ifndef 	PROG_MD310
 //#endif
@@ -1219,6 +1236,17 @@ if(GetTestMode() == 0x5D)
 
 //#ifndef PROG_MD310_SAT
 #endif
+#endif // PROG_VNV1
+
+//ok BlinkLED(200, 3); 
+
+
+//xilinx do not loaded #ifdef PROG_VNV1 
+//  _at91rm9200_pio_set(AT91RM9200_PIO_PORT_B, 0, AT91RM9200_PIO_PERIPHERAL_IO, 1);
+//    pio_ptrb->CODR = 1<<0; //temporary!!! set to zero
+//#endif    
+
+
 
 
 //#endif
@@ -1353,6 +1381,12 @@ m_get_clk2();
 #endif // PROG_TUTS
 
 
+//#ifdef	PROG_VNV1 
+//    pio_ptrb->SODR = 1<<6; 
+// #endif    
+
+
+
 //___________________________ok      
 // BlinkLED(1000, 1000); 
 //  for(;;);
@@ -1433,9 +1467,13 @@ if (_int_install_isr(AT91RM9200_FIQ_VECTOR,
  //______________________________________  
  //____________________________________________ 
  
+//wrong#endif // PROG_VNV1
+ 
+ 
 #ifndef  DISABLE_ETHERNET
 
 //BlinkLED(2000, 2);   //ok
+ BlinkLED(200, 3); 
 
  
   Set_enet_local0((uchar*)&enet_local0[0]);
