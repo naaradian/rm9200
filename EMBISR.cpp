@@ -448,12 +448,15 @@ extern "C" void outportb(unsigned int a1, unsigned char a2)
 extern "C" void outportb3(unsigned int a1, unsigned char a2)
 {
  //  write_xil_char(((uint_32)(a1)), (char) a2);
+
      char* port;
+#ifndef MD3416_TEST
   if(a1 < XILINX_SIZE)
   {
    port = pxilinx3 + (a1);
    *port = a2;
   }
+#endif
 } //
 //#endif
 
@@ -475,11 +478,14 @@ extern "C" unsigned char inportb(unsigned int a1)
 extern "C" unsigned char inportb3(unsigned int a1)
 {
    char* port;
+#ifndef MD3416_TEST
+
  if(a1 < XILINX_SIZE)
    {
    port = pxilinx3 + (a1);
    }
   //   return read_xil_char((uint_32)(a1));
+#endif
 	return *port;
 }
 

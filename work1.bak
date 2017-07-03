@@ -767,12 +767,12 @@ ExDt UsedExp;
 //MDataV  CommandData;
 
 //#ifdef PROG_PU_MSAT5
-
+ /*
 MDataV	BUC24V;
 MDataV	BUC10M;
 MDataV	LNB15V;
 MDataV	LNB10M;
-
+ */
 //#include pu_msta5_items.cpp
 
 //#endif	
@@ -8377,6 +8377,16 @@ AT91F_DataflashInitx();
    InvertBitOrdering();	 //bit order need inverted.
 	size = ODU_XIL_SIZE; //236000;
 #endif
+
+#ifdef PROG_MD310E16
+	printfp("\n\r InvertBitOrdering()... ");
+   InvertBitOrdering();	 //bit order need inverted.
+   size = ODU_XIL_SIZE; //236000;
+#endif
+
+
+
+
 	printfp("\n\r write_dataflashx()... ");
 
  errorw = write_dataflashx (addr_dest,  (unsigned int)&TFTP_Buffer[0x60],  size);	//121018 - write only xilinx data(try use zero address for xilinx loading) 
@@ -13811,7 +13821,7 @@ case 0x44l:
 		   
 
 		 break;
- 				#endif //PROG_DTVM
+ 				#endif 
 
 /*
 
@@ -28304,7 +28314,8 @@ ScanTxtFiles();
 //#define  SIZEX (5)
 #define  SIZEX (500)
 #define  SIZEXR (SIZEX)
-#define  ADEST (CFG_DATAFLASH_LOGIC_ADDR_CS0X + 0x49000)
+//#define  ADEST (CFG_DATAFLASH_LOGIC_ADDR_CS0X + 0x49000)
+#define  ADEST (CFG_DATAFLASH_LOGIC_ADDR_CS0X)
 
 #define  SIZEX1 (700)
 #define  SIZEXR1 (SIZEX1)
@@ -28348,7 +28359,7 @@ extern "C" void CheckOperateFlashx(void)
   	BuffW[i] = i;
     BuffR[i] = 0; //clear
   }
-  write_dataflashx(ADEST, (unsigned long)&BuffW[0] , SIZEX);
+ //t write_dataflashx(ADEST, (unsigned long)&BuffW[0] , SIZEX);
  //  printfp("\n\r set : ");
 	
 // for( i = 0; i < SIZEX1; i++)
@@ -28380,17 +28391,18 @@ extern "C" void CheckOperateFlashx(void)
   printfp("\n\r");
    for(i = 0; i < SIZEXR; i++)
   {	
-  if(BuffR[i] != (i % 256) )
-  {	flag = 0;
+ // if(BuffR[i] != (i % 256) )
+ // {	flag = 0;
+ if(!(i % 16)) printfpd("\n\r %04X>", i);
 
-  	printfpd(" %d", i);
+  //	printfpd(" %d ", i);
 	printfpd(" %02X", BuffR[i]);
-	 break;
-	 }
+  //	 break;
+ //	 }
   }
 
- if(flag) printfp("\n\rOk");
- else	  printfp("\n\rNot Ok");
+// if(flag) printfp("\n\rOk");
+// else	  printfp("\n\rNot Ok");
 
 
   
@@ -28417,12 +28429,24 @@ extern "C" void CheckOperateFlashx(void)
 
 #endif
 
+
+#ifdef PROG_MD310E16
+
+#include "md310e16_work1.cpp"
+
+#endif
+
+
+
 //#endif
 
 //#else
 
 //#include "vnv_work1.cpp"
 #endif
+
+
+
 
 extern "C" unsigned short GetDevId(void)
 {

@@ -37,9 +37,9 @@
 //#define PROG_BMDN3	 //maked mode 1+1  bmdn3.cpp!!!+ pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 //#define PROG_BMDN4	 //act15505 1+1 use PVG710 maked mode 1+1  bmdn4.cpp!!!+ pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 //#define PROG_BMDN5	 //act155051 1+0 use PVG710 maked mode 1+1  bmdn5.cpp!!!+ pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
-//#define PROG_BMDN6		// 155052 //try md310e.cpp+ filters act155051 1+0 use PVG710 maked mode 1+1 + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
-//#define PROG_MD310	  // + filters act155051 1+0 use PVG710 maked mode 1+1  md310e.cpp!!!+ pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
-#define PROG_MD310E16	   //e_16 sets as pragma + filters act155051 1+0 use PVG710 maked mode 1+1  md310e.cpp!!!+ pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
+//#define PROG_BMDN6	 // 155052 //try md310e.cpp+ filters act155051 1+0 use PVG710 maked mode 1+1 + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
+//#define PROG_MD310	  //+ filters act155051 1+0 use PVG710 maked mode 1+1  md310e.cpp!!!+ pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
+//#define PROG_MD310E16	   //e_16 sets as pragma + filters act155051 1+0 use PVG710 maked mode 1+1  md310e16.cpp!!!+ pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 
 //#define PROG_KAZAH			// 155052 //try md310e.cpp => kazah.cpp + filters act155051 1+0 use PVG710 maked mode 1+1 + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 
@@ -170,28 +170,29 @@
 //#define	PROG_PRM_PCH_DEM_XIL_CHN_DMU5  //prm_pch_dem_chn_dmu5.cpp  dmu + 10G
 //#define	PROG_DMU6  //  dmu5.1 dmu6.cpp + dmu6plus.cpp ( provingent + demodulator)	 + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 
-//#define	PROG_VNV1 //vnosvinos vnv1.cpp	=> vnv1.cpp (from pum.cpp)
+#define	PROG_VNV1 //vnosvinos vnv1.cpp	=> vnv1.cpp (from pum.cpp)
 
 
 //#define PROG_PROV  //prov.cpp PVG610_API.c  hostDriverForPc.cpp	utils.c	  endian.c	basic.cpp
 //262 : remove 10 symbols in parse rs232
 
 //#define SOFT_VER (0x509)	 
-#define SOFT_VER (0x1154)    
+#define SOFT_VER (0x1167)    
 #ifndef PROG_PU_MSAT    
 //#define SOFT_VER_STRING    "   14.12.01.1-800 ADESTO"//263 : maked init counter and data for write_buffer_char1()
 //#ifndef PROG_PUPM3_1_ADESTO	
 //#ifndef PROG_PU_MSAT1
-#define SOFT_VER_STRING      "      17.06.16.1-1154    "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING      "      17.06.26.3-1167    "//263 : maked init counter and data for write_buffer_char1()
 #else
 //#define SOFT_VER_STRING "Radian Ver. 01.00        "//263 : maked init counter and data for write_buffer_char1()
 #ifdef	PROG_VNV1
-#define SOFT_VER_STRING      "      17.06.16.1-1154    "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING      "      17.06.26.3-1167    "//263 : maked init counter and data for write_buffer_char1()
 #else
-#define SOFT_VER_STRING   "Radian v1154.70616       "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING   "Radian v1167.70628       "//263 : maked init counter and data for write_buffer_char1()
 #endif
 #endif
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//#define MD3416_TEST
 //#define TUTS_PRINT
 
 //#define PUM_TEMP_NO_EXCH	 //for md34e_16 = pum710_mux
@@ -346,7 +347,7 @@
 //#define WITHOUT_INTERRUPTS //
 //#define DEBUG_ALARM
 //#define CAN_ETHERNET_ASU
-#define MAKET_PLATA	 
+//#define MAKET_PLATA	 
 //#define LOCK_ENABLED
 //#define TRAP_ENABLED
 //#define BAD_CHECKSUM
@@ -3441,20 +3442,25 @@ extern "C" void Init_PU_M(void);
 extern "C" void PU_M(void);
 #endif //PROG_PU_M
 
-
-
-
-
-
-
 #ifdef	PROG_VNV1
 
 #define WITHOUT_INTERRUPTS 	   //temporary
 
+extern unsigned char self_tlf; 
+
+#define BIT_READ 		(0x80)
+#define ADDR_LOSSES   	(0x04)
+#define ADDR_AISES		(0x13)
+#define ADDR_IDT		(8)
+#define IDT_QUANTITY	(6)
+#define ADDR_LED		(8)
+#define ADDR_E1			(0x40)
+#define E1_QUANTITY		(48)
+
 extern "C" void TestWriteFlash6(void);
 //#define	PROG_DMU6
 //#define	PROG_PU_MSAT5
-#define PROG_PU_M
+#define PROG_PU_M_MUX
 
 
 #define HAVE_GATEWAY
@@ -3863,12 +3869,21 @@ extern "C" void KeepState(void);
 #endif
 
 
-
+#ifndef PROG_PU_MSAT5 
 
 #define	 MIN_SATSET6	(1)
 #define	 MAX_SATSET6	(30)  //*1000000
 #define	 MIN_SATSET7	(1)
 #define	 MAX_SATSET7	(30)   //*1000000
+
+#else
+
+#define	 MIN_SATSET6	(1)
+#define	 MAX_SATSET6	(63)  //*1000000
+#define	 MIN_SATSET7	(1)
+#define	 MAX_SATSET7	(63)   //*1000000
+
+#endif
 
 
 //t#define	 MIN_SATSET8	(0)
@@ -5489,22 +5504,34 @@ extern "C" void ConfigFileDestroy(unsigned long);
 #endif
 
 #ifdef 	PROG_MD310E16
+extern "C" void InvertBitOrdering(void);
+#define ODU_XIL_SIZE (235838)
+
+
 
 #define PROG_MD310
+
 #define E1_16
+
 #ifdef E1_16
-#define E1LED_LA_port	(0x32)
-#define E1LED_LB_port	(0x33)
-#define E1LED_RA_port	(0x34)
-#define E1LED_RB_port	(0x35)
+extern unsigned char e1_quantity;
+#define MAX_E1			(16)
+
+#define E1LED_LA_port	(0x40)
+#define E1LED_LB_port	(0x41)
+#define E1LED_RA_port	(0x42)
+#define E1LED_RB_port	(0x43)
 
 #define LOSS_BIT		(1)
-#endif
+
+#define E1_LOS	 	(0)
+#define E1_AIS		(4)
 
 
 #endif
 
 
+#endif
 
 #ifdef 	PROG_MD310
 
@@ -5544,8 +5571,8 @@ extern signed long farinplev1;
 extern signed long farinplev2;
 
 extern unsigned char pdpower1;
-extern unsigunsigned char pdpower1;
-extern unsighar power_modul;
+extern unsigned char pdpower2;
+extern unsigned char power_modul;
 extern unsigned long power_rate;
 extern unsigned char flag_enable_operate_power1;
 extern unsigned char flag_enable_operate_power2;
@@ -5899,8 +5926,7 @@ extern "C" void SetOptics(unsigned char, unsigned char);
 extern "C" void InitSetConfigFile(unsigned long);
 
 extern "C" void InitSetACMMask(unsigned short);
-extern "C"tACMMask(unsigned short);
-extern "C"gned char);
+extern "C" void SetACMMask(unsigned char , unsigned char);
 extern unsigned short acmmask0;
 
 //extern unsigned char ScanTxtFilesNum[MAX_CFG_FILE_VARIANT];
@@ -6190,8 +6216,7 @@ extern "C" void SetNeedInitAllProti(unsigned char);
 #define  MODE_N_PLUS_1_RSV_ON (0x10)
 
 extern void SetParseFlags(unsigned char);
-externSetParseFlags(unsigned char);
-externar);
+extern unsigned char ParseFlags(unsigned char);
 extern "C" void SetNeedWriteDevId(void);
 extern unsigned long GetProt(unsigned char);
 extern void SetProt(unsigned char, unsigned long );

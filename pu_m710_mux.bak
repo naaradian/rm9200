@@ -1409,8 +1409,8 @@ void SaveFile()
 
 extern "C" void SavePortsFromNVRAM()
 {
-	unsigned char  *bt;
- 	bt = (unsigned char *)(NVRAM_BASE);
+  //	unsigned char  *bt;
+  //	bt = (unsigned char *)(NVRAM_BASE);
 
 	outportb(0x501 ,  MEMP[0x1]);
 	outportb(0x502 ,  MEMP[0x2]);
@@ -1615,8 +1615,10 @@ if((oldflag_ud1 != flag_ud1) || (oldflag_ud2 != flag_ud2) || (oldflag_710 != fla
 
 //printfpd("\n\rr>%X :", MOD_LED_ADDR3);
 //printfpd(" %X", LedsReg);
-
+#ifndef MD3416_TEST
   outportb(MOD_LED_ADDR3, LedsReg);	   //common norma
+#endif
+
 }
 //_____________________________________
 /*
@@ -2386,18 +2388,19 @@ maskcnt = 1;
 			 ClearNeedWriteDevId();
 		   }
 
-#ifndef PUM_TEMP_NO_EXCH
+//ok #ifndef PUM_TEMP_NO_EXCH
 
 
 #ifdef PROG_PU_M_MUX
 //________________________________________________________________where get it ??????
-  //		for(i=0; i<unEmb2Mux34.emb2Mux34.numE1; i++)
- //		{
- //			unEmb2Mux34.emb2Mux34.ctrl_e1[i]  = inportb3(0x090+i);
- //			unEmb2Mux34.emb2Mux34.state_e1[i] = inportb3(0x080+i);
- //		}
+  		for(i=0; i<unEmb2Mux34.emb2Mux34.numE1; i++)
+ 		{
+ 			unEmb2Mux34.emb2Mux34.ctrl_e1[i]  = inportb3(0x090+i);
+ 			unEmb2Mux34.emb2Mux34.state_e1[i] = inportb3(0x080+i);
+ 		}
 #endif //PROG_PU_M_MUX
 
+//ok #ifndef PUM_TEMP_NO_EXCH
 
 ////
 
@@ -2414,6 +2417,10 @@ maskcnt = 1;
 		unEmb2TypeVer.emb2TypeVer.signature_hardware[7] = 0;//inportb(0x507); // reserv
 		unEmb2TypeVer.emb2TypeVer.signature_hardware[8] = 0;//inportb(0x508); // reserv
 		unEmb2TypeVer.emb2TypeVer.signature_hardware[9] = 0; // reserv
+
+//ok #ifndef PUM_TEMP_NO_EXCH
+
+
 		unEmb2TypeVer.emb2TypeVer.signature_hardware[10] = inportb(0x520);
 		unEmb2TypeVer.emb2TypeVer.signature_hardware[11] = inportb(0x521);
 		unEmb2TypeVer.emb2TypeVer.signature_hardware[12] = inportb(0x522);
@@ -2421,6 +2428,7 @@ maskcnt = 1;
 		unEmb2TypeVer.emb2TypeVer.signature_hardware[14] = inportb(0x524);
 		unEmb2TypeVer.emb2TypeVer.signature_hardware[15] = inportb(0x525);
 
+//ok #ifndef PUM_TEMP_NO_EXCH
 
    err_tmp = (unsigned short)inportb(0x526) + ((unsigned short)inportb(0x527)<<8);
 
@@ -2503,6 +2511,10 @@ maskcnt = 1;
  	unStatePUM.statePUM.ulErrAfterRS2 += err_tmp_now; //t
   //	unStatePUM.statePUM.ulErrAfterRS2 = 0x12345678;	 //t
 
+
+#ifndef PUM_TEMP_NO_EXCH
+
+
 	err_tmp = (unsigned short)inportb(0x528) + ((unsigned short)inportb(0x529)<<8) + ((unsigned long)inportb(0x52A)<<16);
   //	 err_tmp_now =   err_tmp -  count_no_correct_block1;
 
@@ -2521,6 +2533,7 @@ if(err_tmp >= count_no_correct_block1)
 
    unStatePUM.statePUM.ulErrBeforeRS1 += err_tmp_now;
 
+//wrong  #ifndef PUM_TEMP_NO_EXCH
 
 	err_tmp = (unsigned short)inportb(0x52B) + ((unsigned short)inportb(0x52C)<<8) + ((unsigned long)inportb(0x52D)<<16);
    //	 err_tmp_now =   err_tmp -  count_no_correct_block2;
@@ -2539,6 +2552,10 @@ if(err_tmp >= count_no_correct_block2)
  	count_no_correct_block2 = err_tmp; 
  //	unStatePUM.statePUM.ulErrBeforeRS2 = err_tmp;
  unStatePUM.statePUM.ulErrBeforeRS2 += err_tmp_now;
+
+
+#else   // PUM_TEMP_NO_EXCH
+
 //________________________________________________________________________________,, from bmd 155
 #ifdef PROG_PU_M_MUX
 
@@ -2550,6 +2567,10 @@ if(err_tmp >= count_no_correct_block2)
 	unEmb2Mux34.emb2Mux34.type = 1;
 
 #endif //PROG_PU_M_MUX
+
+
+//wrong  #ifndef PUM_TEMP_NO_EXCH
+
 
 
 	unStatePUM.statePUM.state[0] = inportb(0x520);
@@ -2576,7 +2597,7 @@ if(err_tmp >= count_no_correct_block2)
 	unStatePUM.statePUM.state[14] = 0; // Счетчик ПСП ст. байт
 #endif
 
-#else   // PUM_TEMP_NO_EXCH
+//ok#else   // PUM_TEMP_NO_EXCH
 
 	 unStatePUM.statePUM.state[2] = inportb(0x522);
 

@@ -1650,6 +1650,11 @@ printfpd("\n\r destroy : %d", variant);
 
 unsigned long ratesymbol_far;
 
+#ifdef E1_16
+unsigned char e1_quantity;
+#endif
+
+
 extern "C" void ConfigFileLoadm(unsigned long variant, unsigned char flagm)
 {
 PVG610_MODEM_STATUS_STRUCT	Ms;
@@ -1694,6 +1699,7 @@ SetNeedInitAllProti(im); //120202
  //____________________________________________________________
 // printfp("1210041");
 if(variant != NUM_CALIBR_FILE)
+if(1)
 {
 variant =  GetNumConfigFile(im) & CONFIG_FILE_MASK;
 }
@@ -1702,6 +1708,30 @@ if(!hot_restart)
   {
   SetOptics(im, 1);
   }
+
+#ifdef E1_16
+e1_quantity =	  (unsigned char)modemp[0].configfilefext.ConfigTxtData.emb4md15504cfg.mode15504[0].interf;
+if(e1_quantity > MAX_E1) e1_quantity = MAX_E1;
+
+
+unsigned short leds = 0;
+unsigned char tmpq =  e1_quantity;
+printfpd("\n\r e1_quantity = %d ", e1_quantity);
+
+
+while(tmpq--)
+{
+  leds += (1 << tmpq);
+}
+
+outportb(E1LED_RA_port, leds & 0xff);
+outportb(E1LED_RB_port, leds >> 8);    
+//printfpd("\n\r e1_quantity = %d ", e1_quantity);
+
+
+#endif
+
+
 
 unsigned long rateEth = 
  ((unsigned long)modemp[im].configfilefext.ConfigTxtData.emb4md15504cfg.mode15504[0].rateEth0)+
@@ -5936,6 +5966,11 @@ EmbInit(); //my
 	embTimer.SetCallBack0(&embTimerCallback0);
 
 //bad 120608 return;
+//#ifdef E1_16
+
+// e1_quantity = 0;
+
+//#endif
 
 //////////////////////
 //131227#ifndef PROG_MD310
@@ -6370,7 +6405,13 @@ SetCurrentTrunk(1); //get on trunk
 //#define SCAN_PERIOD (1000) //1c
 #define SCAN_PERIOD (10000) //10c
 //#define READ_ERRORS_PERIOD (1000) //1c
+
+#ifndef PROG_MD310E16
 #define READ_ERRORS_PERIOD (3000) //1c
+#else
+#define READ_ERRORS_PERIOD (3000) //1c
+#endif
+
 
 extern "C" void UpdateErrors(unsigned char mod)
 {
@@ -6669,7 +6710,10 @@ PVG610_MODEM_FEC_COUNTERS_STRUCT Fc;
 PVG610_MODEM_STATUS_STRUCT	Ms;
 PVG610_MODEM_ACQUIRE_COUNTERS_STRUCT Ac;
 PVG610_NET_E1_ALARMS_STRUCT  Stat[E1_LINES_QUANTITY];
+#ifdef E1_16
+
 unsigned char E1LED_LA, E1LED_LB;
+#endif
 
 //PVG610_API_ModemAcquireCountersGet(0, 0, &Ac);
 unsigned char ans, ans1;
@@ -6725,34 +6769,49 @@ if(ans) return;
 // modemp[deviceindex].netE1Alarms[i] = Stat[i].netE1Alarms;
 //}
 
+// printfpd ("\n\r e1_quantity : %d", e1_quantity);
 
-for(i = 0; i < 8; i++)		 //now 21
+for(i = 0; i < E1_LINES_QUANTITY; i++)		 //now 21
 {
- modemp[deviceindex].netE1Alarms[i] = Stat[i].netE1Alarms;
- if( Stat[i].netE1Alarms & LOSS_BIT) {E1LED_LA |= (1 << i); 
- unEmb2Mux34.emb2Mux34.state_e1[i] = 1;
+ unEmb2Mux34.emb2Mux34.state_e1[i] = 3;
 }
- else  {E1LED_LA &= ~(1 << i);
+
+E1LED_LA = 0;
+E1LED_LB = 0;
+
+for(i = 0; i < e1_quantity; i++)		 //now 21
+{
+// printfpd("i: %d", i);
+ modemp[deviceindex].netE1Alarms[i] = Stat[i].netE1Alarms;
+ if(!( Stat[i].netE1Alarms & LOSS_BIT)) {E1LED_LA |= (1 << i); 
  unEmb2Mux34.emb2Mux34.state_e1[i] = 0;
+// printfp(" 0");
 }
+ //else  { printfp("3");
+
+//}
 }
 
-for(i = 8; i < E1_LINES_QUANTITY; i++)		 //now 21
+for(i = 8; i < e1_quantity; i++)		 //now 21
 {
+// printfpd(" %d:", i);
  modemp[deviceindex].netE1Alarms[i] = Stat[i].netE1Alarms;
- if( Stat[i].netE1Alarms & LOSS_BIT) {E1LED_LB |= (1 << i);
-  unEmb2Mux34.emb2Mux34.state_e1[i] = 1;
-
- }
- else  {E1LED_LB &= ~(1 << i);
+ if(!( Stat[i].netE1Alarms & LOSS_BIT)) {E1LED_LB |= (1 << (i - 8));
   unEmb2Mux34.emb2Mux34.state_e1[i] = 0;
+//  printfp("!");
 
  }
+ //else  { printfp("_");
+
+// }
 }
 
 #ifdef E1_16
 outportb(E1LED_LA_port, E1LED_LA);
-outportb(E1LED_LB_port, E1LED_LB);    
+outportb(E1LED_LB_port, E1LED_LB); 
+//printfpd("\n\r E1LEDLA : 0x%02X ", E1LED_LA); 
+//printfpd(" E1LEDLB : 0x%02X ", E1LED_LB);
+  
 #endif
 
 
@@ -12433,6 +12492,7 @@ static unsigned long periodcnt;
 
  if(ReadingEnabled(1))
  {
+
 #ifndef PROG_BMDN4
   ReadStateEasy();  //110131
 #else
@@ -12441,6 +12501,7 @@ static unsigned long periodcnt;
 
 
  }
+
   ScanErrors();	//110725 //read errors on roulette prinzip
 
 #ifndef PROG_BMDN4

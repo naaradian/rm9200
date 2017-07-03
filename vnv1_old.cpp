@@ -1,40 +1,6 @@
-//#ifndef __TINY__
-//#define __TINY__
-//#endif
 #include "start.h"
 #include "hello7.h"
 #include "embisr.h"
-
-#include "Temperature.cpp"
-#include "pvg710.cpp"
-
-
-#define DISPL (0x50)
-
-//#ifdef PROG_PU_M_V
-//extern unsigned char cur_req_quantity;
-//#endif
-
-char  NeedWriteID;
-
-extern "C" void SetNeedWriteDevId(void)
-{
-  NeedWriteID = 1;
-}
-
-extern "C" void ClearNeedWriteDevId(void)
-{
-  NeedWriteID = 0;
-}
-
-extern "C" unsigned char GetNeedWriteDevId(void)
-{
-  return NeedWriteID;
-}
-
-
-
-unsigned char modforss;
 
 unsigned char ascii[] = {
 //0:
@@ -64,7 +30,6 @@ unsigned char ascii[] = {
 0x70,0x63,0xbf,0x79,0xe4,0x78,0xe5,0xc0,0xc1,0xe6,0xc2,0xc4,0x62,0xc5,0xc6,0xc7
 //256
 };
-//port
 
 void AsciiInit()
 {
@@ -161,10 +126,7 @@ ascii[240] = 0x70;	ascii[241] = 0x63;	 ascii[242] = 0xbf;	 ascii[243] = 0x79;
 ascii[244] = 0xe4;	ascii[245] = 0x78;	 ascii[246] = 0xe5;	 ascii[247] = 0xc0;
 ascii[248] = 0xc1;	ascii[249] = 0xe6;	 ascii[250] = 0xc2;	 ascii[251] = 0xc4;	
 ascii[252] = 0x62;	ascii[253] = 0xc5;	 ascii[254] = 0xc6;	 ascii[255] = 0xc7; 
-
 }
-
-
 
 union UL2UC
 {
@@ -178,13 +140,7 @@ union UI2UC
  //	unsigned char uc[2];
 	unsigned char uc[4];
 };
-/*
-union u2uc
-{
-  unsigned u;
-	unsigned char uc[2];
-};
-*/
+
 unsigned char HexChar(unsigned char s)
 {
   if(s<=9) return s + '0';
@@ -208,31 +164,7 @@ void ConvertToWin1251(char *str)
 		}
 	}
 }
-/*
-unsigned SelfID() 
-{ 
-	unsigned far *ctrl = (unsigned far*)0xFFFF000A; 
-	return ((*ctrl&0x00FF)<<8)+(((*ctrl)>>8)&0x00FF); 
-}
 
-unsigned SelfYear() 
-{ 
-	unsigned far *ctrl = (unsigned far*)0xFFFF0008; 
-	return ((*ctrl&0x00FF)<<8)+(((*ctrl)>>8)&0x00FF);  
-}
-
-unsigned SelfVer1() 
-{ 
-	unsigned far *ctrl = (unsigned far*)0xFFFF000C; 
-	return ((*ctrl&0x00FF)<<8)+(((*ctrl)>>8)&0x00FF);  
-}
-
-unsigned SelfVer2() 
-{ 
-	unsigned far *ctrl = (unsigned far*)0xFFFF000E; 
-	return ((*ctrl&0x00FF)<<8)+(((*ctrl)>>8)&0x00FF);  
-}
-*/
 unsigned char Modify5A(unsigned char byte)
 {
 	switch(byte)
@@ -245,88 +177,9 @@ unsigned char Modify5A(unsigned char byte)
 	}
 
 }
-// 	unsigned CRC() {	if(Length()<256) return body[Length()+12] + (body[Length()+11]<<8);	else return 0; }
 
-struct EmbMsg485
-{
-	unsigned char readyToSend;
-	unsigned short counter;
-	unsigned char body[64];
+#include "embmsg485.cpp"
 
-	unsigned char Addr()	{	return body[0];	 }
-	unsigned char Length() {	return body[1];	 }
-	unsigned short CRC() {	return body[body[1]+2]+1; }
-	unsigned char Body(int i) { return body[i+2]; }
-
-	void SetAddr(unsigned char byte) { body[0]=byte|0x10; }
-	void SetLength(unsigned char byte) { body[1]=byte;	}
-	void SetBody(int i, unsigned char byte) { body[i+2]=byte; }
-
-	void Init();
-	unsigned short Add(unsigned char byte);
-	unsigned short Used() { return counter; }
-	unsigned short IsFree() { return 64-counter; }
-	int short IsEnd();
-	unsigned short ChkCRC();
-	unsigned short CalcCRC();
-	unsigned short FullSize();
-
-	unsigned char IsReadyToSend() { return readyToSend; }	
-	void SetReadyToSend() { readyToSend=1; }
-};
-
-unsigned short EmbMsg485::FullSize() 
-{	
-	if(Length()<256) return Length() + 5;	 
-	else return counter;
-}
-
-
-void EmbMsg485::Init()
-{
-	counter=0;
-	readyToSend=0;
-  for(int i=0; i<64; i++) body[i]=0;
-}
-
-unsigned short EmbMsg485::Add(unsigned char byte)
-{
-  if(counter<64)
-	{
-		body[counter++]=byte;
-	}
-	else
-	  return 0;
-}
-
-int short EmbMsg485::IsEnd()
-{
-  if(counter>2)
-		if(counter==Length()+3)
-			return 1;
-	return 0;
-} 
-
-unsigned short EmbMsg485::ChkCRC()
-{
-	if(CRC()==CalcCRC()) return 1;
-	else return 0;
-}
-
-unsigned short EmbMsg485::CalcCRC()
-{
-  int i;
-	unsigned short c=0;
-	if(Length()<64) 
-	{
-		for(i=0; i<Length()+2; i++) c += body[i];
-		body[Length()+2]=c+1;
-		return c+1;
-	}
-	else return 0;
-} 
-
-// 	unsigned CRC() {	if(Length()<256) return body[Length()+12] + (body[Length()+11]<<8);	else return 0; }
 struct MsgStatus
 {
 	unsigned readyToSend : 1;
@@ -358,6 +211,7 @@ union UnTOM
 	unsigned char byte;
 	TOM tom;
 };
+
 struct EmbMsg
 {
 	unsigned char dir;
@@ -373,31 +227,20 @@ struct EmbMsg
 	void SetAddrI(unsigned short word) { body[3]=word&0xFF; body[2]=(word>>8)&0xFF;	}
 	void SetAddrS(unsigned short word) { body[5]=word&0xFF; body[4]=(word>>8)&0xFF;	}
 	void SetAddrR(unsigned short word) { body[10]=word&0xFF; body[9]=(word>>8)&0xFF;	}
-
 	void SetRS485() { UnTOM unTOM; unTOM.byte = body[0]; unTOM.tom.R=1; body[0] = unTOM.byte; }
 	unsigned char IsRS485() { UnTOM unTOM; unTOM.byte = body[0]; if(unTOM.tom.R) return 1; return 0; }
 	void SetType(unsigned char byte) { body[6]=byte; }
 	void SetLength(unsigned short word) { if(IsRS485()) word+=2; body[8]=word&0xFF; body[7]=(word>>8)&0xFF;	}
-
-
 	unsigned char Type()	{ return body[6]; }		// 1
 	unsigned short Length() {	return body[8] + (body[7]<<8);	 }			// 2
 	unsigned short FullSize(); 			// 2
-//	unsigned CRC() {	if(Length()<256) return body[Length()+1] + (body[Length()]<<8);	else return 0; }
-//	unsigned short CRC() {	if(Length()<256) return body[Length()+10] + (body[Length()+9]<<8);	else return 0; }
-    unsigned short CRC() {	if(Length()<256) return body[Length()+12] + (body[Length() + 11]<<8);	else return 0; }
+	unsigned short CRC() {	if(Length()<256) return body[Length()+10] + (body[Length()+9]<<8);	else return 0; }
 	unsigned char Body(int i) { if(IsRS485()) return body[i+11]; else return body[i+9]; }
 	unsigned char BodyR(int i) { return body[i+11]; }
-
 	void SetTOM(unsigned char byte) { body[0]=byte; }
 	void SetCycle(unsigned char byte) { body[1]=byte; }
-
-
 	void SetBody(int i, unsigned char byte) { if(IsRS485()) body[i+11]=byte; else body[i+9]=byte; }
 	void SetBodyR(int i, unsigned char byte) { body[i+11]=byte; }
-
-//	void SetCRC() { if(Length()<256) { body[Length()+1]=CalculateCRC()&0xFF; body[Length()]=(CalculateCRC()>>8)&0xFF; }
-
 	void Init();
 	unsigned short Add(unsigned char byte);
 	unsigned short Used() { return counter; }
@@ -409,14 +252,10 @@ struct EmbMsg
 	unsigned short ReCalcCRC();
 	unsigned char IsReadyToSend() { return readyToSend.msgStatus.readyToSend; }	
 	void SetReadyToSend(unsigned char i) { readyToSend.msgStatus.readyToSend=i; }
-//	unsigned char IsRS485() { return readyToSend.msgStatus.isRS485; } 
-//	void SetRS485(unsigned char i) { readyToSend.msgStatus.isRS485=i; } 
 	unsigned char IsRS232() { return readyToSend.msgStatus.isRS232; } 
 	void SetRS232(unsigned char i) { readyToSend.msgStatus.isRS232=i; } 
 	unsigned char Dir() { return dir; }
-
 	void SetDir(unsigned char d) { dir= d; } // dir = 1 пришел с West, dir=2 прищел с East
-
 	void Copy(EmbMsg m);
 };
 
@@ -427,15 +266,15 @@ void EmbMsg::Copy(EmbMsg m)
 
 void EmbMsg::Init()
 {
-	counter=0;
+  counter=0;
   for(int i=0; i<270; i++) body[i]=0;
-	readyToSend.msgStatus.readyToSend=0;
+  readyToSend.msgStatus.readyToSend=0;
 }
 
 unsigned short EmbMsg::FullSize() 
 {	
 	if(Length()<256) return Length() + 13;	 
-	else return counter;
+	else return 0;
 }
 
 unsigned short EmbMsg::Add(unsigned char byte)
@@ -464,36 +303,13 @@ int short EmbMsg::IsEndOfHeader()
 	if(counter>9) return 2;
 	return 0;
 }
- /*
+
 unsigned short EmbMsg::ChkCRC()
 {
 	if(CRC()==CalcCRC()) return 1;
 	else return 0;
 }
- */
-unsigned short EmbMsg::ChkCRC()
-{
-  int i;
-	unsigned c=0, b=0;
-  //	if(typeOfProtocol==2)
-   //	{
-		if(Length()<=256) 
-		{
-			for(i=0; i<Length()+11; i++) c += body[i];
-			b = CRC();
- #ifdef DEBUG_LOOP_PRINT
 
-			printfpd("\n\rc= %02X", c);	
-			printfpd("b= %02X\n\r", b);	
- #endif
-			if(b==c) return 1;
-			else return 0;
-		}
-//	}
-    return 1;
-}
-
-	 /*
 unsigned short EmbMsg::CalcCRC()
 {
   int i;
@@ -506,29 +322,8 @@ unsigned short EmbMsg::CalcCRC()
 		return c;
 	}
 	else return 0;
-}
-	 */
-
-unsigned short EmbMsg::CalcCRC()
-{
-  int i;
-	unsigned c=0;
- //	if(typeOfProtocol==2)
-  //	{
-		if(Length()<=256) 
-		{
-			for(i=0; i<Length()+11; i++) c += body[i];
-			body[Length()+11]=(c>>8)&0xFF;
-			body[Length()+12]=c&0xFF;
-			return c;
-		}
-		else return 0;
-  //	}
-  //	else return 0;
 } 
- 
 
-/////////////////////
 struct EmbMsgBuffer
 {
     unsigned short BuffSize;
@@ -584,27 +379,6 @@ unsigned short EmbMsgBuffer::Free()
   else return n+BuffSize;
 }
 
-/////////////////////
-
- /*
-struct Emb2TypeVer
-{
-	unsigned type;
-	unsigned softVer;
-	unsigned ctrlNumber;
-	unsigned ctrlYear;
-	unsigned ctrlVer1;
-	unsigned ctrlVer2;
-	unsigned char signature_hardware[16];
-	unsigned char signature_software[16];
-};
-
-union UnEmb2TypeVer
-{
-	Emb2TypeVer emb2TypeVer;
-	unsigned char byte[44];
-};
- */
 
 struct Emb2TypeVer
 {
@@ -623,7 +397,7 @@ union UnEmb2TypeVer
 	Emb2TypeVer emb2TypeVer;
 	unsigned char byte[44];
 };
-
+ /*
 struct StateBMD155
 {
 	unsigned char state;  // Бит 0: "0" - остутсвтие связи с ППУ1, "1" - норма
@@ -653,7 +427,7 @@ union UnStateBMD155
 	StateBMD155 stateBMD155;
 	unsigned char byte[72];
 };
-	
+  */	
 struct StatePUM
 {
 	unsigned char ver;						// 1
@@ -675,6 +449,8 @@ union UnStatePUM
 	unsigned char byte[42];
 };
 
+
+/*
 struct StateRRL
 {
 	unsigned char ver;	
@@ -688,7 +464,6 @@ union UnStateRRL
 	StateRRL stateRRL;
 	unsigned char byte[66];
 };
-//________________________________________________________new
   
 struct Emb2Mux34
 {
@@ -707,9 +482,25 @@ union UnEmb2Mux34
 	Emb2Mux34 emb2Mux34;
 	unsigned char byte[40];
 };
+ */
 
+struct Emb2MuxVNV
+{
+	unsigned char type;
+	unsigned char softVer;
+	unsigned char numE1;
+	unsigned char numEth;
+  	unsigned char reserv[4];
+	unsigned char state_e1[48];
+	unsigned long state_eth[8];
+};
 
-//________________________________________________________________<< new
+union UnEmb2MuxVNV
+{
+	Emb2MuxVNV emb2MuxVNV;
+	unsigned char byte[88];
+};
+
 struct Command
 {
 	unsigned char chan;
@@ -718,7 +509,7 @@ struct Command
 	unsigned char done;
 };
 
-   struct Emb2NetStat
+struct Emb2NetStat
 {
 	unsigned long selfPacketSend; // 4
 	unsigned long selfPacketRecv; // 4
@@ -742,35 +533,19 @@ union UnEmb2NetStat
 	Emb2NetStat emb2NetStat;
 	unsigned char byte[32];
 };
-/////////////////////
 
-//	EmbIndicator embIndicator;
-////////////////////////
 	EmbTimer embTimer;
-////////////////////////
-
-#ifdef RS485_MSG_BUFF
 
 	   EmbMsgBuffer tBuffRS485;
 	   unsigned long time_lastsend_rs485;
 	   unsigned char flag_wait_rs485;
-#endif
-
-
-
-//___________________________________________________________________need init!!!
 unsigned long time1=0,time2=0,time3=0,time4=0,time5=60;
 unsigned char flagADUC1=0, flagADUC2=0;
-
-//______________________________________________________________added of  me
  UL2UC ul2uc;
  UI2UC ui2uc;
  unsigned short temp_crc;
-// unsigned char * addrRAM;
  unsigned long shift;
  unsigned long len;
-
-//____________________________________________________________<< added of me
 
 void Callback0()
 {
@@ -779,15 +554,6 @@ void Callback0()
   time3++;
   time4++;
   time5++;
-///////////  Первая ВНЧ  ////////////
-/*	if(inportb(0x510)!=0xFF) 
-		if(inportb(0x510)&0x10) 
-			flagADUC1++;
-///////////  Вторая ВНЧ  ////////////
-	if(inportb(0x5C0)!=0xFF) 
-		if(inportb(0x5C0)&0x10) 
-			flagADUC2++;*/
-/////////////////////////////////////
 }
 
 //--------------------------------------------------
@@ -801,7 +567,6 @@ void Callback0()
 	EmbMsg embMsgWest;
 	EmbMsg embMsgEast;
 	EmbMsg embMsgAns;
-//	EmbMsg embMsgTemp;
 
 	EmbMsg485 embMsg485_1;
 	EmbMsg485 embMsg485_2;
@@ -820,33 +585,17 @@ void Callback0()
 	EmbMsg embMsg485E;	  //added 090406
 
     EmbSerialPU_M embSerialACT155;
-//-------------------------------------------------
-
 	unsigned short aI, aS, aR;	  //added 090406
-
 	unsigned char mode5A232E = 0;   //added 090406
 	unsigned char mode5A485E = 0;	 //added 090406
 	unsigned char mode5A485 = 0;    //added 090406
-
-
-
-
-		
-//	EmbSerialACT155 embSerialACT155;
   
 	UL2UC ul2uc;
 	UI2UC ui2uc;
 
 	unsigned char  * addrRAM;
-
-//	unsigned shift;
- //	unsigned len;
- //	unsigned temp_crc;
-
 	char ch;
 	long f_len;
-
-//___________________________________________________________________need init!!!!
 	unsigned char flagRequest=0;
 	unsigned char stemp, serr=0xFF, crc_temp=0;
 	unsigned long i=0;
@@ -872,14 +621,13 @@ void Callback0()
 	unsigned char i232=0, iTrans=0, iMod=0;
 	unsigned char ans1=0, ans2=0, addr485=0;
 
-	UnStateBMD155 unStateBMD155;
+ //	UnStateBMD155 unStateBMD155;
 	UnEmb2TypeVer unEmb2TypeVer; 
 	UnEmb2NetStat unEmb2NetStat;
-	UnStateRRL unStateRRL;
+   //	UnStateRRL unStateRRL;
 	UnStatePUM unStatePUM;
-
- 	UnEmb2Mux34 unEmb2Mux34;
-
+  //	UnEmb2Mux34 unEmb2Mux34;
+	UnEmb2MuxVNV  unEmb2MuxVNV;
 
 	long count_block;
 	long count_no_correct_block1;
@@ -905,8 +653,6 @@ void ProtocolFromModACT155()
 {
 	while(embSerialACT155.UsedMod())
 	{
-   //			ResetWatchDog();
-//			if(++ic>16) return;
 			westByte = embSerialACT155.GetMod();
 			switch(westByte)
 			{
@@ -926,19 +672,7 @@ void ProtocolFromModACT155()
 
 			if(embMsgWest.IsEnd())
 			{
-
-   recieveWest = 0;
-#ifdef CHECK_CRC   
-  if(embMsgWest.ChkCRC()) //120608	  //091111
-#else  
-	if(1)
-#endif   
-	{					
-
-   //			printEthLongHex(embMsgWest.AddrS());
-
 				if((embMsgWest.AddrS()!=SelfID())&&(embMsgWest.AddrI()!=SelfID()))
-				if(ForwardingEnabled())
 				{
 						// передаем побайтно дальше принимаем пакет
 					embSerialACT155.AddTransit(0x55);	
@@ -954,28 +688,22 @@ void ProtocolFromModACT155()
 						default: embSerialACT155.AddTransit(embMsgWest.body[i]);
 						}
 					}
-					embSerialACT155.AddTransitM(0x55);	
 				}
 					
 				if(embMsgWest.AddrS()==SelfID())
 				{
-	//			printEthLongHex(1);
-
 					embMsgWest.SetDir(1);
 					rBuffEmbMsg.Add(embMsgWest);
 					embMsgWest.Init();
 				}
-}
 				embMsgWest.Init(); //101210
 				recieveWest = 0;
-			}	//is end
-   } //while 121211
+			}
 
 //		if(!recieveWest)
 		{
 			if(tBuffEmbMsgWest.Used())
 			{
-   //			printEthLongHex(4);
 				EmbMsg embMsgA;
 				embMsgA.Init();
 				tBuffEmbMsgWest.Get(embMsgA);
@@ -993,18 +721,16 @@ void ProtocolFromModACT155()
 					}
 	 //				ResetWatchDog();
 				}
-				embSerialACT155.AddTransitM(0x55);
+				embSerialACT155.AddTransit(0x55);
 			}
 		}
- //121211	}
+	}
 }
 
 void ProtocolFromTransitACT155()
 {
 	while(embSerialACT155.UsedTransit())
 	{
- //		ResetWatchDog();
-//		if(++ic>16) return;
 		eastByte = embSerialACT155.GetTransit();
 		switch(eastByte)
 		{
@@ -1026,15 +752,7 @@ void ProtocolFromTransitACT155()
 
 		if(embMsgEast.IsEnd())
 		{
-   recieveEast = 0;
-#ifdef CHECK_CRC   
-  if(embMsgEast.ChkCRC()) //120608	  //091111
-#else  
-	if(1)
-#endif   
-	{					
 			if((embMsgEast.AddrS()!=SelfID())&&(embMsgEast.AddrI()!=SelfID()))
-			if(ForwardingEnabled())
 			{
 				embSerialACT155.AddMod(0x55);	
 				embSerialACT155.AddMod(0xAA);	
@@ -1050,31 +768,23 @@ void ProtocolFromTransitACT155()
 					default: embSerialACT155.AddMod(embMsgEast.body[i]);
 					}
 				}
-				 embSerialACT155.AddModM(0x55);	
-
 				countSend++;
 			}
 			
 			if(embMsgEast.AddrS()==SelfID())
 			{
-	//		 printEthLongHex(5);
 
 				embMsgWest.SetDir(2);
 				rBuffEmbMsg.Add(embMsgEast);
 				embMsgEast.Init();
 			}
-		}
 		  embMsgEast.Init(); //101210
 		 recieveEast = 0;  //101210
-		}	//is end
-	 } //while 121211
-
+		}
 //		if(!recieveEast)
 		{
 			if(tBuffEmbMsgEast.Used())
 			{
-   //			printEthLongHex(6);
-
 				EmbMsg embMsgA;
 				embMsgA.Init();
 				tBuffEmbMsgEast.Get(embMsgA);
@@ -1093,10 +803,10 @@ void ProtocolFromTransitACT155()
 					}
 	  //				ResetWatchDog();
 				}
-				embSerialACT155.AddModM(0x55);
+				embSerialACT155.AddMod(0x55);
 			}
 		}
-  //121211	}
+	}
 }
 
 
@@ -1105,23 +815,6 @@ void Check2InitTransitMod()
 
 	if(!ready_transit) unEmb2NetStat.emb2NetStat.ready_transit=1;
 	if(!ready_mod) unEmb2NetStat.emb2NetStat.ready_mod=1;
-		// Если произошло изменение ready_transit или ready_mod из "0" в "1"
-		// то time3Marker = 0; под пакет 2355 байта и скорость 64К*8/11=46545
-/*
-	if(time1-time3BlankMod>500) 
-	{
-		recieveWest=0; 
-		time3BlankMod = time1;
-		embSerialACT155.AddTransit(0x55);
-	}
-	if(time1-time3BlankTransit>500)
-	{
-		recieveEast=0; 
-		time3BlankTransit = time1;
-		embSerialACT155.AddMod(0x55);
-	}
-
-			 */
 	if((time1-time3highID)>10000) 
 	{
 		time3highID=time1;
@@ -1140,8 +833,6 @@ void Check2InitTransitMod()
 				{	
 					if(tBuffEmbMsgEast.Used())
 					{
-	 //				printEthLongHex(7);
-
 						EmbMsg embMsgA;
 						embMsgA.Init();
 						tBuffEmbMsgEast.Get(embMsgA);
@@ -1160,7 +851,7 @@ void Check2InitTransitMod()
 							}
 			   //				ResetWatchDog();
 						}
-						embSerialACT155.AddModM(0x55);
+						embSerialACT155.AddMod(0x55);
 					}
 				}
 		}
@@ -1171,9 +862,6 @@ void Check2InitTransitMod()
 			{	
 				if(tBuffEmbMsgWest.Used())
 				{
-
-	 //				printEthLongHex(8);
-
 					EmbMsg embMsgA;
 					embMsgA.Init();
 					tBuffEmbMsgWest.Get(embMsgA);
@@ -1191,7 +879,7 @@ void Check2InitTransitMod()
 						}
 				 //		ResetWatchDog();
 					}
-					embSerialACT155.AddTransitM(0x55);
+					embSerialACT155.AddTransit(0x55);
 				}
 			}
 		}
@@ -1349,9 +1037,7 @@ void Read()
 	for(i=0; i<7; i++) aaa[i] = inportb(0x50F);
 	
 }
-
-
-
+ 
 void SaveFile()
 {
 						//  <Адрес в флэш-памяти/32><Фрагмент файла/Nх8>
@@ -1401,74 +1087,8 @@ void SaveFile()
 	embMsgAns.SetBody(8,ui2uc.uc[0]);
 	embMsgAns.SetBody(9,ui2uc.uc[1]);
 }
-
-
-#define PARAMETERS_DISPLACEMENT (0x1000)
-#define PARAMETERS_DISPLACEMENT1 (0x1100)
-
-
-extern "C" void SavePortsFromNVRAM()
-{
-  //	unsigned char  *bt;
-  //	bt = (unsigned char *)(NVRAM_BASE);
-
-	outportb(0x501 ,  MEMP[0x1]);
-	outportb(0x502 ,  MEMP[0x2]);
-	outportb(0x503 ,  MEMP[0x3]);
-
-	outportb(0x512 , MEMP[0x12]);
-	outportb(0x513 , MEMP[0x13]);
-	outportb(0x514 , MEMP[0x14]);
-	outportb(0x515 , MEMP[0x15]);
-
-	outportb(0x520 , MEMP[0x20]);
-	outportb(0x521 , MEMP[0x21]);
-	outportb(0x522 , MEMP[0x22]);
-	outportb(0x523 , MEMP[0x23]);
-	outportb(0x524 , MEMP[0x24]);
-	outportb(0x525 , MEMP[0x25]);
-
-#ifdef PROG_PU_M_MUX
-	 outportb3(0x37 , MEMP[0x37]);
-	 for(long i = 0; i < 0x10; i++)
-	 {
-	  outportb3((0x90 + i) , MEMP[0x90 + i]);
-	 }
-#endif //PROG_PU_M_MUX
-
-
-
-}
-
-extern "C" void SaveParameterToNVRAM(unsigned long current_port, unsigned char parameter)
-{
-  unsigned char  *bt;
-  bt = (unsigned char *)(NVRAM_BASE);
-  if((current_port >= 0x501) && (current_port <= 0x525))
-  {
-    MEMP[current_port - 0x500] = parameter;
-  }
-  else 
-   {
-  	if((current_port < SIZE_MEMP))
-  	{
-		MEMP[current_port] = parameter;
-  	}
-  }
-  SetNeedWriteDevId();
-}
-
 							  
-
-
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
-////////////////////  M A I N  //////////////////////
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
-
-//void main()
-
+ 
 int rrr=0;
 unsigned countUD1=0;
 unsigned countUD2=0;
@@ -1476,246 +1096,48 @@ unsigned countUD2=0;
 unsigned long ErrResSNMP;
 unsigned char start_count;
 
-unsigned char oldflag; //need init
-unsigned char oldflag_710; 
-unsigned char oldflag_ud1; //need init
-unsigned char oldflag_ud2; //need init
-unsigned char oldflag_prv;
-unsigned char oldflag_prv1;
-unsigned char dev_status;
+//#ifdef OP_TRUNKS
+
+unsigned long DelayWriteTime;
+unsigned char NeedWriteID;
+
+#define DELAY_TIME_TO_WRITE	(1000)
 
 
-
-extern "C" void OperateLeds3()
+extern "C" void SetNeedWriteDevId(void)
 {
-//static unsigned char blink;
-unsigned char flag = 0;
-unsigned char flag_prv = 0;
-unsigned char flag_prv1 = 0;
-unsigned char flag_710 = 0;
-unsigned char flag_ud1 = 0;
-unsigned char flag_ud2 = 0;
-
-unsigned char LedsReg = 0;// = mod_mask;
-unsigned char LedsReg1 = 0;// = mod_mask;
-
-//printfpd("\n\r1>%d", countUD1);
-//printfpd("\n\r2>%d", countUD2);
-
-if(countUD1 < ALARM_LEVEL_UD) 
- {
-   LedsReg |= NORMA_UD1_BIT;
- //  LedsReg &= ~(NORMA_UD1_BIT);
-    dev_status |= 	MASK_BIT_4;
-   flag_ud1 = 0; 
- }
- else
- {
-   LedsReg &= ~(NORMA_UD1_BIT);
- //    LedsReg |= NORMA_UD1_BIT;
-    dev_status &= ~(MASK_BIT_4);
-   flag_ud1 = 1;
- }
-
-
-if(countUD2 < ALARM_LEVEL_UD) 
- {
-   LedsReg |= NORMA_UD2_BIT;
- //    LedsReg &= ~(NORMA_UD2_BIT);
-   dev_status |= 	MASK_BIT_5;
-   flag_ud2 = 0; 
- }
- else
- {
-   LedsReg &= ~(NORMA_UD2_BIT);
- //    LedsReg |= NORMA_UD2_BIT;
-
-   dev_status &= ~(MASK_BIT_5);
-   flag_ud2 = 1;
- }
-
-
-
- /*
-#ifndef LOAD_ONE_PROVINGENT_ON_PLATA
- for(unsigned is = 0; is < 2 ; is++)
-#else
- for(unsigned is = 0; is < 1 ; is++)
-#endif
-{
-if(norma_status[is] > ALARM_QUANTITY)  //bad answer
-{
- flag = 1;
+//printf("\n\rSetWriteDevId");
+  NeedWriteID = 1;
+DelayWriteTime = time1;
 }
 
-}
-  */
-//_______________________________________________________________
-// unsigned char stat710 = inportb(BLOCK_SWEEP1 + STATUS710_PORT);
- unsigned char stat710 = inportb( STATUS710_PORT);
-// unsigned char statsynt = inportb(BLOCK_SWEEP1 + STATUSSYNT_PORT);
-
-if(stat710 == 0xff)
+extern "C" void ClearNeedWriteDevId(void)
 {
- stat710 = 0; //without xilinx readed 0xff
+  NeedWriteID = 0;
 }
 
- if((stat710 & MASK_BIT_0) ) { LedsReg |= MASK_BIT_0; flag_prv = 0;} 
- else {LedsReg &= ~(MASK_BIT_0); flag_prv = 1;}
-
-//#ifndef LOAD_ONE_PROVINGENT_ON_PLATA
- if((stat710 & MASK_BIT_1)) { LedsReg |= MASK_BIT_1;	flag_prv1 = 0;}
- else {LedsReg &= ~(MASK_BIT_1); flag_prv1 = 1;}
-/*
-#else
- LedsReg1 &= ~(MASK_BIT_1); flag_prv1 = 1; //new
-#endif
-*/
-
-//#ifndef LOAD_ONE_PROVINGENT_ON_PLATA
-/*
- if((oldflag_prv != flag_prv) || (oldflag_prv1 != flag_prv1))
- {
- oldflag_prv = flag_prv;
-  oldflag_prv1 = flag_prv1;
-
-// outportb((BLOCK_SWEEP1 + MOD_LED_ADDR2), LedsReg1);
- }
-	*/
- /*
-#else
-
-if((oldflag_prv != flag_prv) )
- {
- oldflag_prv = flag_prv;
- outportb((BLOCK_SWEEP1 + MOD_LED_ADDR2), LedsReg1);
- }
-#endif
-	*/
-//_______________________________________________________________
-
-
-
-//#ifndef LOAD_ONE_PROVINGENT_ON_PLATA
-
- if((stat710 & MASK_BIT_0) && (stat710 & MASK_BIT_1) )
-  {  LedsReg |= NORMA_BIT1; flag_710 = 0;} 		 //common norma
- else {LedsReg &= ~(NORMA_BIT1); flag_710 = 1;}
-
-   
-// #ifndef LOAD_ONE_PROVINGENT_ON_PLATA
-//if((oldflag != flag) ||	(oldflag_ud1 != flag_ud1) || (oldflag_ud2 != flag_ud2) || (oldflag_710 != flag_710))
-//if(oldflag_710 != flag_710)
-if((oldflag_ud1 != flag_ud1) || (oldflag_ud2 != flag_ud2) || (oldflag_710 != flag_710))
+extern "C" unsigned char GetNeedWriteDevId(void)
 {
-// oldflag = flag;
-  oldflag_ud1 = flag_ud1;
-  oldflag_ud2 = flag_ud2;
-  oldflag_710 = flag_710;
+  if(DelayWriteTime > time1)
+  {
 
-//printfpd("\n\rr>%X :", MOD_LED_ADDR3);
-//printfpd(" %X", LedsReg);
-#ifndef MD3416_TEST
-  outportb(MOD_LED_ADDR3, LedsReg);	   //common norma
-#endif
+     DelayWriteTime = time1;
+  }
 
-}
-//_____________________________________
-/*
-if(norma_status[0] < ALARM_QUANTITY)
-{
-//printfp("|");
- dev_status |= 	MASK_BIT_0;
-}
-else
-{
-//printfp("&");
- dev_status &= ~(MASK_BIT_0);
-}
-*/
-/*
-#ifndef LOAD_ONE_PROVINGENT_ON_PLATA
-if(norma_status[1] < ALARM_QUANTITY)
-{
- dev_status |= 	MASK_BIT_1;
-}
-else
-{
-#else
- dev_status &= ~(MASK_BIT_1);
-#endif
-
-#ifndef LOAD_ONE_PROVINGENT_ON_PLATA
-}
-#endif
-	 */
-if(stat710 & MASK_BIT_0)
-{
-//printfp("\n\r-1");
- dev_status |= 	MASK_BIT_2;
-}
-else
-{
- dev_status &= ~(MASK_BIT_2);
-}
-//#ifndef LOAD_ONE_PROVINGENT_ON_PLATA
-if(stat710 & MASK_BIT_1)
-{
- dev_status |= 	MASK_BIT_3;
-}
-else
-{
-
-//#else
- dev_status &= ~(MASK_BIT_3);
-//#endif
-
-//#ifndef LOAD_ONE_PROVINGENT_ON_PLATA
-}
-//#endif
-   /*
-if(statsynt & MASK_BIT_0)
-{
- dev_status |= 	MASK_BIT_6;
-}
-else
-{
- dev_status &= ~(MASK_BIT_6);
-}
-   */
-   /*
-if(GetModForSS())// & MASK_BIT_0)
-{
- dev_status |= 	MASK_BIT_7;
-}
-else
-{
- dev_status &= ~(MASK_BIT_7);
-}
-	*/
-
-
- //  printfpd("\n\r%02X",LedsReg);
+  if((time1 - DelayWriteTime) < DELAY_TIME_TO_WRITE)
+  {
+   return 0;
+   }
+  return NeedWriteID;
 }
 
- long err_tmp_prev1;// = 0l;
-	 long err_tmp_prev3;// = 0l;
-    long err_tmp_prev4;// = 0l;
-
-unsigned char used_TCP;
-unsigned char hot_restart;
-
-
-//msg485______________________
 #define   EmbMsg485Buffer_Size (16)
 struct EmbMsg485Buffer
 {
     unsigned short BuffSize;
     unsigned short Head;
     unsigned short Tail;
-  //  EmbMsg Buff[32];
-   // EmbMsg Buff[16];
-	  EmbMsg485 Buff[EmbMsg485Buffer_Size];
+  EmbMsg485 Buff[EmbMsg485Buffer_Size];
   public:
     void Init();
     void Add(EmbMsg485&);
@@ -1761,15 +1183,11 @@ unsigned short EmbMsg485Buffer::Used()
 
   if( n >= 0 )
   {
- //  printEthLongHex(Head);
    return n;
    }
   else
   {	 
   if(n == (BuffSize - 1))  {
-#ifdef	ETH_DEBUG_ENABLED	
- //  printEthLongHex(0x99);
-#endif	//ETH_DEBUG_ENABLED
    	 }
   return n+BuffSize;
   }
@@ -1781,13 +1199,12 @@ unsigned short EmbMsg485Buffer::Free()
   if( n > 0 ) return n;
   else return n+BuffSize;
 }
-/////////////////////
 
-
-//msg485______________________
 
 EmbMsg485Buffer tBuffEmbMsg485Request_1;
 EmbMsg485Buffer tBuffEmbMsg485Request_2;
+
+
 
 void WritePort()
 {
@@ -1801,8 +1218,9 @@ void WritePort()
 		embMsg485Request_1.SetBody(2,embMsgRequest->Body(1)&0x3F);
 		embMsg485Request_1.SetBody(3,embMsgRequest->Body(4));
 		embMsg485Request_1.CalcCRC();
-	 //	embMsg485Request_1.SetReadyToSend();
-	   tBuffEmbMsg485Request_1.Add(embMsg485Request_1);
+		embMsg485Request_1.SetReadyToSend();
+		 tBuffEmbMsg485Request_1.Add(embMsg485Request_1);
+
 	}
 	else
 	{
@@ -1816,18 +1234,14 @@ void WritePort()
 			embMsg485Request_2.SetBody(2,embMsgRequest->Body(1)&0x3F);
 			embMsg485Request_2.SetBody(3,embMsgRequest->Body(4));
 			embMsg485Request_2.CalcCRC();
-		//	embMsg485Request_2.SetReadyToSend();
-		tBuffEmbMsg485Request_2.Add(embMsg485Request_2);
+			embMsg485Request_2.SetReadyToSend();
+			 tBuffEmbMsg485Request_2.Add(embMsg485Request_2);
+
 		}
 		else
 		{
-
-#ifndef PUM_TEMP_NO_EXCH
-
 			outportb(embMsgRequest->Body(0)+(embMsgRequest->Body(1)<<8), embMsgRequest->Body(4));
-#endif		
-		
-			SaveParameterToNVRAM(embMsgRequest->Body(0)+(embMsgRequest->Body(1)<<8) , embMsgRequest->Body(4));
+   //			SaveParameterToNVRAM(embMsgRequest->Body(0)+(embMsgRequest->Body(1)<<8) , embMsgRequest->Body(4));
 			embMsgAns.SetType(0x0A);
 			embMsgAns.SetBody(0,embMsgRequest->Body(0));
 			embMsgAns.SetBody(1,embMsgRequest->Body(1));
@@ -1839,17 +1253,11 @@ void WritePort()
 	}
 }
 
+
 void ReadPort()
 {
-
-  //	 printEthLongHex(embMsgRequest->Body(1));
- //	embMsgRequest->Body(0)
- //	if((embMsg.Body(1)&0xC0)==0x80)
 	if((embMsgRequest->Body(1)&0xC0)==0x80)
 	{
-
-  //	printEthLongHex(0x80);
-
 		embMsg485Request_1.Init();
 		embMsg485Request_1.SetAddr(0);//0x01);
 		embMsg485Request_1.SetLength(3); //3
@@ -1857,8 +1265,8 @@ void ReadPort()
 		embMsg485Request_1.SetBody(1,embMsgRequest->Body(0));
 		embMsg485Request_1.SetBody(2,embMsgRequest->Body(1)&0x3F);
 		embMsg485Request_1.CalcCRC();
-	 //	embMsg485Request_1.SetReadyToSend();
-	   tBuffEmbMsg485Request_1.Add(embMsg485Request_1);
+		embMsg485Request_1.SetReadyToSend();
+		tBuffEmbMsg485Request_1.Add(embMsg485Request_1);
 	}
 	else
 	{
@@ -1871,8 +1279,9 @@ void ReadPort()
 			embMsg485Request_2.SetBody(1,embMsgRequest->Body(0));
 			embMsg485Request_2.SetBody(2,embMsgRequest->Body(1)&0x3F);
 			embMsg485Request_2.CalcCRC();
-		//	embMsg485Request_2.SetReadyToSend();
-		tBuffEmbMsg485Request_2.Add(embMsg485Request_2);
+			embMsg485Request_2.SetReadyToSend();
+			 tBuffEmbMsg485Request_2.Add(embMsg485Request_2);
+
 		}
 		else
 		{
@@ -1882,82 +1291,140 @@ void ReadPort()
 			embMsgAns.SetBody(1,embMsgRequest->Body(1));
 			embMsgAns.SetBody(2,0);
 			embMsgAns.SetBody(3,8);
- #ifndef PUM_TEMP_NO_EXCH
-
 			embMsgAns.SetBody(4,inportb(embMsgRequest->Body(0)+(embMsgRequest->Body(1)<<8)));
-#endif		
 			embMsgAns.SetLength(5);
 		}
 	}
 }
 
-unsigned char send_keeper1, send_keeper2;
 
 
-char MEMP[SIZE_MEMP];
-int cnt; 
-
-
-
- extern "C" void Init_PU_M()
+ extern "C" unsigned char SpiMirrrorTest()
 {
-//  hot_restart = MirrorTest();
-   ClearNeedWriteDevId();
+ //AT91F_SpiInit();
+ AT91F_SpiEnable(3);
 
- send_keeper1 = send_keeper2 = 1;
-
- used_TCP = 0;
- long err_tmp_prev1 = 0l;
-   long err_tmp_prev3 = 0l;
-   long err_tmp_prev4 = 0l;
-
-// printfp("Init_PU_M");
-timer_oper_prog = 0;
-InitOperProg();
-
-oldflag = 0xff;
-oldflag_710 = 0xff;
-oldflag_ud1 = 0xff;
-oldflag_ud2 = 0xff;
-oldflag_prv = 0xff;
-oldflag_prv1 = 0xff;
-dev_status = 0x0;
-
-
-if(! hot_restart)
-{
-#ifdef USE_P710
-//printfp("Start Init");
-PVG710_Init(0);	  //for test
-PVG710_Init(1);	  //for test
-
-#endif
+ unsigned char ret = 0;
+ char * pret;
+ char Buff[3];
+ char a1, a2;
+ Buff[0] = 0; Buff[1] = 0xAA; Buff[2] = 0x55;
+ SpiWriteReadCS3(3, Buff);
+ Buff[0] = 0; Buff[1] = 0xFF; Buff[2] = 0xFF;
+ pret = SpiWriteReadCS3(3, Buff);
+ a1 = *pret++;
+ a2 = *pret;
+  if((a1 == 0x55) && (a2 == 0xAA))
+ { ret = 1;}
+ return ret;
 }
 
-#ifdef RS485_MSG_BUFF
-	   tBuffRS485.Init();
-	   time_lastsend_rs485 = 0;
-	   flag_wait_rs485 = 0;
-#endif //RS485_MSG_BUFF
-
-
-#ifdef USE_RS125
- parse_status = 0l;
- rs125_send_timer = 0l;
-for(im = 0; im < PERIOD_OF_KEEP; im++)
+extern "C" unsigned short VNV_spi_read(unsigned char addr, unsigned char data1, unsigned char data2)
 {
- oct_res_sub[im] = 0;
- oct_tr_sub[im] = 0;
- oct_res_ser[im] = 0;
- oct_tr_ser[im] = 0;
+ AT91F_SpiEnable(3);
+ unsigned short ret = 0;
+ char * pret;
+ char Buff[3];
+ Buff[0] = addr; Buff[1] = data1; Buff[2] = data2;
+ pret = SpiWriteReadCS3(3, Buff);
+ ret = *pret++;
+ ret <<= 8;
+ ret += *pret;
+ return ret;
+}
+
+extern "C" void VNV_spi_write (unsigned char addr, unsigned char data1, unsigned char data2)
+{
+ AT91F_SpiEnable(3);
+ char Buff[3];
+ Buff[0] = addr; Buff[1] = data1; Buff[2] = data2;
+ SpiWriteReadCS3(3, Buff);
+}
+
+extern "C" void FillAlarms(unsigned char addr, char* palarms)
+{
+ unsigned char mask = 1;
+ for(unsigned char i = 0; i< 8; i++)
+ {
+   if(*palarms & mask)
+   {
+	 unEmb2MuxVNV.emb2MuxVNV.state_e1[i + (addr << 3)] = 0;
+   }
+   else
+   {
+	 unEmb2MuxVNV.emb2MuxVNV.state_e1[i + (addr << 3)] = 3;
+   }
+	 mask <<= 1;
  }
+}  
 
-// cnt_oct_res_sub = 0;
-// cnt_oct_tr_sub = 0;
-// cnt_oct_res_ser = 0;
-// cnt_oct_tr_ser = 0;
-#endif //
+extern "C" void FillAISes(unsigned char addr, char* palarms)
+{
+ unsigned char mask = 1;
+ for(unsigned char i = 0; i< 8; i++)
+ {
+   if(*palarms & mask)
+   {
+	 unEmb2MuxVNV.emb2MuxVNV.state_e1[i + (addr << 3)] = 1;		 //ais
+   }
+   mask <<= 1;
+ }
+}
 
+extern "C" void ReadE1Losses(void)
+{
+// fill unEmb2MuxVNV.emb2MuxVNV.state_e1[i]
+ AT91F_SpiEnable(3);
+ char * pret;
+ char Buff[3];
+ Buff[1] = BIT_READ  +  ADDR_LOSSES; //	 0x80 + 0x04; //read bit + addr
+ unsigned char addr;
+ for(addr = ADDR_IDT; addr < ADDR_IDT + IDT_QUANTITY; addr++)
+  {
+	Buff[0] = addr;
+	pret = SpiWriteReadCS3(3, Buff);
+	FillAlarms(addr - ADDR_IDT, pret+2);
+	Buff[0] = ADDR_LED + addr -  ADDR_IDT ;
+	Buff[1] = * (pret + 2);
+	Buff[2] = 0xff;   			//set all right leds on
+	SpiWriteReadCS3(3, Buff);   //operate leds
+  }
+}
+
+extern "C" void ReadE1AISes(void)
+{
+// fill unEmb2MuxVNV.emb2MuxVNV.state_e1[i]
+ AT91F_SpiEnable(3);
+ char * pret;
+ char Buff[3];
+ Buff[1] = BIT_READ  +  ADDR_AISES; //	 0x80 + 0x04; //read bit + addr
+ unsigned char addr;
+ for(addr = ADDR_IDT; addr < ADDR_IDT + IDT_QUANTITY; addr++)
+  {
+	Buff[0] = addr;
+	pret = SpiWriteReadCS3(3, Buff);
+	FillAISes(addr - ADDR_IDT, pret+2);
+  }
+}
+
+extern "C" void InitE1VNV(void)
+{
+ AT91F_SpiEnable(3);
+ char Buff[3];
+ Buff[1] = 0; 
+ Buff[2] = 0; 
+ for(Buff[0] = ADDR_E1; Buff[0] < ADDR_E1 + E1_QUANTITY;Buff[0]++)
+  {
+ 	SpiWriteReadCS3(3, Buff);
+  }
+}
+ 
+extern "C" void Init_PU_M()
+{
+//return; //t
+ tBuffRS485.Init();
+ time_lastsend_rs485 = 0;
+ flag_wait_rs485 = 0;
 
 ErrResSNMP = 0l;
 start_count = 0;
@@ -2019,7 +1486,7 @@ start_count = 0;
 AsciiInit();
 EmbInit();	 //embrs232 embrs485
 //_________________________________________________
-/* 120917 
+  
    ab1[0] =	0x45;ab1[1] =0x60;ab1[2] =0xBF;ab1[3] =0x25;ab1[4] =0x52;ab1[5] =0x2A;ab1[6] =0x64;ab1[7] =0x3F;ab1[8] =0x89;ab1[9] =0x00;   // IM-Filter part 1 
    ab2[0] = 0x45;ab2[1] =0x68;ab2[2] =0x53;ab2[3] =0x02;ab2[4] =0x49;ab2[5] =0x8A;ab2[6] =0x07;ab2[7] =0xF6;ab2[8] =0x04;ab2[9] =0x00;   // IM-Filter part 2 
    ab3[0] =	0x45;ab3[1] =0x18;ab3[2] =0x08;ab3[3] =0xB0;ab3[4] =0xC5;ab3[5] =0x42;ab3[6] =0x3E;ab3[7] =0xFB;ab3[8] =0x72;ab3[9] =0x07;  // FRR-Filter    
@@ -2073,15 +1540,8 @@ EmbInit();	 //embrs232 embrs485
    a28[0] = 0x07; // power dnv mode -- ожидание поднятия трубки
 //outportb(0x511;ab6[0] = 0x00);ab6[0] = // on hook
    aa[0] =  0xC4;aa[1] =0x07;aa[2] =0xFF;aa[3] =0x00;aa[4] =0x00;aa[5] =0x00;aa[6] =0x00; 
-//_____________________________________________
-	   */
-
-
 
 //__________________________________________________<< init _tlf
-
-//void InitMain()
-//{
 
 	unEmb2NetStat.emb2NetStat.allPacketRecv=0;	// +
 	unEmb2NetStat.emb2NetStat.genMarker=0;			// +
@@ -2089,7 +1549,7 @@ EmbInit();	 //embrs232 embrs485
 	unEmb2NetStat.emb2NetStat.requestMarker=0;  // +
 	unEmb2NetStat.emb2NetStat.selfPacketRecv=0; // +
 	unEmb2NetStat.emb2NetStat.selfPacketSend=0; // +
-
+   /*
 	unStateBMD155.stateBMD155.count_block=0;
 	unStateBMD155.stateBMD155.count_no_correct_block1=0;
 	unStateBMD155.stateBMD155.count_no_correct_block2=0;
@@ -2099,9 +1559,9 @@ EmbInit();	 //embrs232 embrs485
 	unStateBMD155.stateBMD155.demPI=0;
 	unStateBMD155.stateBMD155.loopPI=0;
 	unStateBMD155.stateBMD155.statePI=0;
-
+	 */
 	unEmb2TypeVer.emb2TypeVer.softVer    = SOFT_VER;  //add suppourt protocol	rs232 from ethernet protocol 888
-	unEmb2TypeVer.emb2TypeVer.type       = 0x8014;
+	unEmb2TypeVer.emb2TypeVer.type       = 0x0506;
 	unEmb2TypeVer.emb2TypeVer.ctrlNumber = SelfID();
 	unEmb2TypeVer.emb2TypeVer.ctrlYear   = SelfYear();
 	unEmb2TypeVer.emb2TypeVer.ctrlVer1   = SelfVer1();
@@ -2113,740 +1573,220 @@ EmbInit();	 //embrs232 embrs485
 		unEmb2TypeVer.emb2TypeVer.signature_hardware[i] = 0;
 	}
 
-  /*
-	unEmb2TypeVer.emb2TypeVer.signature_hardware[0] = inportb(0x501);
-	unEmb2TypeVer.emb2TypeVer.signature_hardware[1] = inportb(0x502);
-	unEmb2TypeVer.emb2TypeVer.signature_hardware[2] = inportb(0x514);
- */
-
-		SavePortsFromNVRAM();
-   #ifndef PUM_TEMP_NO_EXCH
-
-//___________________________________________________________________________
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[0] = inportb(0x501);
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[1] = inportb(0x502);
-//		unEmb2TypeVer.emb2TypeVer.signature_hardware[2] = inportb(0x514);
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[2] = inportb(0x503);
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[3] = inportb(0x512);
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[4] = inportb(0x513);
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[5] = inportb(0x514);
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[6] = inportb(0x515);
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[7] = 0;//inportb(0x507); // reserv
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[8] = 0;//inportb(0x508); // reserv
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[9] = 0; // reserv
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[10] = inportb(0x520);
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[11] = inportb(0x521);
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[12] = inportb(0x522);
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[13] = inportb(0x523);
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[14] = inportb(0x524);
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[15] = inportb(0x525);
-
-#endif
-//_____________________________________________________________________________
-
-	   /*120917
- //	bt = (unsigned char far*)0x80000000;
-	bt = (unsigned char *)(NVRAM_BASE);
-
-
-	unEmb2TypeVer.emb2TypeVer.signature_software[0] = *bt;
-	unEmb2TypeVer.emb2TypeVer.signature_software[1] = *(bt+1);
-	unEmb2TypeVer.emb2TypeVer.signature_software[2] = *(bt+2);
-	unEmb2TypeVer.emb2TypeVer.signature_software[3] = *(bt+3);
-	unEmb2TypeVer.emb2TypeVer.signature_software[4] = *(bt+4);
-	unEmb2TypeVer.emb2TypeVer.signature_software[5] = *(bt+5);
-	unEmb2TypeVer.emb2TypeVer.signature_software[6] = *(bt+6);
-	unEmb2TypeVer.emb2TypeVer.signature_software[7] = *(bt+7);
-	unEmb2TypeVer.emb2TypeVer.signature_software[8] = *(bt+8);
-	unEmb2TypeVer.emb2TypeVer.signature_software[9] = *(bt+9);
-	unEmb2TypeVer.emb2TypeVer.signature_software[10] = *(bt+10);
-	unEmb2TypeVer.emb2TypeVer.signature_software[11] = *(bt+11);
-	unEmb2TypeVer.emb2TypeVer.signature_software[12] = *(bt+12);
-	unEmb2TypeVer.emb2TypeVer.signature_software[13] = *(bt+13);
-	unEmb2TypeVer.emb2TypeVer.signature_software[14] = *(bt+14);
-	unEmb2TypeVer.emb2TypeVer.signature_software[15] = *(bt+15);
-	*/
-//}
-
-//__________________________________________________
-
-
-
-
-
- //port!!!!!	outport(0xFFA4, 0x0077);
-//	outportb(0x6FF,inportb(0x6FF)|0x10);
-//port	unsigned countUD1=0;
-//port	unsigned countUD2=0;
 
  countUD1=0;	//port
  countUD2=0;   //port
 
-///////  Канал транзит  ///////
-///////////////////////////////
-	tBuffEmbMsg485Request_1.Init();
-	tBuffEmbMsg485Request_2.Init();
-
 	tBuffEmbMsgWest.Init();
 	tBuffEmbMsgEast.Init();
 	rBuffEmbMsg.Init();
- //	embMsgTemp.Init();
 	embSerialACT155.Init();
-
-//--------------------------------------------------  >> add  init
- //not need init	EmbTimerCallback embTimerCallback0;
-
-//ok 	EmbMsgBuffer rBuffEmbMsg;	
-//ok	EmbMsgBuffer tBuffEmbMsgWest;
-//ok	EmbMsgBuffer tBuffEmbMsgEast;
-//ok    EmbSerialPU_M embSerialACT155;
-
 
 	 embMsg.Init();
      embMsgWest.Init();
 	 embMsgEast.Init();
 	 embMsgAns.Init();
- //	EmbMsg embMsgTemp;
      embMsg485.Init();	 //added 090406
 	 embMsg232.Init();	 //added 090406
 	 embMsg232E.Init();	 //added 090406
 	 embMsg485E.Init();	  //added 090406
-
 
 	embMsg485_1.Init();
     embMsg485_2.Init();
     embMsg485Request_1.Init();
 	embMsg485Request_2.Init();
 
-//ok in embinit	EmbRS232 embRS232;
-//ok in embinit EmbRS485 embRS485;
-	
-  
- //-------------------------------------------------	<< add
-
-
-
-
-  //	ResetWatchDog();
-//	embIndicator.Init();
-//	embSerialACT155.Init();
-  
-
-//090406 this maked in embinit	embRS232.Init(384);		// Инициализация RS232 на скорость 38400 кбит/с
-
-///////////////////////////////////////////////////////////////////////////////
 	embTimer.Init(10); // *0,1 ms темп следования прерываний от таймера
 	embTimerCallback0.callback = &Callback0;
 	embTimerCallback0.interval = 1; // вызов функции 1 раз за N срабатываний таймера
 	embTimerCallback0.count = 0;
 	embTimer.SetCallBack0(&embTimerCallback0);
-//////////////////////
-  /*120917
+
 	InitTLF();
 //	Ring();
 	for(tlf_counter=0; tlf_counter<6; tlf_counter++) tlf_number[tlf_counter] = 0xFF;
 	tlf_counter=0;
-		 */
 
 	for(i=0; i<16; i++)
 	{
 		send1[i]=0;
 		send2[i]=0;
+		 /*
 		unStateBMD155.stateBMD155.ppu1_bytes[i]=0;
 		unStateBMD155.stateBMD155.ppu2_bytes[i]=0;
 		unStateBMD155.stateBMD155.state=0;
+		*/
 	}
 //// Загрузка телефонного кодека ////
-
-//120917	for(i=0; i<9; i++) powerInFar[i]=0;
-
-   //port	int rrr=0;
+	for(i=0; i<9; i++) powerInFar[i]=0;
 	rrr=0; //port
 
 ///////  Включаем канал транзит 0x95 - 0x00  ///////
 ///////  "конец" 0x95 - 0x01
 ////////////////////////////////////////////////
-   //	Enable(); // Разрешаем все прерывания
 	send1[0]=12;
 	send2[0]=12;
-
    
 	time3Marker = time3;
 
-	unStateRRL.stateRRL.ver = 0x01;
-	unStateRRL.stateRRL.state = 0x01;
+ //	unStateRRL.stateRRL.ver = 0x01;
+//	unStateRRL.stateRRL.state = 0x01;
 
- //120917	Wait();
+	Wait();
 //	Ring();
 //	Pause();
 	presto_time = time1;
-
-
- //port 	InitMain();
-// 526-527	Счётчик ошибок после комбинатора	16 бит
-// 528-52A	Счётчик ошибок, исправленных РС в 1 стволе	24 бит
-// 52B-52D	Счётчик ошибок, исправленных РС в 2 стволе	24 бит
-// 52E-52F	Счётчик ошибок не исправленных РС в 1 стволе	16 бит
-// 530-531	Счётчик ошибок не исправленных РС в 2 стволе	16 бит
-// 532-533	Счётчик числа принятых пакетов	16 бит
-	count_no_correct_result = (unsigned)inportb(0x526) + ((unsigned)inportb(0x527)<<8);	
-	count_block = (unsigned)inportb(0x532) + ((unsigned)inportb(0x533)<<8);
-	count_notRS1 = (unsigned)inportb(0x52E) + ((unsigned)inportb(0x52F)<<8);
-	count_notRS2 = (unsigned)inportb(0x530) + ((unsigned)inportb(0x531)<<8); 
-	count_no_correct_block1 = (unsigned)inportb(0x528) + ((unsigned)inportb(0x529)<<8) + ((unsigned)inportb(0x52A)<<16);
-	count_no_correct_block2 = (unsigned)inportb(0x52B) + ((unsigned)inportb(0x52C)<<8) + ((unsigned)inportb(0x52D)<<16);
-
-	unStatePUM.statePUM.ver = 0x01;
+ 
+  	unStatePUM.statePUM.ver = 0x01;
 	unStatePUM.statePUM.reserv = 0x20;
 
-// Порт 0х501 Тип Бит		
-//1	"0" - с MUX;  "1" - нет MUX	Наличие мультиплексора
-//2		
-//3		
-//4		
-//5	"1" - 2М, "2" - 4М, "3" - 8М, "4" - 17М, "5" - 34М	Скорость потока
-//6		
-//7		
-//8	
-#ifdef PROG_PU_M_MUX
-	
-	if(inportb(0x501)&0x01)
-	{
-		switch(inportb(0x501)&0xF0)
-		{
-			case 0x10: unEmb2Mux34.emb2Mux34.numE1 = 1; break;
-			case 0x20: unEmb2Mux34.emb2Mux34.numE1 = 2; break;
-			case 0x30: unEmb2Mux34.emb2Mux34.numE1 = 4; break;
-			case 0x40: unEmb2Mux34.emb2Mux34.numE1 = 8; break;
-			case 0x50: unEmb2Mux34.emb2Mux34.numE1 = 16; break;
-			default: unEmb2Mux34.emb2Mux34.numE1 = 0;
-		}
-	}
-	else 
-	{
-		unEmb2Mux34.emb2Mux34.numE1 = 0;
-	}
+   	unEmb2MuxVNV.emb2MuxVNV.numE1 = 48;
 
-	for(i=0; i<unEmb2Mux34.emb2Mux34.numE1; i++)
+for(i=0; i<unEmb2MuxVNV.emb2MuxVNV.numE1; i++)
 	{
-		unEmb2Mux34.emb2Mux34.ctrl_e1[i] = 0;
-		unEmb2Mux34.emb2Mux34.state_e1[i] = 0;
+		unEmb2MuxVNV.emb2MuxVNV.state_e1[i] = 0;
 	}
-#endif //PROG_PU_M_MUX
+	 InitE1VNV();
 
 } //add this
 
+#define SCAN_PERIOD		(500)
 
 extern "C" void PU_M()
-//  while(1)
-	{
-	long err_tmp_now = 0l;
-
-	static long err_tmp_prev1 = 0l;
-	static long err_tmp_prev3 = 0l;
-    static long err_tmp_prev4 = 0l;
-
-
- static unsigned long timescan;
-
-
-#ifndef TEMPORARY_DO_NOT_STOP_RECEIVE
-
- 
-static unsigned char maskcnt;
-
-if(maskcnt)
 {
-//MaskReceive();
-embSerialACT155.ChangeReceive1();
-maskcnt = 0;
-}
-else
+static unsigned long cnt;
+cnt++;
+if(GetNeedWriteDevId())
 {
-//UnMaskReceive();
-embSerialACT155.ChangeReceive2();
-maskcnt = 1;
+ WriteDevId();
+ ClearNeedWriteDevId();
 }
 
-#endif
-
-
- if(timescan > time1)	timescan = time1;
-
- if((time1 - timescan) > STATE_SCAN_PERIOD)
- {
-  timescan = time1;
-  ParseOperProg();
-  OperateLeds3();
- }
-
-
-
-   if(GetNeedWriteDevId())
-		   {
-			 WriteDevId();
-			 ClearNeedWriteDevId();
-		   }
-
-//ok #ifndef PUM_TEMP_NO_EXCH
-
-
-#ifdef PROG_PU_M_MUX
-//________________________________________________________________where get it ??????
-  		for(i=0; i<unEmb2Mux34.emb2Mux34.numE1; i++)
- 		{
- 			unEmb2Mux34.emb2Mux34.ctrl_e1[i]  = inportb3(0x090+i);
- 			unEmb2Mux34.emb2Mux34.state_e1[i] = inportb3(0x080+i);
- 		}
-#endif //PROG_PU_M_MUX
-
-#ifndef PUM_TEMP_NO_EXCH
-
-////
-
-//_________________________________________________________________________
-//___________________________________________________________________________
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[0] = inportb(0x501);
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[1] = inportb(0x502);
-//		unEmb2TypeVer.emb2TypeVer.signature_hardware[2] = inportb(0x514);
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[2] = inportb(0x503);
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[3] = inportb(0x512);
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[4] = inportb(0x513);
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[5] = inportb(0x514);
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[6] = inportb(0x515);
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[7] = 0;//inportb(0x507); // reserv
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[8] = 0;//inportb(0x508); // reserv
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[9] = 0; // reserv
-
-//ok #ifndef PUM_TEMP_NO_EXCH
-
-
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[10] = inportb(0x520);
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[11] = inportb(0x521);
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[12] = inportb(0x522);
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[13] = inportb(0x523);
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[14] = inportb(0x524);
-		unEmb2TypeVer.emb2TypeVer.signature_hardware[15] = inportb(0x525);
-
-//ok #ifndef PUM_TEMP_NO_EXCH
-
-   err_tmp = (unsigned short)inportb(0x526) + ((unsigned short)inportb(0x527)<<8);
-
-//   err_tmp_now =   err_tmp -  err_tmp_prev1;
-    if(err_tmp >= err_tmp_prev1)
-	err_tmp_now =   (long)err_tmp -  (long)err_tmp_prev1;
-	 else
-	err_tmp_now =    (long)err_tmp + 0x10000l - (long)err_tmp_prev1;
-
-
-   err_tmp_prev1 = err_tmp;
-   if(err_tmp >= count_no_correct_result) 
-	unStateBMD155.stateBMD155.count_no_correct_result = err_tmp - count_no_correct_result;
-	else
-	unStateBMD155.stateBMD155.count_no_correct_result = (err_tmp  + 0x10000 ) - count_no_correct_result ;
+if(!(cnt% SCAN_PERIOD))
+{
+ ReadE1Losses();
+ ReadE1AISes();
+}
  
-	count_no_correct_result = err_tmp;
-
-   //	unStatePUM.statePUM.ulErrOut = err_tmp;
-//  printEthLongHex(err_tmp);
-
-	unStatePUM.statePUM.ulErrOut += err_tmp_now;  //
-
- 	if(!start_count)
- 	{start_count = 1;}
- 	else
- 	{
-	ErrResSNMP += unStateBMD155.stateBMD155.count_no_correct_result;
- 	}
-
-	err_tmp = (unsigned short)inportb(0x532) + ((unsigned short)inportb(0x533)<<8);
-   	if(err_tmp>=count_block)
-   	 unStateBMD155.stateBMD155.count_block = err_tmp - count_block;
-	else 
-	unStateBMD155.stateBMD155.count_block = (err_tmp + 0x10000 ) - count_block ;
-	count_block = err_tmp;
-
- // unStatePUM.statePUM.ulBlock = err_tmp;
-  	unStatePUM.statePUM.ulBlock += err_tmp;
-
-	err_tmp = (unsigned short)inportb(0x52E) + ((unsigned short)inportb(0x52F)<<8);
-//static unsigned short  cntprint;
-  //	err_tmp = 0xFFFF + cntprint ;//t
-	if(err_tmp >= err_tmp_prev3)
-	err_tmp_now =   (long)err_tmp -  (long)err_tmp_prev3;
-	 else
-   err_tmp_now =    (long)err_tmp + 0x10000l - (long)err_tmp_prev3;
-
-   //		err_tmp_now = 0xFFFF;//t
-
-    err_tmp_prev3 = (long)err_tmp;
- 
- 	if(err_tmp >= count_notRS1)
- 	unStateBMD155.stateBMD155.count_notRS1 = (long)err_tmp - count_notRS1;
-	else
-	unStateBMD155.stateBMD155.count_notRS1 = ((long)err_tmp + 0x10000) - count_notRS1 ;
-
-	count_notRS1 = (long)err_tmp;
- // 	unStatePUM.statePUM.ulErrAfterRS1 = err_tmp;
-  	unStatePUM.statePUM.ulErrAfterRS1 += (long)err_tmp_now;
-
-	err_tmp = (unsigned short)inportb(0x530) + ((unsigned short)inportb(0x531)<<8); 
-
-   if(err_tmp >= err_tmp_prev4)
-	err_tmp_now =   (long)err_tmp -  (long)err_tmp_prev4;
-	 else
-    err_tmp_now =    (long)err_tmp + 0x10000l - (long)err_tmp_prev4;
-
-
-  //	err_tmp_now =   err_tmp -  err_tmp_prev4;
-    err_tmp_prev4 = (long)err_tmp;
-
- 	if	(err_tmp>=count_notRS2)
- 	 unStateBMD155.stateBMD155.count_notRS2 = err_tmp - count_notRS2;//count_notRS2;
-	else 
- 	unStateBMD155.stateBMD155.count_notRS2 = (err_tmp + 0x10000) - count_notRS2 ;
-
-	count_notRS2 = (long)err_tmp;
-   //	unStatePUM.statePUM.ulErrAfterRS2 = err_tmp;
- 	unStatePUM.statePUM.ulErrAfterRS2 += err_tmp_now; //t
-  //	unStatePUM.statePUM.ulErrAfterRS2 = 0x12345678;	 //t
-
-
-//#ifndef PUM_TEMP_NO_EXCH
-
-
-	err_tmp = (unsigned short)inportb(0x528) + ((unsigned short)inportb(0x529)<<8) + ((unsigned long)inportb(0x52A)<<16);
-  //	 err_tmp_now =   err_tmp -  count_no_correct_block1;
-
-if(err_tmp >= count_no_correct_block1)
-	err_tmp_now =   (long)err_tmp -  (long)count_no_correct_block1;
-	 else
-   err_tmp_now =    (long)err_tmp + 0x1000000l - (long)count_no_correct_block1;
-
-
-	if(err_tmp>=count_no_correct_block1)
-	unStateBMD155.stateBMD155.count_no_correct_block1 = err_tmp - count_no_correct_block1;
-	else 
-
-	unStateBMD155.stateBMD155.count_no_correct_block1 = (err_tmp + 0x1000000) - count_no_correct_block1 ;
-	count_no_correct_block1 = err_tmp;
-
-   unStatePUM.statePUM.ulErrBeforeRS1 += err_tmp_now;
-
-//wrong  #ifndef PUM_TEMP_NO_EXCH
-
-	err_tmp = (unsigned short)inportb(0x52B) + ((unsigned short)inportb(0x52C)<<8) + ((unsigned long)inportb(0x52D)<<16);
-   //	 err_tmp_now =   err_tmp -  count_no_correct_block2;
-
-if(err_tmp >= count_no_correct_block2)
-	err_tmp_now =   (long)err_tmp -  (long)count_no_correct_block2;
-	 else
-   err_tmp_now =    (long)err_tmp + 0x1000000l - (long)count_no_correct_block2;
-
-
-
-	if(err_tmp	>= count_no_correct_block2)
-	 unStateBMD155.stateBMD155.count_no_correct_block2 = err_tmp - count_no_correct_block2;
-	else
-	unStateBMD155.stateBMD155.count_no_correct_block2 = (err_tmp + 0x1000000) - count_no_correct_block2 ;
- 	count_no_correct_block2 = err_tmp; 
- //	unStatePUM.statePUM.ulErrBeforeRS2 = err_tmp;
- unStatePUM.statePUM.ulErrBeforeRS2 += err_tmp_now;
-
-
-//#else   // PUM_TEMP_NO_EXCH
-
-//________________________________________________________________________________,, from bmd 155
-#ifdef PROG_PU_M_MUX
-
-	unEmb2Mux34.emb2Mux34.e3 = inportb(0x522);
-	unEmb2Mux34.emb2Mux34.err_e3 = (unsigned)inportb(0x526) + ((unsigned)inportb(0x527)<<8);
-	unEmb2Mux34.emb2Mux34.reserv[0] = inportb(0x524);
-	unEmb2Mux34.emb2Mux34.reserv[1] = inportb3(0x037);
-	unEmb2Mux34.emb2Mux34.softVer = 1;
-	unEmb2Mux34.emb2Mux34.type = 1;
-
-#endif //PROG_PU_M_MUX
-
-
-//wrong  #ifndef PUM_TEMP_NO_EXCH
-
-
-
-	unStatePUM.statePUM.state[0] = inportb(0x520);
-	unStatePUM.statePUM.state[1] = inportb(0x521);
-	unStatePUM.statePUM.state[2] = inportb(0x522);
-	unStatePUM.statePUM.state[3] = inportb(0x523); /// Повтор
-	unStatePUM.statePUM.state[4] = inportb(0x524);
-	unStatePUM.statePUM.state[5] = inportb(0x525);
-	unStatePUM.statePUM.state[6] = inportb(0x536);
-	unStatePUM.statePUM.state[7] = inportb(0x537);
-	unStatePUM.statePUM.state[8] = inportb(0x538);
-	unStatePUM.statePUM.state[9] = inportb(0x539);
-#ifdef PROG_PU_M_MUX
-	unStatePUM.statePUM.state[10] = inportb3(0x036); // Шлейф
-	unStatePUM.statePUM.state[11] = inportb3(0x037); // Номер Е1 для измерения ПСП
-	unStatePUM.statePUM.state[12] = inportb3(0x028); // Счетчик ПСП мл. байт
-	unStatePUM.statePUM.state[13] = inportb3(0x029); // Счетчик ПСП ср. байт
-	unStatePUM.statePUM.state[14] = inportb3(0x02A); // Счетчик ПСП ст. байт
-#else
-	unStatePUM.statePUM.state[10] = 0; // Шлейф
-	unStatePUM.statePUM.state[11] = 0; // Номер Е1 для измерения ПСП
-	unStatePUM.statePUM.state[12] = 0; // Счетчик ПСП мл. байт
-	unStatePUM.statePUM.state[13] = 0; // Счетчик ПСП ср. байт
-	unStatePUM.statePUM.state[14] = 0; // Счетчик ПСП ст. байт
-#endif
-
-#else   // PUM_TEMP_NO_EXCH
-
-	 unStatePUM.statePUM.state[2] = inportb(0x522);
-
-#endif // PUM_TEMP_NO_EXCH
-
-
-	unStatePUM.statePUM.state[15] = 0;
- 		rrr++;		
-  		while(embSerialACT155.UsedUD1())
+		if(time1 - wait_time >= 40) 
 		{
-			byte = embSerialACT155.GetUD1();
-	   //		printf("_%c",byte);
-			switch(byte)
+			wait_time = time1;
+			Read();
+		if(aaa[3]&0x40) 
+		{
+			if(tlf_state) 
 			{
-				case 0xAA: embMsg485_1.Init(); stemp++; break; // Пакет
-				case 0x5A: mode5AUp1=1; break;
-				default:
-					if(mode5AUp1) 
-					{
-						embMsg485_1.Add(Modify5A(byte));
-						mode5AUp1=0;
-					}
-					else embMsg485_1.Add(byte);
+				Active();
+				tlf_counter = 0; presto=0; presto_ring = 0; presto_time = 0;
 			}
-			if(embMsg485_1.IsEnd())
-			{		
-				countUD1=0;
-				for(i=0; i<32; i++)
+			tlf_state = 0;
+		}
+		else 
+		{
+			if(!tlf_state)
+			{
+				Wait();
+				tlf_state=1;
+			}
+			if((aaa[3]&0x80)&&(aaa[5]&0x80))
+			{
+//	unsigned char tlf_number[4];
+//	unsigned char tlf_counter=0;
+//					Ring();
+				switch(aaa[5]&0xFC)
 				{
-						unStateRRL.stateRRL.ppu1_bytes[i] = embMsg485_1.Body(i);
+					case 196: tlf_counter++; tlf_number[2]=tlf_number[1]; tlf_number[1]=tlf_number[0]; tlf_number[0] = 1; break;
+					case 200: tlf_counter++; tlf_number[2]=tlf_number[1]; tlf_number[1]=tlf_number[0]; tlf_number[0] = 2; break;
+					case 204: tlf_counter++; tlf_number[2]=tlf_number[1]; tlf_number[1]=tlf_number[0]; tlf_number[0] = 3; break;
+					case 208: tlf_counter++; tlf_number[2]=tlf_number[1]; tlf_number[1]=tlf_number[0]; tlf_number[0] = 4; break;
+					case 212: tlf_counter++; tlf_number[2]=tlf_number[1]; tlf_number[1]=tlf_number[0]; tlf_number[0] = 5; break;
+					case 216: tlf_counter++; tlf_number[2]=tlf_number[1]; tlf_number[1]=tlf_number[0]; tlf_number[0] = 6; break;
+					case 220: tlf_counter++; tlf_number[2]=tlf_number[1]; tlf_number[1]=tlf_number[0]; tlf_number[0] = 7; break;
+					case 224: tlf_counter++; tlf_number[2]=tlf_number[1]; tlf_number[1]=tlf_number[0]; tlf_number[0] = 8; break;
+					case 228: tlf_counter++; tlf_number[2]=tlf_number[1]; tlf_number[1]=tlf_number[0]; tlf_number[0] = 9; break;
+					case 232: tlf_counter++; tlf_number[2]=tlf_number[1]; tlf_number[1]=tlf_number[0]; tlf_number[0] = 0; break;
+					case 236: tlf_counter = 0; presto=0; presto_ring = 0; presto_time = 0; break;
+					default: tlf_counter = 0; presto=0; presto_ring = 0; presto_time = 0; break;
 				}
-				for(i=0; i<16; i++)
+	   /*
+			unStateBMD155.stateBMD155.loopPI = tlf_number[0];
+			unStateBMD155.stateBMD155.demPI = (unsigned)tlf_number[1]*10+(unsigned)tlf_number[0];
+			unStateBMD155.stateBMD155.statePI = tlf_number[1];
+	   */
+			unsigned char * nbase = (unsigned char *)(NVRAM_BASE);
+
+
+				if(tlf_counter>=2) 
 				{
-						unStateBMD155.stateBMD155.ppu1_bytes[i] = embMsg485_1.Body(i);
+//		if(((unsigned)tlf_number[1]*10+(unsigned)tlf_number[0]) == unEmb2TypeVer.emb2TypeVer.signature_software[1]) // = self_tlf_number
+			if(((unsigned)tlf_number[1]*10+(unsigned)tlf_number[0]) == (*(nbase + 1))) // = self_tlf_number
+					{
+						presto = 1;
+						presto_time = 0;
+						presto_ring = 0;
+						ring_counter = 0;
+					}
+					else
+					{
+						if(((unsigned)tlf_number[1]*10+(unsigned)tlf_number[0]) == 99) 
+						{
+							presto = 2;
+							presto_time = 0;
+							presto_ring = 0;
+							ring_counter = 0;
+						}
+					}
+					for(tlf_counter=0; tlf_counter<6; tlf_counter++) tlf_number[tlf_counter] = 0xFF;
+					tlf_counter=0;
 				}
-				embMsg485_1.Init();
+			}
+
+			if(presto)
+			{
+				if((!presto_ring)&&(time1-presto_time>2000))
+				{
+					presto_ring = 1;
+					presto_time = time1;
+					ring_counter++;
+					if(ring_counter>7) 
+					{
+						presto=0;
+						presto_ring = 0;
+						presto_time = 0;
+						Wait();
+					}
+				}
+				else
+				{
+					if(time1-presto_time<1400) 
+					{
+						Ring();
+					}
+					else 
+					{
+						presto_ring = 0;
+						if(presto==1) Pause();
+						else Pause2();
+					}
+				}
 			}
 		}
 
- 		if(time1-time1old > 30) // 10
-   //		if(time1-time1old > 100) // 10
-		{
-			time1old = time1;
-			countUD1++;
-	 //		if(embMsg485Request_1.IsReadyToSend())
-		//	{
-   //			printEthStringAdd(0,0);
-     if(tBuffEmbMsg485Request_1.Used()  && send_keeper1)
-			{
-		//	printfp("\n\r________t1");
-			   send_keeper1 = 0;
-
-				EmbMsg485 embMsg485Request_1;
-				embMsg485Request_1.Init();
-				tBuffEmbMsg485Request_1.Get(embMsg485Request_1);
-
-
-				embSerialACT155.AddUD1(0xFF);
-				embSerialACT155.AddUD1(0xAA);
-				for(i=0; i<embMsg485Request_1.Length()+5; i++) 
-				{
-		//		printEthStringAdd(1,embMsg485Request_1.body[i]);
-
-					switch(embMsg485Request_1.body[i])
-					{
-					case 0x5A: embSerialACT155.AddUD1(0x5A); embSerialACT155.AddUD1(0x00); break;
-					case 0x55: embSerialACT155.AddUD1(0x5A); embSerialACT155.AddUD1(0x01); break;
-					case 0xA5: embSerialACT155.AddUD1(0x5A); embSerialACT155.AddUD1(0x02); break;
-					case 0xAA: embSerialACT155.AddUD1(0x5A); embSerialACT155.AddUD1(0x03); break;
-					default: embSerialACT155.AddUD1(embMsg485Request_1.body[i]);
-					}
-				}
-				 embSerialACT155.SetTransmitUD1();
-
-				embMsg485Request_1.Init();
-		  //		printEthStringAdd(2,0);
-
-			}
-			else
-			{
-
-				send_keeper1 = 1;
-
-				embMsg485Request_1.Init();
-				embMsg485Request_1.SetAddr(0);// был 1 //addr485);
-				embMsg485Request_1.SetLength(1);
-				embMsg485Request_1.SetBody(0,0x00);
-				embMsg485Request_1.CalcCRC();
-
-				embSerialACT155.AddUD1(0xFF);
-				embSerialACT155.AddUD1(0xAA);
-				for(i=0; i<embMsg485Request_1.Length()+3; i++) 
-				{
-					switch(embMsg485Request_1.body[i])
-					{
-					case 0x5A: embSerialACT155.AddUD1(0x5A); embSerialACT155.AddUD1(0x00); break;
-					case 0x55: embSerialACT155.AddUD1(0x5A); embSerialACT155.AddUD1(0x01); break;
-					case 0xA5: embSerialACT155.AddUD1(0x5A); embSerialACT155.AddUD1(0x02); break;
-					case 0xAA: embSerialACT155.AddUD1(0x5A); embSerialACT155.AddUD1(0x03); break;
-					default: embSerialACT155.AddUD1(embMsg485Request_1.body[i]);
-					}
-				}
-				embSerialACT155.SetTransmitUD1();
-				embMsg485Request_1.Init();
-			}
 		}
 
-		if(countUD1 > 4) 
-		{
-			for(i=0; i<16; i++)
-			{
-				unStateBMD155.stateBMD155.ppu1_bytes[i] = 0;
-			}
-			for(i=0; i<32; i++)
-			{
-				unStateRRL.stateRRL.ppu1_bytes[i] = 0;
-			}
-			unStateRRL.stateRRL.state = 0x00;
-		}
-////////////////////////////////////////////////
-		while(embSerialACT155.UsedUD2())
-		{
-			byte = embSerialACT155.GetUD2();
-	  //		printf(".%c",byte);
-
-			switch(byte)
-			{
-				case 0xAA: embMsg485_2.Init(); stemp++; break; // Пакет
-				case 0x5A: mode5AUp2=1; break;
-				default:
-					if(mode5AUp2) 
-					{
-						embMsg485_2.Add(Modify5A(byte));
-						mode5AUp2=0;
-					}
-					else embMsg485_2.Add(byte);
-			}
-			if(embMsg485_2.IsEnd())
-			{		
-				countUD2=0;
-				for(i=0; i<32; i++)
-				{
-					unStateRRL.stateRRL.ppu2_bytes[i] = embMsg485_2.Body(i);
-				}
-				for(i=0; i<16; i++)
-				{
-					unStateBMD155.stateBMD155.ppu2_bytes[i] = embMsg485_2.Body(i);
-				}
-				embMsg485_2.Init(); 
-			}
-		}
-	 //	if(time1-time2old>10) // 10
-
-   		if(time1-time2old > 30) //port
-	  //	if(time1-time2old > 100) //port
-		{
-			time2old = time1;
-			countUD2++;
-	   //		if(embMsg485Request_2.IsReadyToSend())
-		//	{
-		  if(tBuffEmbMsg485Request_2.Used() && send_keeper2)
-			{
-			send_keeper2 = 0;
-		//	printfp("\n\r________t1");
-				EmbMsg485 embMsg485Request_2;
-				embMsg485Request_2.Init();
-				tBuffEmbMsg485Request_2.Get(embMsg485Request_2);
-
-				embSerialACT155.AddUD2(0xFF);
-				embSerialACT155.AddUD2(0xAA);
-				for(i=0; i<embMsg485Request_2.Length()+5; i++) 
-				{
-					switch(embMsg485Request_2.body[i])
-					{
-					case 0x5A: embSerialACT155.AddUD2(0x5A); embSerialACT155.AddUD2(0x00); break;
-					case 0x55: embSerialACT155.AddUD2(0x5A); embSerialACT155.AddUD2(0x01); break;
-					case 0xA5: embSerialACT155.AddUD2(0x5A); embSerialACT155.AddUD2(0x02); break;
-					case 0xAA: embSerialACT155.AddUD2(0x5A); embSerialACT155.AddUD2(0x03); break;
-					default: embSerialACT155.AddUD2(embMsg485Request_2.body[i]);
-					}
-				}
-			   embSerialACT155.SetTransmitUD2();
-				embMsg485Request_2.Init();
-			}
-			else
-			{
-
-				send_keeper2 = 1;
-				embMsg485Request_2.Init();
-				embMsg485Request_2.SetAddr(0);// был 1 //addr485);
-				embMsg485Request_2.SetLength(1);
-				embMsg485Request_2.SetBody(0,0x00);
-				embMsg485Request_2.CalcCRC();
-
-				embSerialACT155.AddUD2(0xFF);
-				embSerialACT155.AddUD2(0xAA);
-				for(i=0; i<embMsg485Request_2.Length()+3; i++) 
-				{
-					switch(embMsg485Request_2.body[i])
-					{
-					case 0x5A: embSerialACT155.AddUD2(0x5A); embSerialACT155.AddUD2(0x00); break;
-					case 0x55: embSerialACT155.AddUD2(0x5A); embSerialACT155.AddUD2(0x01); break;
-					case 0xA5: embSerialACT155.AddUD2(0x5A); embSerialACT155.AddUD2(0x02); break;
-					case 0xAA: embSerialACT155.AddUD2(0x5A); embSerialACT155.AddUD2(0x03); break;
-					default: embSerialACT155.AddUD2(embMsg485Request_2.body[i]);
-					}
-				}
-				embSerialACT155.SetTransmitUD2();
-				embMsg485Request_2.Init();
-			}
-		}
-
-		if(countUD2>4) 
-		{
-			for(i=0; i<16; i++)
-			{
-				unStateBMD155.stateBMD155.ppu2_bytes[i] = 0;
-			}
-			for(i=0; i<32; i++)
-			{
-				unStateRRL.stateRRL.ppu2_bytes[i] = 0;
-			}
-			unStateRRL.stateRRL.state = 0x00;
-		}
-//////////////////////////////////////////////////
+		rrr++;		
 		old_ready_transit=ready_transit;
 		old_ready_mod=ready_mod;
-//////////////////////////////////////////////////
- 
+
 		Check2InitTransitMod();		
 		ProtocolFromModACT155();
 		ProtocolFromTransitACT155();
-
-  
-//////////////////////////////////////////////////
 		i232=0;
+   
+#include checkremotevnv.cpp
+#include answervnv.cpp
+}
 
-
- 
- #include checkremotemod.inc
-// #include answermod.inc
-// #include answerpum.inc
-// #include answerpum710.inc
- #include answerpum710mux.c
-
-
- 
-
-	}
 //}
 
 /*FUNCTION*-------------------------------------------------------------------
@@ -2859,25 +1799,15 @@ if(err_tmp >= count_no_correct_block2)
 extern "C" void emb_use_irq0()
 {
 #ifdef IncEmbSerialMD34AVT
-//#ifdef PROG_BUKC
-//my_int_enable_irq0();
-//#endif //PROG_BUKC
   embSerialACT155.IsrXX();
   IntFlag |= INT0_FLAG;
 #endif // IncEmbSerialMD34AVT
 
 #ifdef IncEmbSerialACT155
- //	  Stephany19++; 
      embSerialACT155.IsrXX();
  IntFlag |= INT0_FLAG;
 #endif // IncEmbSerialACT155
-
-// if(InterruptWatchDog < (unsigned long)INTERRUPT_WAIT)
-// {
-//   InterruptWatchDog++;
    my_int_enable_irq0();
-// }
-
 }
 
 /*FUNCTION*-------------------------------------------------------------------
@@ -2893,12 +1823,6 @@ extern "C" void time_notify_core(void)	// called frequency = 1 ms
 // hier need call EmbTimer::IsrXX for any exemplar, declared as type EmbTimer
     embTimer.IsrXX();
 	TimerCounter ++;
-
-//_________________________________________
-//    TimerISR();
-//_________________________________________
-
-
  } 
 
 //_____________________________________________________________________________
@@ -2924,31 +1848,12 @@ void t2ms(unsigned long d)
 
 void StartTestTlf()
 {
-// unsigned char j, aa_loc, aa1, aa2, aa3, code;
  unsigned int i;//,z,  merc, zerc,up0erc,up1erc, w;
- 
-
-  //	embRS232.Init(384);		// Инициализация RS232 на скорость 38400 кбит/с
-///////////////////////////////////////////////////////////////////////////////
- //	Enable(); // Разрешаем все прерывания
 // сброс кодека
 for(i=0; i<15; i++) outportb(0x511, 0x08);
 outportb(0x511, 0x00);
 t2ms(1);
-
-//ScreenSetBuffer();
-//ScreenAddString("test TLF----e");
-//ScreenIntSent();
- //printf("\n\r test TLF----e\n\r");
-
-//while(1)
-//{
-//outportb(0x510, 0x02); for(i=0; i<sizeof(an); i++) outportb(0x50F, an[i]); outportb(0x510, 0x01); while((inportb(0x510) & 0x01)!=0);
-//outport(wdtcon,0x5555);
-//outport(wdtcon,0xaaaa);
-//}
-
-   // INIT кодека
+// INIT кодека
 	outportb(0x510, 0x02); for(i=0; i<sizeof(ab1); i++) outportb(0x50F, ab1[i]); outportb(0x510, 0x01);// for(i=0; i<100; i++);
 while((inportb(0x510) & 0x01)!=0);
 t2ms(1);
@@ -3026,52 +1931,17 @@ while((inportb(0x510) & 0x01)!=0);
 
 
 outportb(0x511, 0x04); // 0);
-
-
 outportb(0x511, 0x04); // r(i=0; i<sizeof(a26); i++) outportb(0x50F, a26[i]); outportb(0x510, 0x01);// for(i=0; i<100; i++);
 while((inportb(0x510) & 0x01)!=0);
 
-
-
-
-//outport(wdtcon,0x5555);
-//outport(wdtcon,0xaaaa);
-
-	
-/*
-	outportb(0x510, 0x02); for(i=0; i<sizeof(a272); i++) outportb(0x50F, a27[i]); outportb(0x510, 0x01);// for(i=0; i<100; i++);
-while((inportb(0x510) & 0x01)!=0);
-	outportb(0x510, 0x02); for(i=0; i<sizeof(a271); i++) outportb(0x50F, a271[i]); outportb(0x510, 0x01);// for(i=0; i<100; i++);
-while((inportb(0x510) & 0x01)!=0);
-	outportb(0x510, 0x02); for(i=0; i<sizeof(a27); i++) outportb(0x50F, a272[i]); outportb(0x510, 0x01);// for(i=0; i<100; i++);
-while((inportb(0x510) & 0x01)!=0);
-*/
-
-//t2ms(1000);
-//outport(wdtcon,0x5555);
-//outport(wdtcon,0xaaaa);
-
-
-
-
 }
-//while(1)
+
 void TestTlf()
 	{
-
   unsigned char  aa_loc, aa1, aa2, aa3, code;
   unsigned int i;
-
 t2ms(2);
-
-// прием символа  режим звонка
-
-//outport(wdtcon,0x5555);
-//outport(wdtcon,0xaaaa);
-         
-	
 outportb(0x510, 0x02); for(i=0; i<sizeof(ac); i++) outportb(0x50F, ac[i]); outportb(0x510, 0x01);// for(i=0; i<100; i++);
- 
  while((inportb(0x510) & 0x01)!=0);
 
 aa_loc = inportb(0x50f);
@@ -3082,11 +1952,7 @@ aa2=inportb(0x50f);
 aa3=inportb(0x50f);
 aa_loc =inportb(0x50f);
 
-//if ((aa3 & 0x80)!=0)
-//if ((aa1 & 0x40)!=0)
- //{ 
 if ((aa1&0x80)&&(aa3&0x80))
-//if(1)
 {
 switch ( (aa3 & 0xfc)>>2 )
 {
@@ -3108,19 +1974,6 @@ switch ( (aa3 & 0xfc)>>2 )
 	default:  	code='?';
 }
 
-//ScreenAddByte( aa1); // intreg1
-//ScreenAddByte( aa2); // intreg2
-//ScreenAddByte( aa3); // intreg3
-//ScreenAddByte( aa); // intreg4
-//ScreenAddByte( aa); // intreg4
-//ScreenAddChar('=');// CR
-//ScreenAddChar(code);// CR
-//ScreenAddChar(13);// CR
-//ScreenIntSent();
-
-#ifndef USART0_TRY_PDC_1T
-printf("\r %d %d %d %d %d = %c \r\n", aa1, aa2, aa3, aa_loc, aa_loc, code);
-#else
 printfp("\r");
 printfpd("%d",aa1);
 printfpd("%d",aa2);
@@ -3130,55 +1983,18 @@ printfp(" = ");
 printfpd("%c",code);
 printfp("\r\n");
 OperateBuffers_usart0t();
-
-#endif
-
 }
-//tt2ms(100);
 t2ms(10);
-
-// }
-
-	//}
-
-	//ScreenAddString(" exit to monitor");
-	//ScreenIntSent();
-//  asm { db 0fah, 0eah ,00h, 0ah, 00h, 27h ;}  // -- exit to monitor
-
 }
 
 extern "C" void test_PU37_start()
 {
  unsigned char  n, i;
-
- //	embRS232.Init(384);		// Инициализация RS232 на скорость 38400 кбит/с
-///////////////////////////////////////////////////////////////////////////////
-//	Enable(); // Разрешаем все прерывания
-
-	// BUS TEST 
-	 
 	outportb(0x500, i);
-	if (i != ( inportb(0x500)) ) 
-			{
-   //		   		ScreenAddString("BUS test  err");
-#ifndef USART0_TRY_PDC_1T
-			  printf("\n\rBUS test  err");
-#else
+if (i != ( inportb(0x500)) ) 
+	{
 		     printfp("\n\rBUS test  err");
-#endif
-
-
-		  //	ScreenIntSent();
 	}
-	 
-	   
-//ScreenSetBuffer();
-//ScreenAddString("test PU37   4 DDC каналов timer mode----");
-//ScreenIntSent();
-//t printf("\rtest PU37   4 DDC channels timer mode----\r");
-
-   // INIT DDC  -- очистка
-
 for (i=0; i<20; i++)
 //for (i=0; i<200; i++)
 	{
@@ -3189,49 +2005,27 @@ for (i=0; i<20; i++)
   }
 
    outport(0x506,0x55); // разрешаем прерывания на прием
-// outport(0x506,0xff);
 }
-//outport(wdtcon,0x5555);
-//outport(wdtcon,0xaaaa);
-
-//while(1)
-   /*
-
- unsigned char  rm, rmo, rtz,rtzo, tm, ttz, tup0, tup1;     
-  unsigned int   merc, zerc,up0erc,up1erc;
-  unsigned char rup0, rup0o,  rup1, rup1o;
-  unsigned long rmc, tmc, rtzc,  ttzc, tup0c, rup0c, tup1c, rup1c;
-
+unsigned char  rm, rmo, rtz,rtzo, tm, ttz, tup0, tup1;     
+unsigned int   merc, zerc,up0erc,up1erc;
+unsigned char rup0, rup0o,  rup1, rup1o;
+unsigned long rmc, tmc, rtzc,  ttzc, tup0c, rup0c, tup1c, rup1c;
 
 void test_PU37_interrupt_ovner()
 {
-
- //unsigned int tmp =  (unsigned int)INT0_FLAG;
-   //t      while (IntFlag & tmp)
-   //     if(IntFlag & tmp)
-   //	 if(1)
-	 //	{
-	   //	  IntFlag &=  ~tmp;
-		//n=inportb(0x505); // опрос флагов прерываний
-
-
-   //		if
-       char cnt = 16;
-	 //	while (((inportb(0x505) &  0x10) != 0) && cnt)  // RX up0
-		while (((inportb(0x505) &  0x10) != 0) && cnt)  // RX up0
+    char cnt = 16;
+	while (((inportb(0x505) &  0x10) != 0) && cnt)  // RX up0
 				{
 				 	rup0=inportb(0x50b);
 					rup0c++;
 					if (rup0o!=rup0)
-							{			
-									if (up0erc <0xfffe) up0erc++;
-							}
+						{			
+							if (up0erc <0xfffe) up0erc++;
+						}
 					rup0++;
 					rup0o=rup0;
 					cnt--;
 				}
-
-	 //	if 
 	   cnt = 16;
 		while(((inportb(0x505) &  0x40) != 0) && cnt) // RX up1
 				{
@@ -3245,171 +2039,53 @@ void test_PU37_interrupt_ovner()
 					rup1o=rup1;
 					cnt--;
 				}
-
-	//	if
-  //	bstate =  inportb(0x505);
-
 		cnt = 16; //t16;
 		while (((inportb(0x505) &  0x01) != 0) && cnt)  // RX MODEM
 				{
 				 	rm=inportb(0x507);
 					rmc++;
-		  	 //  printf("MOD : rmo: %d  rm: %d  \n\r", rmo, rm);
-
 					if (rmo!=rm)
-							{		
-							 //		tchar =   inportb(0x508);
-							   //		tchar =   inportb(0x508);	
-									if (merc <0xfffe) merc++;
-							  //	    printf("MOD : rmo: %d  rm: %d  tchar: 0x%02x \n\r", rmo, rm, tchar);
-							  //	    printf("MOD : rmo: %X  rm: %X   \n\r", rmo, rm);
-									//508
-									
-							}
+ 						{		
+ 							if (merc <0xfffe) merc++;
+ 						}
 					rm++;
 					rmo=rm;
 					cnt--;
 				}
-
-	  //	if 
 	    cnt = 16; //t16;
 		while(((inportb(0x505) &  0x04) != 0) && cnt)  // RX TRANZIT
 				{
 				 rtz=inportb(0x509);
 					rtzc++;
 					if (rtzo!=rtz)
-							{
-									if (zerc <0xfffe) 	zerc++;
-								  //	 printf("TRNZ : rtzo: %d  rtz: %d  tchar: 0x%02x \n\r", rmo, rm, tchar);
-							  //		 printf("TRNZ : rtzo: %d  rtz: %d   \n\r", rtzo, rtz);
-
-							}
+					{
+					if (zerc <0xfffe) 	zerc++;
+					}
 				rtz++;
 				rtzo=rtz;
 				cnt--;
 				}
-
 	    my_int_enable_irq0();
-
 }
-*/
-//__________________
-#define  MODEM_QUANTITY (1)
-unsigned char  rm[MODEM_QUANTITY], rmo[MODEM_QUANTITY], rtz,rtzo, tm[MODEM_QUANTITY], ttz, tup0, tup1;     
-  unsigned int   merc[MODEM_QUANTITY], zerc,up0erc,up1erc;
-  unsigned char rup0, rup0o,  rup1, rup1o;
-  unsigned long rmc[MODEM_QUANTITY], tmc[MODEM_QUANTITY], rtzc,  ttzc, tup0c, rup0c, tup1c, rup1c;
- unsigned long PeriodCounter;
-
 
 void test_PU37()
 {
-  /*	
- static unsigned char  rm, rmo, rtz,rtzo, tm, ttz, tup0, tup1,   i;     
- static unsigned int   merc, zerc,up0erc,up1erc;
- static unsigned char rup0, rup0o,  rup1, rup1o;
- static unsigned long rmc, tmc, rtzc,  ttzc, tup0c, rup0c, tup1c, rup1c;
-  */
-	
-  static unsigned char    i;
-
-// static int PeriodCounter = 0l;
-// unsigned char tchar;
-// unsigned char bstate;
-// unsigned long cnt;
-// for (i=0; i<20; i++)
-//	{
-//   n=inportb(0x507);
-//   n=inportb(0x50B);
-//   n=inportb(0x50d);
-//   n=inportb(0x509);
-//  }
-
-
- //  outport(0x506,0x55); //t разрешаем прерывания на прием
-
-
-//t2ms(3);
-//t delay_mcs(1l); //work 
-//  delay_mcs(50l); 
-//for (bt=0; bt<0x02ff; bt++) {} // задержка
-   		i++;
-// DDC  rx- tx test----------------------------------------------------
-// timer mode TX---------------------------------------
+ static unsigned char    i;
+ static int PeriodCounter = 0l;
+ i++;
  PeriodCounter++;
-// if(PeriodCounter > 100000l)
-//ok if(PeriodCounter > 10000l)
- //ok  if(PeriodCounter > 1000l)
-//  if(PeriodCounter > 1000l)
-//if(PeriodCounter >5l)
-if(PeriodCounter >10l)
-
-//if(PeriodCounter >50l)
-
-//#ifndef FULL_TEST_TRANZIT
-// if(PeriodCounter > TEST_PERIOD)
-
-//if(PeriodCounter > 10000l) //t
-//#else
-//if(1)	//110822
-//#endif// FULL_TEST_TRANZIT
+ if(PeriodCounter > TEST_PERIOD)
   {
-
-static unsigned char maskcnt;
-
-if(maskcnt)
-{
-//MaskReceive();
-embSerialACT155.ChangeReceive1();
-maskcnt = 0;
-}
-else
-{
-//UnMaskReceive();
-embSerialACT155.ChangeReceive2();
-maskcnt = 1;
-}
-
-
-//printf(".");
  PeriodCounter = 0l;
-	 // TX UP0
-//for (i=0; i<10; i++)
-	 //	{
-
-//modem transmit 508 : bit5
-//transit transmit50a : bit5
-//up0 : transmit50c : bit5
-//up1 : transmit 50e
- 
-
-	 // 	bstate =  inportb(0x50c);
-
-		//  printf("bstate up0:  %d  \n\r", bstate);
-
-
-			   // while((inportb(0x505) & 0x20) == 0) {}
-				  //	  if(inportb(0x505) & 0x20)
-				 //	    if(inportb(0x50c) & 0x20)
-
-		   //			  {
-	//	   #ifndef FULL_TEST_TRANZIT
-//  for(i = 0; i< MODEM_QUANTITY;i++)
- // {
-  	 if((embSerialACT155.UsedSendUD1() < 5)) 
+ if((embSerialACT155.UsedSendUD1() < 5)) 
 			     {
 				embSerialACT155.AddUD1(tup0++);
 			    embSerialACT155.AddUD1(tup0++);
 			    embSerialACT155.AddUD1(tup0++);
 				embSerialACT155.AddUD1(tup0++);
 				embSerialACT155.AddUD1(tup0++);
-				embSerialACT155.SetTransmitUD1();
-			   //		   outportb(0x50B, tup0++);
 				tup0c += 5;   
-	 //		#endif								   
 				 } 
-			   
-
  	if((embSerialACT155.UsedSendUD2() < 5)) 
 			     {
 				embSerialACT155.AddUD2(tup1++);
@@ -3417,667 +2093,54 @@ maskcnt = 1;
 			    embSerialACT155.AddUD2(tup1++);
 				embSerialACT155.AddUD2(tup1++);
 				embSerialACT155.AddUD2(tup1++);
-				embSerialACT155.SetTransmitUD2();
-			   //		   outportb(0x50B, tup0++);
 				tup1c += 5;   
-	 //		#endif								   
 				 } 
-			   
-				 
-
-
-
-
-
-	  //	}
-
-// TIMER MODE
-	 // TX UP1
-//for (i=0; i<2; i++)
-//{
-			  //	 while((inportb(0x505) & 0x80) == 0) {}
-//bstate =  inportb(0x50e);
-
-   //		  printf("bstate up1 :  %d  \n\r", bstate);
-
-	//					if (inportb(0x50e) & 0x20)
-   //						{
- //  #ifndef FULL_TEST_TRANZIT
- /*
-  		if(embSerialACT155.UsedSendUD2() < 5)
-			     {
-			   //ok		   embSerialACT155.UsedUD1();
-			   	  		 embSerialACT155.AddUD2(tup1++);
-						  embSerialACT155.AddUD2(tup1++);
-						   embSerialACT155.AddUD2(tup1++);
-						    embSerialACT155.AddUD2(tup1++);
-							 embSerialACT155.AddUD2(tup1++);
-
-   					 //t	 outportb(0x50D, tup1++);
-   				   		 tup1c+=5;
-//#endif
-   					  	 }
-						 */
-//}
-	 // TX MODEM
-//for (i=0; i<8; i++)
-//{
- 				   //		 while((inportb(0x505) & 0x02) == 0) {}
-  // bstate =  inportb(0x508);
-	   //		 printf("bstate md :  %d  \n\r", bstate);
-
-				//		 if	 (inportb(0x508) & 0x20)
-					//	 {
-
-//#ifdef FULL_TEST_TRANZIT
-
- 					//	 {
-
-//#ifdef FULL_TEST_TRANZIT
-  
-  for(long itr = 0; itr< MODEM_QUANTITY;itr++)
-  {
-     if(embSerialACT155.UsedSendMod() < 5)
-		  // 	if(!embSerialACT155.UsedSendMod()) 
-				  {
-
-		   embSerialACT155.AddMod(tm[itr]++ );
-				      embSerialACT155.AddMod(tm[itr]++);
-					     embSerialACT155.AddMod(tm[itr]++);
-						    embSerialACT155.AddMod(tm[itr]++);
-							   embSerialACT155.AddModM(tm[itr]++);
-					
-		  		   tmc[itr] += 5;
-				   }
-		  		  
-   }
-
-	
-
-			  //	  while
-		  	//  if(embSerialACT155.UsedSendTransit() < 5)
-
-//			   if (inportb(0x8) & 0x20)
-		   	  if(embSerialACT155.UsedSendTransit() < 5) 
-			     {
-			   	   embSerialACT155.AddTransitM(ttz++);
-			   	   embSerialACT155.AddTransitM(ttz++);
-			   	   embSerialACT155.AddTransitM(ttz++);
-			   	   embSerialACT155.AddTransitM(ttz++);
-			   	   embSerialACT155.AddTransitM(ttz++);
- 
-				 // if(ttz == 0xff) 
-			   //ok	  ttz &= 0x20;
-				//ok  ttz &= 0x60;
-			  //ok	  ttz &= 0xE0;
-			  //ok	  ttz &= 0xF0;
-			  //ok	  ttz &= 0xF8;
-			  //ok	  ttz &= 0xFC;
-			   //	  ttz &= 0xFE;
-			  //	  ttz |= 0x01;
-			  //bad	  ttz &= 0xFF;
-	   		 //  	   ttzc++;
-		   //		     embSerialACT155.AddTransit(ttz++);
-	   		//   	   ttzc++;
-  			 //		embSerialACT155.AddTransit(ttz++);
-	   		//   	   ttzc++;
-  			   //		embSerialACT155.AddTransit(ttz++);
-	   		 //  	   ttzc++;
-  				 //	embSerialACT155.AddTransit(ttz++);
-	   		  	   ttzc += 5;
-			 // ttzc += 5;
-  	   //		 printf("\n\r ttzc : %d", ttzc);
-			    }
- 
-} //PeriodCounter
-
-  for(i = 0; i< MODEM_QUANTITY;i++)
-  {
- 
-  if( embSerialACT155.m_RBuffMod.Used()) 
-	{
-	rm[i]=embSerialACT155.m_RBuffMod.Get();
-					rmc[i]++;
-		  	 //  printf("MOD : rmo %d  rm: %d  \n\r", rmo, rm);
-
-					if (rmo[i]!=rm[i])
-							{		
-							 //		tchar =   inportb(0x508);
-							   //		tchar =   inportb(0x508);	
-									if (merc[i] <0xfffe) merc[i]++;
-								 //   printf("MOD : rmo: %d  rm: %d  tchar: 0x%02x \n\r", rmo, rm, tchar);
-									//508
-									
-							}
-					rm[i]++;
-					rmo[i]=rm[i];
-
-  }
-}
-  
-  //	if(irq.bit.IRQ_RX_trans)// m_RBuffTransit.Add(inportb(0x509)); 
-   if( embSerialACT155.m_RBuffTransit.Used()) 
- {	
-  rtz=embSerialACT155.m_RBuffTransit.Get();
-					rtzc++;
-					if (rtzo!=rtz)
-							{
-						//		printfp("\n\r waiting :");
-						 //		printfpd(" %02X",rtzo);
-						 //	    printfp("have :");
-						 //		printfpd(" %02X",rtz);
-
-									if (zerc <0xfffe) 	zerc++;
-							}
-				rtz++;
-			   //	if(rtz == 0xFF)
-			  //ok	 rtz &= 0x20;
-			  //ok	 rtz &= 0x60;
-			  //ok	 rtz &= 0xE0;
-			  //ok 	 rtz &= 0xF0;
-			  //ok 	 rtz &= 0xF8;
-			 //ok  	 rtz &= 0xFC;
-			//   	 rtz &= 0xFE;
-			//	  rtz |= 0x01;
-			 //  	 rtz &= 0xFF;
-
-				rtzo=rtz;
-}
-
-
-   //	if(irq.bit.IRQ_RX_UD1)// m_RBuffUD1.Add(inportb(0x50B)); 
-			   
-
-   //	if(irq.bit.IRQ_RX_UD2)//	 m_RBuffUD2.Add(inportb(0x50D)); 	   //090413
-   /*
-	if( embSerialACT155.m_RBuffUD2.Used())
-	{
-				 rup1=embSerialACT155.m_RBuffUD2.Get();
-				   rup1c++;
-					if (rup1o!=rup1)
-							{
-									if (up1erc <0xfffe) 	up1erc++;
-							}
-				rup1++;
-				rup1o=rup1;
-		 //	cnt--;
-	}
-
-	 */
-
-			   
-//___________________________________________________________________________
-
-
-
- 			
-/*
-	if (tup1c>20000)
-		{
-
-	  //		ScreenAddString("Send UP1 --");
-	  //		ScreenAddInt(tup1c);
-	  //		ScreenAddString(" RX--");
-	  //		ScreenAddInt(rup1c);
-	  //		ScreenAddString(" ERR--");
-	  //		ScreenAddInt(up1erc);
-	  //		ScreenIntSent();
-  	  printf("Send UP1 -- %d  RX-- %d  ERR-- %d\n\r", tup1c, rup1c, up1erc);
-
-			tup1c=0;rup1c=0; up1erc=0;
-
-			}
-*/
-
-for(long ip = 0; ip < MODEM_QUANTITY; ip++)
-{
-	if (tup0c>10000)
-		{
-
-		 //	ScreenAddString("Send MOD --");
-		 //	ScreenAddInt(tmc);
-		 //	ScreenAddString(" RX--");
-		 //	ScreenAddInt(rmc);
-		 //	ScreenAddString(" ERR--");
-		 //	ScreenAddInt(merc);
-		 //	ScreenIntSent();
-// 	   printf("Mod:%d Send MOD -- %d  RX-- %d  ERR-- %d\n\r",ip, tmc[ip], rmc[ip], merc[ip]);
-#ifndef USART0_TRY_PDC_1T
-     printf("Mod:%d  Send UP1 -- %d  RX-- %d  ERR-- %d\n\r",ip, tup0c, rup0c, up0erc);
-#else
-  printfp("\n\rMOD --"); 
-  printfpd("%d",ip);
-  printfp("\n\rSend UP1 --"); 
-  printfpd("%d",tup0c);
-  printfp(" RX--"); 
-  printfpd("%d",rup0c);
-  printfp(" ERR--"); 
-  printfpd("%d",up0erc);
-OperateBuffers_usart0t();
-#endif
-
-			tup0c=0; rup0c=0; up0erc=0;
-		}
-	
- }
-
-for(ip = 0; ip < MODEM_QUANTITY; ip++)
-{
-	if (tup1c>10000)
-		{
-
-		 //	ScreenAddString("Send MOD --");
-		 //	ScreenAddInt(tmc);
-		 //	ScreenAddString(" RX--");
-		 //	ScreenAddInt(rmc);
-		 //	ScreenAddString(" ERR--");
-		 //	ScreenAddInt(merc);
-		 //	ScreenIntSent();
-// 	   printf("Mod:%d Send MOD -- %d  RX-- %d  ERR-- %d\n\r",ip, tmc[ip], rmc[ip], merc[ip]);
-#ifndef USART0_TRY_PDC_1T
-     printf("Mod:%d  Send UP2 -- %d  RX-- %d  ERR-- %d\n\r",ip, tup1c, rup1c, up1erc);
-#else
-  printfp("\n\rMOD --"); 
-  printfpd("%d",ip);
-  printfp("\n\rSend UP2 --"); 
-  printfpd("%d",tup1c);
-  printfp(" RX--"); 
-  printfpd("%d",rup1c);
-  printfp(" ERR--"); 
-  printfpd("%d",up1erc);
-OperateBuffers_usart0t();
-#endif
-
-			tup1c=0; rup1c=0; up1erc=0;
-		}
-	
- }
-
-
-
-
-
-
-	if (ttzc>10000)
-		{
-
-	   //		ScreenAddString("Send TrZ --");
-	   //		ScreenAddInt(ttzc);
-	   //		ScreenAddString(" RX--");
-	   //		ScreenAddInt(rtzc);
-	   //		ScreenAddString(" ERR--");				  
-	   //		ScreenAddInt(zerc);
-	   //		ScreenIntSent();
-//   	   printf("Send TrZ -- %d  RX-- %d  ERR-- %d\n\r", ttzc, rtzc, zerc);
-#ifndef USART0_TRY_PDC_1T
-    printf("Send TrZ -- %d  RX-- %d  ERR-- %d\n\r", ttzc, rtzc, zerc);
-#else
-  printfp("\n\rSend TrZ --"); 
-  printfpd("%d",ttzc);
-  printfp(" RX--"); 
-  printfpd("%d",rtzc);
-  printfp(" ERR--"); 
-  printfpd("%d",zerc);
-OperateBuffers_usart0t();
-
-#endif
-
-
-	 //  printf("count = %d \n\r",count1);
-
-			ttzc=0;rtzc=0; zerc=0;
-			}
-	
-
-for(ip = 0; ip < MODEM_QUANTITY; ip++)
-{
-	if (tmc[ip]>10000)
-		{
-
-		 //	ScreenAddString("Send MOD --");
-		 //	ScreenAddInt(tmc);
-		 //	ScreenAddString(" RX--");
-		 //	ScreenAddInt(rmc);
-		 //	ScreenAddString(" ERR--");
-		 //	ScreenAddInt(merc);
-		 //	ScreenIntSent();
-// 	   printf("Mod:%d Send MOD -- %d  RX-- %d  ERR-- %d\n\r",ip, tmc[ip], rmc[ip], merc[ip]);
-#ifndef USART0_TRY_PDC_1T
-     printf("Mod:%d  Send MOD -- %d  RX-- %d  ERR-- %d\n\r",ip, tmc[ip], rmc[ip], merc[ip]);
-#else
-  printfp("\n\rMOD --"); 
-  printfpd("%d",ip);
-  printfp("\n\rSend MOD --"); 
-  printfpd("%d",tmc[ip]);
-  printfp(" RX--"); 
-  printfpd("%d",rmc[ip]);
-  printfp(" ERR--"); 
-  printfpd("%d",merc[ip]);
-OperateBuffers_usart0t();
-#endif
-
-			tmc[ip]=0;rmc[ip]=0; merc[ip]=0;
-		}
-	
- }
-//outport(wdtcon,0x5555);
-//outport(wdtcon,0xaaaa);
- //     wd_reset();	
-
-	//  my_int_enable_irq0();
-   //	  }
- //	  else
- //	  {
- //	  printf("\n wait interrupt...\n\r");
- //	  }
-//}
-
-	//ScreenAddString(" exit to monitor");
-	//ScreenIntSent();
-//  asm { db 0fah, 0eah ,00h, 0ah, 00h, 27h ;}  // -- exit to monitor
-}
-
-
-//_________________
-
-
-   /*
-void test_PU37()
-{
-  static unsigned char    i;
-
- static int PeriodCounter = 0l;
-// unsigned char tchar;
-// unsigned char bstate;
-// unsigned long cnt;
-// for (i=0; i<20; i++)
-//	{
-//   n=inportb(0x507);
-//   n=inportb(0x50B);
-//   n=inportb(0x50d);
-//   n=inportb(0x509);
-//  }
-
-
- //  outport(0x506,0x55); //t разрешаем прерывания на прием
-
-
-//t2ms(3);
-//t delay_mcs(1l); //work 
-//  delay_mcs(50l); 
-//for (bt=0; bt<0x02ff; bt++) {} // задержка
-   		i++;
-// DDC  rx- tx test----------------------------------------------------
-// timer mode TX---------------------------------------
- PeriodCounter++;
-// if(PeriodCounter > 100000l)
-//ok if(PeriodCounter > 10000l)
- //ok  if(PeriodCounter > 1000l)
-//ok  if(PeriodCounter > 10l)
-//t if(PeriodCounter >5l)
-//#ifndef FULL_TEST_TRANZIT
- if(PeriodCounter > TEST_PERIOD)
-
-//if(PeriodCounter > 10000l) //t
-//#else
-//if(1)
-//#endif// FULL_TEST_TRANZIT
-  {
- PeriodCounter = 0l;
-	 // TX UP0
-//for (i=0; i<10; i++)
-	 //	{
-
-//modem transmit 508 : bit5
-//transit transmit50a : bit5
-//up0 : transmit50c : bit5
-//up1 : transmit 50e
- 
-
-	 // 	bstate =  inportb(0x50c);
-
-		//  printf("bstate up0:  %d  \n\r", bstate);
-
-
-			   // while((inportb(0x505) & 0x20) == 0) {}
-				  //	  if(inportb(0x505) & 0x20)
-				 //	    if(inportb(0x50c) & 0x20)
-
-		   //			  {
-	//	   #ifndef FULL_TEST_TRANZIT
-	   #ifdef PROG_BMD155PS				
-		   if(embSerialACT155.UsedSendPower() < 5) 
-			     {
-
-				embSerialACT155.AddPower(tup0++);
-			    embSerialACT155.AddPower(tup0++);
-			    embSerialACT155.AddPower(tup0++);
-				embSerialACT155.AddPower(tup0++);
-				embSerialACT155.AddPower(tup0++);
-
-
-			   //		   outportb(0x50B, tup0++);
-						 		 tup0c += 5;   
-	 //		#endif								   
-								 } 
-#endif // PROG_BMD155PS
-
-				 
-
-
-
-
-
-	  //	}
-
-// TIMER MODE
-	 // TX UP1
-//for (i=0; i<2; i++)
-//{
-			  //	 while((inportb(0x505) & 0x80) == 0) {}
-//bstate =  inportb(0x50e);
-
-   //		  printf("bstate up1 :  %d  \n\r", bstate);
-
-	//					if (inportb(0x50e) & 0x20)
-   //						{
- //  #ifndef FULL_TEST_TRANZIT
- //}
-	 // TX MODEM
-//for (i=0; i<8; i++)
-//{
- 				   //		 while((inportb(0x505) & 0x02) == 0) {}
-  // bstate =  inportb(0x508);
-	   //		 printf("bstate md :  %d  \n\r", bstate);
-
-				//		 if	 (inportb(0x508) & 0x20)
-					//	 {
-
-//#ifdef FULL_TEST_TRANZIT
 		   if(embSerialACT155.UsedSendMod() < 5)
-		  // 	if(!embSerialACT155.UsedSendMod()) 
-				  {
-		  		   embSerialACT155.AddMod(tm++);
-				      embSerialACT155.AddMod(tm++);
-					     embSerialACT155.AddMod(tm++);
-						    embSerialACT155.AddMod(tm++);
-							   embSerialACT155.AddMod(tm++);
-
-		  		   tmc += 5;
+				 {
+		  		  embSerialACT155.AddMod(tm++);
+				  embSerialACT155.AddMod(tm++);
+				  embSerialACT155.AddMod(tm++);
+				  embSerialACT155.AddMod(tm++);
+				  embSerialACT155.AddMod(tm++);
+				  tmc += 5;
 		  		  }
-//#else
-
-			//t	  outportb(0x507, tm++);
-			   //	  tmc++;
-//#endif
-
-					  //	 }
-//}
-	  // TX TRANZIT
-//for (i=0; i<8; i++)
-//{
-  				   //		while((inportb(0x505) & 0x08) == 0) {}
-   // bstate =  inportb(0x50a);
-		   //		 printf("bstate trz :  %d  \n\r", bstate);
-
-			//			if (inportb(0x50a) & 0x20)
-					//	{
-//#ifdef FULL_TEST_TRANZIT
-			  //	  while
-		  	  if(embSerialACT155.UsedSendTransit() < 5)
-		   //	  if(!embSerialACT155.UsedSendTransit()) 
+	  	  if(embSerialACT155.UsedSendTransit() < 5)
 			     {
 			   	   embSerialACT155.AddTransit(ttz++);
-	   		 //  	   ttzc++;
 				     embSerialACT155.AddTransit(ttz++);
-	   		//   	   ttzc++;
   					embSerialACT155.AddTransit(ttz++);
-	   		//   	   ttzc++;
   					embSerialACT155.AddTransit(ttz++);
-	   		 //  	   ttzc++;
-  					embSerialACT155.AddTransit(ttz++);
-	   		 //  	   ttzc++;
-			  ttzc += 5;
-  
-			    }
-  			//	if(embSerialACT155.UsedSendTransit() < 2)
-		   //	  if(!embSerialACT155.UsedSendTransit()) 
-			//     {
-			//   	   embSerialACT155.AddTransit(ttz++);
-	   		//   	   ttzc++;
-			//    }
-			//	  if(embSerialACT155.UsedSendTransit() < 1)
-		   //	  if(!embSerialACT155.UsedSendTransit()) 
-			//     {
-			//   	   embSerialACT155.AddTransit(ttz++);
-	   		//   	   ttzc++;
-			//    }
-			  
-
-
-
-//#else
-
-					  //	 outportb(0x509,  ttz++); 
-				  //		ttzc++;
-//#endif
-				   //		}
-//}
-
+ 					embSerialACT155.AddTransit(ttz++);
+		  ttzc += 5;
+ 			    }
 } //PeriodCounter
-//--------------------------------------------------------------
 
-//	if (0x80 & inportb(0xff2e)) // при появлении прерывания INT3
 
-   //	while (0x20 & inportb(0xff2e)) // при появлении прерывания INT1
-
-//___________________________________________________________________________
- 
 	if( embSerialACT155.m_RBuffMod.Used()) 
 	{
 	rm=embSerialACT155.m_RBuffMod.Get();
 					rmc++;
-		  	 //  printf("MOD : rmo: %d  rm: %d  \n\r", rmo, rm);
-
 					if (rmo!=rm)
 							{		
-							 //		tchar =   inportb(0x508);
-							   //		tchar =   inportb(0x508);	
 									if (merc <0xfffe) merc++;
-								 //   printf("MOD : rmo: %d  rm: %d  tchar: 0x%02x \n\r", rmo, rm, tchar);
-									//508
-									
-							}
+ 							}
 					rm++;
 					rmo=rm;
-
 }
 
-  
-  //	if(irq.bit.IRQ_RX_trans)// m_RBuffTransit.Add(inportb(0x509)); 
    if( embSerialACT155.m_RBuffTransit.Used()) 
  {	
   rtz=embSerialACT155.m_RBuffTransit.Get();
 					rtzc++;
 					if (rtzo!=rtz)
-							{
-									if (zerc <0xfffe) 	zerc++;
-							}
+				  	{
+				  		if (zerc <0xfffe) 	zerc++;
+				  	}
 				rtz++;
 				rtzo=rtz;
-}
-
-
-   //	if(irq.bit.IRQ_RX_UD1)// m_RBuffUD1.Add(inportb(0x50B)); 
-#ifdef PROG_BMD155PS   
-	if( embSerialACT155.m_RBuffPower.Used())
+	}
+if (ttzc>20000)
 	{
-				 	rup0=embSerialACT155.m_RBuffPower.Get();
-					rup0c++;
-					if (rup0o!=rup0)
-							{			
-									if (up0erc <0xfffe) up0erc++;
-							}
-					rup0++;
-					rup0o=rup0;
-				  //	cnt--;
-				}
-#endif //  PROG_BMD155PS
-			   
-
-   //	if(irq.bit.IRQ_RX_UD2)//	 m_RBuffUD2.Add(inportb(0x50D)); 	   //090413
- 
-			   
-//___________________________________________________________________________
-
-
-
-
-
-#ifdef PROG_BMD155PS	  
-	if (tup0c > 20000)
-		{
-
-	 //		ScreenAddString("Send UP0 --");
-	//		ScreenAddInt(tup0c);
-	 //		ScreenAddString(" RX--");
-	//		ScreenAddInt(rup0c);
-	//		ScreenAddString(" ERR--");
-   //			ScreenAddInt(up0erc);
-   //			ScreenIntSent();
- //  printf("\n\rSend UP0 -- %d  RX-- %d  ERR-- %d\n\r", tup0c, rup0c, up0erc);
-#ifndef USART0_TRY_PDC_1T
-   printf("\n\rSend Power -- %d  RX-- %d  ERR-- %d\n\r", tup0c, rup0c, up0erc);
-#else
-  printfp("\n\rSend Power --"); 
-  printfpd("%d",tup0c);
-  printfp(" RX--"); 
-  printfpd("%d",rup0c);
-  printfp(" ERR--"); 
-  printfpd("%d",up0erc);
-  OperateBuffers_usart0t();
-
-#endif
-			tup0c=0;rup0c=0; up0erc=0;
-			}
-#endif //PROG_BMD155PS
-			
-
-	if (ttzc>20000)
-		{
-
-	   //		ScreenAddString("Send TrZ --");
-	   //		ScreenAddInt(ttzc);
-	   //		ScreenAddString(" RX--");
-	   //		ScreenAddInt(rtzc);
-	   //		ScreenAddString(" ERR--");				  
-	   //		ScreenAddInt(zerc);
-	   //		ScreenIntSent();
-   	//   printf("Send TrZ -- %d  RX-- %d  ERR-- %d\n\r", ttzc, rtzc, zerc);
-
-#ifndef USART0_TRY_PDC_1T
-    printf("Send TrZ -- %d  RX-- %d  ERR-- %d\n\r", ttzc, rtzc, zerc);
-#else
   printfp("\n\rSend TrZ --"); 
   printfpd("%d",ttzc);
   printfp(" RX--"); 
@@ -4085,29 +2148,11 @@ void test_PU37()
   printfp(" ERR--"); 
   printfpd("%d",zerc);
 OperateBuffers_usart0t();
-
-#endif
-
-	 //  printf("count = %d \n\r",count1);
-
 			ttzc=0;rtzc=0; zerc=0;
-			}
+	}
 	
 	if (tmc>20000)
 		{
-
-		 //	ScreenAddString("Send MOD --");
-		 //	ScreenAddInt(tmc);
-		 //	ScreenAddString(" RX--");
-		 //	ScreenAddInt(rmc);
-		 //	ScreenAddString(" ERR--");
-		 //	ScreenAddInt(merc);
-		 //	ScreenIntSent();
-   //	   printf("Send MOD -- %d  RX-- %d  ERR-- %d\n\r", tmc, rmc, merc);
-
-#ifndef USART0_TRY_PDC_1T
-     printf("Send MOD -- %d  RX-- %d  ERR-- %d\n\r", tmc, rmc, merc);
-#else
   printfp("\n\rSend MOD --"); 
   printfpd("%d",tmc);
   printfp(" RX--"); 
@@ -4115,36 +2160,10 @@ OperateBuffers_usart0t();
   printfp(" ERR--"); 
   printfpd("%d",merc);
 OperateBuffers_usart0t();
-#endif
-
-
 			tmc=0;rmc=0; merc=0;
 		}
-	
-
-//outport(wdtcon,0x5555);
-//outport(wdtcon,0xaaaa);
- //     wd_reset();	
-
-	//  my_int_enable_irq0();
-   //	  }
- //	  else
- //	  {
- //	  printf("\n wait interrupt...\n\r");
- //	  }
-//}
-
-	//ScreenAddString(" exit to monitor");
-	//ScreenIntSent();
-//  asm { db 0fah, 0eah ,00h, 0ah, 00h, 27h ;}  // -- exit to monitor
 }
- */
 
-
-
-
-
-//#ifdef PROG_BMD155
 extern  "C" unsigned long TypeVer(void)
 {
 static unsigned long ret;
@@ -4161,7 +2180,6 @@ static unsigned long ret;
 ret =  (unsigned long)unEmb2TypeVer.emb2TypeVer.ctrlYear;
 ret <<=16;
 ret += (unsigned long)unEmb2TypeVer.emb2TypeVer.ctrlNumber;
-//ret = 0x12345678;
 return ret;
 }
 
@@ -4171,7 +2189,6 @@ static unsigned long ret;
 ret =  (unsigned long)unEmb2TypeVer.emb2TypeVer.ctrlVer1;
 ret <<=16;
 ret += (unsigned long)unEmb2TypeVer.emb2TypeVer.ctrlVer2;
-//ret = 0x12345678;
 return ret;
 }
 
@@ -4179,9 +2196,6 @@ extern  "C" unsigned long BlockS(void)
 {
 static unsigned long ret;
 ret =  unStatePUM.statePUM.ulBlock;
-//ret <<=16;
-//ret += (unsigned long)unEmb2TypeVer.emb2TypeVer.ctrlVer2;
-//ret = 0x12345678;
 return ret;
 }
 
@@ -4189,9 +2203,6 @@ extern  "C" unsigned long ErrOutS(void)
 {
 static unsigned long ret;
 ret =  unStatePUM.statePUM.ulErrOut;
-//ret <<=16;
-//ret += (unsigned long)unEmb2TypeVer.emb2TypeVer.ctrlVer2;
-//ret = 0x12345678;
 return ret;
 }
 
@@ -4199,9 +2210,6 @@ extern  "C" unsigned long ErrAfterRS1S(void)
 {
 static unsigned long ret;
 ret =  unStatePUM.statePUM.ulErrAfterRS1;
-//ret <<=16;
-//ret += (unsigned long)unEmb2TypeVer.emb2TypeVer.ctrlVer2;
-//ret = 0x12345678;
 return ret;
 }
 
@@ -4209,9 +2217,6 @@ extern  "C" unsigned long ErrAfterRS2S(void)
 {
 static unsigned long ret;
 ret =  unStatePUM.statePUM.ulErrAfterRS2;
-//ret <<=16;
-//ret += (unsigned long)unEmb2TypeVer.emb2TypeVer.ctrlVer2;
-//ret = 0x12345678;
 return ret;
 }
 
@@ -4219,9 +2224,6 @@ extern  "C" unsigned long ErrBeforeRS1S(void)
 {
 static unsigned long ret;
 ret =  unStatePUM.statePUM.ulErrBeforeRS1;
-//ret <<=16;
-//ret += (unsigned long)unEmb2TypeVer.emb2TypeVer.ctrlVer2;
-//ret = 0x12345678;
 return ret;
 }
 
@@ -4229,9 +2231,6 @@ extern  "C" unsigned long ErrBeforeRS2S(void)
 {
 static unsigned long ret;
 ret =  unStatePUM.statePUM.ulErrBeforeRS2;
-//ret <<=16;
-//ret += (unsigned long)unEmb2TypeVer.emb2TypeVer.ctrlVer2;
-//ret = 0x12345678;
 return ret;
 }
 
@@ -4242,77 +2241,20 @@ ret =  unStatePUM.statePUM.state[4];
 ret <<= 24;
 ret =  unStatePUM.statePUM.state[2];
 ret <<= 8;
+return ret;
+}
 
-//ret += (unsigned long)unEmb2TypeVer.emb2TypeVer.ctrlVer2;
-//ret = 129; //t
-return ret;
-}
-/*
-extern  "C" unsigned long LoopS(void)
-{
-static unsigned long ret;
-ret =  unStatePUM.statePUM.state[5];
-return ret;
-}
-*/
-//extern unsigned long Stephany19;
-/*
-extern  "C" void SetLoopS(unsigned long val)
-{
- unStatePUM.statePUM.state[5] = (unsigned char)val;
-  Stephany19 = val;
-}
- */
-/*
-extern  "C" unsigned long TlfNumberS(void)
-{
-static unsigned long ret;
-ret =  unEmb2TypeVer.emb2TypeVer.signature_software[1];
-return ret;
-}
-*/
-//extern  "C" void SetTlfNumberS(unsigned long *val)
-/*
-extern  "C" void SetTlfNumberS(signed long val)
-{
- unEmb2TypeVer.emb2TypeVer.signature_software[1] = (unsigned char)val;
- unsigned char* bt = (unsigned char *)(NVRAM_BASE);
- *(bt+1) = (unsigned char)val;
-  Stephany19 = val;
-}
-*/
-//extern  "C" unsigned long SetLoopO(uchar_ptr data_ptr, uint_32 * data_len)
- /*
-extern  "C" void SetLoopO(unsigned char* data_ptr, unsigned long* data_len)
-{
-  if(!(* data_len))
-  {
-	 * data_ptr =  unStatePUM.statePUM.state[5];
-  }
-  else
-  {
-	  unStatePUM.statePUM.state[5] =  * data_ptr;
-  }
-
-}
- */
 extern  "C" void SetTlfNumberO(unsigned char* data_ptr, unsigned long* data_len)
 {
   unsigned char* bt = (unsigned char *)(NVRAM_BASE);
   unEmb2TypeVer.emb2TypeVer.signature_software[1] = (unsigned char)*data_ptr;
   *(bt+1) =   (unsigned char)*data_ptr;
-  //Stephany19 = (unsigned char)*data_ptr;
 }
-
-
-//extern  "C" unsigned char * GetTlfNumberO(unsigned char* data_ptr, unsigned long* data_len)
 
 extern  "C" void SetBERO(unsigned char* data_ptr, unsigned long* data_len)
 {
 }
 
-
-//extern  "C" unsigned char * GetTlfNumberO(unsigned char* data_ptr, unsigned long* data_len)
 extern  "C" unsigned char * GetTlfNumberO(unsigned long* data_len)
 {
  unsigned char* bt = (unsigned char *)(NVRAM_BASE);
@@ -4320,18 +2262,11 @@ extern  "C" unsigned char * GetTlfNumberO(unsigned long* data_len)
  return (bt+1);
 }
 
-
-
-
-
 extern  "C" void SetLoopO(unsigned char* data_ptr, unsigned long* data_len)
 {
   unStatePUM.statePUM.state[5] = (unsigned char)*data_ptr;
- // Stephany19 = (unsigned char)*data_ptr;
 }
 
-
-//extern  "C" unsigned char * GetTlfNumberO(unsigned char* data_ptr, unsigned long* data_len)
 extern  "C" unsigned char * GetLoopO(unsigned long* data_len)
 {
   *data_len = 1;
@@ -4367,15 +2302,8 @@ extern "C" void SetBAlarmLaser(unsigned long varval)
 
 }
 
-
-
-
-
-
-
 extern  "C" unsigned long bSignal1(void)
 {
-	 //  522 : 1  1/0  unlock /lock
 	 if(unStatePUM.statePUM.state[2] & 2) return 0l;
 	 else return 1l;
 }
@@ -4400,7 +2328,7 @@ extern  "C" unsigned long InputSignal(void)
 {
 	if(unStatePUM.statePUM.state[4] & 0x1) return 0l;
 	 else return 1l;
-
+	  
 }
 extern  "C" unsigned long bLoopNear(void)
 {
@@ -4415,51 +2343,10 @@ extern  "C" unsigned long bLoopFar(void)
 }
 extern  "C" unsigned long bAlarmLaser(void)
 {
- //	if(unStatePUM.statePUM.state[4] & 0x8) return 0l;
- //	 else return 1l;
-  	if(unStatePUM.statePUM.state[4] & 0x8) return 1l;
+ 	if(unStatePUM.statePUM.state[4] & 0x8) return 1l;
  	 else return 0l;
-
-
 }
 
-
-
-
-
-// unsigned char *TLFNumberData;
-/*
-extern "C" unsigned char *TLFNumberData2(void)
-{
- static unsigned char Buffer[] = "Test"; 
- return	Buffer;
-}
-*/
-
-
-/*
-extern "C" void embMsgWestE_Init(void)
-{
- embMsgWestE.Init();
-}
-
-
-extern "C" void embMsgWestE_Add(char * pc)
-{
- embMsgWestE.Add((unsigned char)* pc);
-  
-}
-*/
-
-//extern "C" void printEmb(void)
-//{
-// for(i=0; i< 10; i++) 
-//		   	 {
-		//   	 	printEthLongHex(embMsgWestE.body[i]);
- //		   	 }
-//}
-
-//___________________________________________________________________________________
 char TestRing()
 {
 unsigned char  aa_loc, aa1, aa2, aa3;//, code;
@@ -4474,9 +2361,6 @@ unsigned int i;
 	aa2=inportb(0x50f);
 	aa3=inportb(0x50f);
 	aa_loc =inportb(0x50f);
-#ifndef USART0_TRY_PDC_1T
-	printf("\r aa1=0x%X aa2=0x%X aa3=0x%X aa_loc=0x%X \r\n", aa1, aa2, aa3, aa_loc);
-#else
 	printfp("\r aa1=0x");
 	printfpd("%X ", aa1);
     printfp(" aa2=0x");
@@ -4486,8 +2370,6 @@ unsigned int i;
     printfp(" aa_loc=0x");
 	printfpd("%X", aa_loc);
 	OperateBuffers_usart0t();
-#endif
-
 
   	if (aa1 & 0x48)
 	{
@@ -4500,50 +2382,6 @@ unsigned int i;
 void StartRing()
 {
  Ring();
-}
-//__________________________________________________________________________________
-
-
-#ifdef PROG_PU_M_MUX_TEST
-extern "C" void CompareRegs(void)
-{
-unsigned char nvram, xil;
-unsigned char  *bt;
- 	bt = (unsigned char *)(NVRAM_BASE);
-   	 for(long i = 0; i < 0x10; i++)
-	 {
-	  xil = inportb3(0x90 + i); 
-	  nvram = *(bt + PARAMETERS_DISPLACEMENT1 + 0x90 + i);
-	  	if(xil != nvram)
-	  	{
-		 printf("\n\r i = 0x%02X xil = 0x%02X nvram = 0x%02X \n\r", i , xil , nvram);
-	  	}
-		else
-		{
-		 printf("\r i = 0x%02X xil = 0x%02X nvram = 0x%02X", i , xil , nvram);
-		}
-	 }
-}
-
-#endif //PROG_PU_M_MUX_TEST
-
-extern "C" unsigned char ForwardingEnabled()
-{
-unsigned char status = inportb(STATUS_TRANZIT_ADDR);
-if((status & (unsigned char)(DIS_R)) || (status & (unsigned char)(DIS_R)))
-{
- return 0;
- //return 1;
-}
- return 1;
-}
-
-extern "C" void checklossmem(void)
-{
-//printfpd("\n\r ans :%d", ans_transit_counter);
-//printfpd("  add :%d",buff_west_add_counter);
-//printfpd("\n\r send  :%d",send_modem_counter);
-//printfpd(" ans  :%d",ans_modem_counter);
 }
 
 

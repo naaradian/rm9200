@@ -1709,13 +1709,11 @@ if(!hot_restart)
   }
 
 #ifdef E1_16
-e1_quantity =	  (unsigned char)modemp[0].configfilefext.ConfigTxtData.emb4md15504cfg.mode15504[0].interf;
+e1_quantity =	  (unsigned char)modemp[0].configfilefext.ConfigTxtData.emb4md15504cfg.mode15504[0].interf & 0x3F;
 if(e1_quantity > MAX_E1) e1_quantity = MAX_E1;
-
-
 unsigned short leds = 0;
 unsigned char tmpq =  e1_quantity;
-printfpd("\n\r e1_quantity = %d ", e1_quantity);
+//printfpd("\n\r e1_quantity = %d ", e1_quantity);
 
 
 while(tmpq--)
@@ -6408,7 +6406,7 @@ SetCurrentTrunk(1); //get on trunk
 #ifndef PROG_MD310E16
 #define READ_ERRORS_PERIOD (3000) //1c
 #else
-#define READ_ERRORS_PERIOD (3000) //1c
+#define READ_ERRORS_PERIOD (800) //1c
 #endif
 
 
@@ -6716,8 +6714,9 @@ unsigned char E1LED_LA, E1LED_LB;
 
 //PVG610_API_ModemAcquireCountersGet(0, 0, &Ac);
 unsigned char ans, ans1;
-
+	
 	unStatePUM.statePUM.state[4] = GetStmPhyReg(mod);//inportb(0x524);
+
 	if(unStatePUM.statePUM.state[4] & FAR_LOOP)
 	{
 	  unStatePUM.statePUM.state[5] |= OLD_FAR_LOOP;
@@ -6736,6 +6735,8 @@ unsigned char ans, ans1;
 	   unStatePUM.statePUM.state[5] &= ~(OLD_NEAR_LOOP);
 	}
   	unStatePUM.statePUM.state[6] = GetEthReg(mod);
+
+   
 #ifndef PROG_MD310
 #ifndef PROG_BMDN6M
 
@@ -6759,17 +6760,22 @@ unsigned char ans, ans1;
 //#ifdef USART0_TRY_PDC_1T
 //  printfpd("\n\rss%ld", time1);
 //#endif
+
+
+//ok return; //t 170622 
+ 
+
 //___________________________________________________
  ans = PVG610_API_NetE1AlarmsGet(deviceindex,0, 0x1fffffl, &Stat[0]);
 if(ans) return;
-
+ 
 //for(i = 0; i < E1_LINES_QUANTITY; i++)
 //{
 // modemp[deviceindex].netE1Alarms[i] = Stat[i].netE1Alarms;
 //}
 
 // printfpd ("\n\r e1_quantity : %d", e1_quantity);
-
+ 
 for(i = 0; i < E1_LINES_QUANTITY; i++)		 //now 21
 {
  unEmb2Mux34.emb2Mux34.state_e1[i] = 3;
@@ -6778,32 +6784,39 @@ for(i = 0; i < E1_LINES_QUANTITY; i++)		 //now 21
 E1LED_LA = 0;
 E1LED_LB = 0;
 
-for(i = 0; i < e1_quantity; i++)		 //now 21
+for(i = 0; i < 8; i++)		 //now 21
 {
-// printfpd("i: %d", i);
+if(i == e1_quantity)
+ {break;}
+
+// printfpd("\n\r%d> :", i);
+ //printfpd("%X",Stat[i].netE1Alarms);
  modemp[deviceindex].netE1Alarms[i] = Stat[i].netE1Alarms;
- if(!( Stat[i].netE1Alarms & LOSS_BIT)) {E1LED_LA |= (1 << i); 
+ if(!(Stat[i].netE1Alarms == LOSS_BIT)) {E1LED_LA |= (1 << i); 
  unEmb2Mux34.emb2Mux34.state_e1[i] = 0;
 // printfp(" 0");
 }
- //else  { printfp("3");
-
+ if(Stat[i].netE1Alarms ==  E1_AIS) unEmb2Mux34.emb2Mux34.state_e1[i] = 1;
+ 
 //}
 }
 
 for(i = 8; i < e1_quantity; i++)		 //now 21
 {
-// printfpd(" %d:", i);
+// printfpd("\n\r%d> :", i);
+// printfpd("%X",Stat[i].netE1Alarms);
  modemp[deviceindex].netE1Alarms[i] = Stat[i].netE1Alarms;
- if(!( Stat[i].netE1Alarms & LOSS_BIT)) {E1LED_LB |= (1 << (i - 8));
+ if(!(Stat[i].netE1Alarms == LOSS_BIT)) {E1LED_LB |= (1 << (i - 8));
   unEmb2Mux34.emb2Mux34.state_e1[i] = 0;
 //  printfp("!");
-
  }
- //else  { printfp("_");
-
+   if(Stat[i].netE1Alarms ==  E1_AIS) unEmb2Mux34.emb2Mux34.state_e1[i] = 1;
 // }
 }
+
+
+//wrong return; //t 170622 
+
 
 #ifdef E1_16
 outportb(E1LED_LA_port, E1LED_LA);
@@ -6812,8 +6825,9 @@ outportb(E1LED_LB_port, E1LED_LB);
 //printfpd(" E1LEDLB : 0x%02X ", E1LED_LB);
   
 #endif
+	
 
-
+//wrong//return; //t 170622 
 //____________________________________________________
 
  ans = PVG610_API_ModemStatusGet((deviceindex), 0, &Ms);
@@ -9264,17 +9278,19 @@ timescan = time1;
 
 
 
-timer_config += READ_ERRORS_PERIOD / 1000l;
-
+//timer_config += READ_ERRORS_PERIOD / 1000l;
+ timer_config += 1;
 #ifdef TEST_TIME_CONFIG
  SetThreshold(8, timer_config);  //for test only!!!!!!!!!!!!!!!
+
+
 #endif
 
- //printf("\n\rread errors: %d", curmod);
+// printfpd("\n\rread errors: %d", curmod);
 
 
-
-  switch(curmod)
+	
+	  switch(curmod)
   {
 	case 0 :   if(!(used_modems & MASK_BIT_0)){ClearStats(curmod);curmod++;} else{ ReadErrors(curmod); curmod++; break;}
 	case 1 :   if(!(used_modems & MASK_BIT_1)){ClearStats(curmod);curmod++;} else{ ReadErrors(curmod); curmod++; break;}
@@ -9288,7 +9304,7 @@ timer_config += READ_ERRORS_PERIOD / 1000l;
 
 	default : curmod = 0; 
   }
-
+	
  
 }
 
@@ -12419,7 +12435,7 @@ if (periodcnt1 > 20)
 }
 
 #endif
-
+   /*
 #ifdef PROG_MD310_SAT
  
  
@@ -12438,7 +12454,7 @@ else
   }
 }
 #endif	
-
+	*/
 
 static unsigned long periodcnt;
  periodcnt++;

@@ -7683,7 +7683,9 @@ SatACode.ChangingValue =  0; //to do not view on display
 #endif
 
 #ifdef 	PROG_PU_M_MUX
+#ifndef	PROG_VNV1
   modforss = Buf[498];
+#endif
 #endif
 
 
@@ -8245,6 +8247,12 @@ IPAddressUDP.ChangingValue =  IPAddressUDP.Value;
  LNB10.ChangingValue = Buf[777]; 
  
 #endif
+
+#ifdef	PROG_VNV1
+  Buf[778] =  self_tlf; 
+#endif
+
+
 
 
 
@@ -9118,7 +9126,9 @@ SatACode.ChangingValue =  0; //to do not view on display
 #endif
 
 #ifdef 	PROG_PU_M_MUX
+#ifndef	PROG_VNV1
   modforss = Buf[498];
+#endif
 #endif
 
 
@@ -9657,23 +9667,6 @@ check_ver = ( ((unsigned long)Buf[485] << 24) + ((unsigned long)Buf[486] << 16)
 
 extern "C" void WriteDevId(void)
 {
-
-//return; //
-
-// printfp("\n\rWriteDevId"); //t
-
-//#ifdef TEST_REMOTE_FF
-//#ifdef MAKET_PLATA	
-//printfp("\n\rWritedevId");
-//#endif
-//#endif
-//writeid_counter++;
-
-//i40826 if((!start_main_loop) || (!read_flag)) return;
-
-//150518 to do not have olwais hot restart if(!read_flag) return;	//140826
-
-
 writeid_counter++;
 
 #ifdef MAKET_PLATA	
@@ -9681,9 +9674,8 @@ BlinkLED(50, 2);
 printfpd("\n\rWritedevId : %d ", DEV_ID_SIZE);
 #endif
 
-
- char Buf[DEV_ID_SIZE];
-  char Buf1[DEV_ID_SIZE];
+char Buf[DEV_ID_SIZE];
+char Buf1[DEV_ID_SIZE];
 
  unsigned int DeviceAddress = ID_ADDRESS;
  unsigned int AddressSrc    = (unsigned int)(&Buf[0]);
@@ -10339,7 +10331,9 @@ tmp = 0; //satacode do not keep
 #endif
 
 #ifdef 	PROG_PU_M_MUX
+#ifndef	PROG_VNV1
  Buf[498] =	 modforss;
+#endif
 #endif
 
 
@@ -10766,7 +10760,9 @@ for (cnt = 592; cnt < 769; cnt++)
    
 #endif
 
-
+#ifdef	PROG_VNV1
+  Buf[778] =  self_tlf; 
+#endif
 
 //__________________________________________________crc
  Buf[DEV_ID_SIZE - 1] = 0;

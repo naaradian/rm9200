@@ -2319,12 +2319,27 @@ InitEthStat();
 
 
 }
+	
+#ifdef E1_16
+unsigned char e1_quantity;
+#endif
 
 extern "C" void SetParamsTxFromCfg(unsigned char p)
 {
-
+#ifdef E1_16
 unsigned char e1_quantity =	  (unsigned char)modemp[0].configfilefext.ConfigTxtData.emb4md15504cfg.mode15504[p].interf;
+unsigned short leds = 0;
 
+
+
+while(e1_quantity--)
+{
+  leds += (1 << (e1_quantity - 1));
+}
+
+outportb(E1LED_RA_port, leds & 0xff);
+outportb(E1LED_RB_port, leds >> 8);    
+#endif
 
 
  //printfp("\n\r SetparamsTxfromcfg");

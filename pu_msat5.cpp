@@ -5937,7 +5937,7 @@ unsigned char cdac;
 
 #define DKOEF_SIZE (13)
 #define FREQ_ODIV  (1425)
-#define FREQ_REF   (80000000) // (10000000)	
+#define FREQ_REF  (20000000) // (80000000) // (10000000)	
 
 
 DKoef dkoef[DKOEF_SIZE];
@@ -6175,11 +6175,12 @@ else
 printfpd("D VCO_SEL : % 02X ", VCO_SEL);
 printfpd("D DIV4_EN : % 02X ", DIV4_EN);
 
-INT_K = (Fvco) / (long long)FREQ_REF;
+INT_K = (Fvco) / 1000l;
+INT_K  /=  ((unsigned long)(FREQ_REF<<1) / 1000l);
 
-frac = ((Fvco % (long long)FREQ_REF) << 16) / (unsigned long)FREQ_REF;
+frac = ((Fvco % (long long)(FREQ_REF<<1)) << 16) / (unsigned long)(FREQ_REF<<1);
 
-printfpd("\n\rD MINT_K : %d ", INT_K);
+printfpd("\n\rD INT_K : %d \n\r", INT_K);
 printfpd(" D frac : %d ", frac);
 printfpd(" Fvco / 1000000 : %d ", Fvco / 1000000);
 
@@ -6214,7 +6215,7 @@ IOSpiSendR(4   , 3,  0,DataDDS, DataDDS);	  //channel C
 IOSpiSendR(5   , 3,  0,DataDDS, DataDDS);	
 
 pData = DataDDS;
-*pData++ = 0x42;   *pData++ = 0;	 *pData = 0x29;//0x28; //0x09;  //addr 21
+*pData++ = 0x42;   *pData++ = 0;	 *pData = 0x29; //170619 //0x29;//0x28; //0x09;  //addr 21
 IOSpiSendR(4   , 3,  0,DataDDS, DataDDS);	  //channel C
 IOSpiSendR(5   , 3,  0,DataDDS, DataDDS);	
 
@@ -6358,7 +6359,10 @@ pData = DataDDS;
 //printfpd("\n\r 4-1 need 0x50 : %02X ", (unsigned char)(INT_K));
 
 
-		 *pData++ =  (unsigned char)(INT_K >> 8);    *pData++ = (unsigned char)INT_K; 
+	 	 *pData++ =  (unsigned char)(INT_K >> 8);    *pData++ = (unsigned char)INT_K; 
+	 //	    *pData++ = 0x08;	 *pData = 0x50;  //t
+
+
 IOSpiSendR(4   , 3,  0,DataDDS, DataDDS);	  //channel C
 IOSpiSendR(5   , 3,  0,DataDDS, DataDDS);	
 
@@ -6372,12 +6376,18 @@ pData = DataDDS;
 
 //frac = (((odiv * freq) % (unsigned long)FREQ_REF) << 16)/ (unsigned long)FREQ_REF;
 
-		 *pData++ = (unsigned char)(frac >> 8);    *pData++ = (unsigned char)frac; 
+  		 *pData++ = (unsigned char)(frac >> 8);    *pData++ = (unsigned char)frac; 
+  //		  *pData++ = 0;    *pData++ = 0; 
+
+
 IOSpiSendR(4   , 3,  0,DataDDS, DataDDS);	  //channel C
 IOSpiSendR(5   , 3,  0,DataDDS, DataDDS);	
 
 pData = DataDDS;
-*pData++ = 0x08;   *pData++ = 0xff;	 *pData = 0xff;  //addr 4
+*pData++ = 0x08; 
+
+  //	  *pData++ =0;	 *pData = 0;  //addr 4
+  *pData++ = 0xff;	 *pData = 0xff;  //addr 4
 IOSpiSendR(4   , 3,  0,DataDDS, DataDDS);	  //channel C
 IOSpiSendR(5   , 3,  0,DataDDS, DataDDS);	
 //______________________________uncomment	
@@ -6553,12 +6563,12 @@ printfpd(" M FREQ_REF : %d ", FREQ_REF);
 
 
 
-INT_K = (Fvco) / (unsigned long)FREQ_REF;
+INT_K = (Fvco) / (unsigned long)(FREQ_REF <<1);
 
-frac = ((Fvco % (unsigned long)FREQ_REF) << 16) / (unsigned long)FREQ_REF;
+frac = ((Fvco % (unsigned long)(FREQ_REF << 1)) << 16) / (unsigned long)(FREQ_REF<<1);
 
-printfpd("\n\r MINT_K : %d", INT_K);
-printfpd("frac : %d", frac);
+printfpd("\n\r M INT_K : %d  ", INT_K);
+printfpd(" frac : %d", frac);
 
 
 
@@ -6614,7 +6624,7 @@ pData = DataDDS;
 IOSpiSendR(3  , 3,  0,  DataDDS, DataDDS);	  //channel D
 
 pData = DataDDS;
-*pData++ = 0x42;   *pData++ = 0;	 *pData = 0x29;//t 0x08;  //addr 21
+*pData++ = 0x42;   *pData++ = 0;	 *pData = 0x29;//0x29;//t 0x08;  //addr 21
 IOSpiSendR(3  , 3,  0,  DataDDS, DataDDS);	  //channel D
 
 pData = DataDDS;
@@ -6657,6 +6667,7 @@ IOSpiSend(3  , 3,  0,  DataDDS, DataDDS);	  //channel D
 */
 
  //_________--------t
+ /*
 pData = DataDDS;
 *pData++ = 0x60;   *pData++ = 0;	 *pData = 0;  //addr 30
 IOSpiSendR(3  , 3,  0,  DataDDS, DataDDS);	  //channel C
@@ -6701,7 +6712,7 @@ pData = DataDDS;
 IOSpiSendR(3  , 3,  0,  DataDDS, DataDDS);	  //channel C
 
 //____________________---t
-
+			   */
 //______________________________uncomment  
 
 pData = DataDDS;

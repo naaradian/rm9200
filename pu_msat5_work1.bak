@@ -754,6 +754,7 @@ delay_mcs(2);
   default :   break;
 }
 
+    printfp("\n\r");
 
  return 0;
 }
@@ -761,7 +762,7 @@ delay_mcs(2);
 
 
 
-
+  /*
 
 extern "C" void LoadFiltersO (unsigned char baud, unsigned char chnl)
 {
@@ -785,30 +786,65 @@ Buff[1] = 0xFD;
 
 BufferData = &Buff[0];  //	length_of_data = 2;
 
-  /*
-if(!chnl)
-{
-WriteReadSpiBm( 50,  length_of_data, BufferData, BufferData);
-}
-else
-{
-WriteReadSpiBm( 51,  length_of_data, BufferData , BufferData);
+ 
+IOSpiSendR(chnl, 2, 0, BufferData, BufferData);
+
 
 }
-  */
+ */
+extern "C" void LoadFiltersO (unsigned char baud, unsigned char chnl)
+{
+unsigned char * BufferData;
+unsigned char Buff[2]; // =  (0x81, 0xFD); 
+
+if(baud > 63) baud = 63;
+ 
+Buff[0] = 0xdf; //0xFB;
+
+ /*
+Buff[1] = 0x80;
+if(baud > 31)  Buff[1] |= 0x40;
+
+if(baud & 0x1)	 Buff[1] |= 0x20;
+if(baud & 0x2)	 Buff[1] |= 0x10;
+if(baud & 0x4)	 Buff[1] |= 0x8;
+if(baud & 0x8)	 Buff[1] |= 0x4;
+if(baud & 0x10)	 Buff[1] |= 0x2;
+if(baud & 0x20)	 Buff[1] |= 0x1;
+	 */
+
+Buff[1] = 0x80;
+if(baud > 31)  Buff[1] |= 0x40;
+  
+if(baud & 0x1)	 Buff[1] |= 0x10;
+if(baud & 0x2)	 Buff[1] |= 0x8;
+if(baud & 0x4)	 Buff[1] |= 0x4;
+if(baud & 0x8)	 Buff[1] |= 0x2;
+if(baud & 0x10)	 Buff[1] |= 0x1;
+//if(baud & 0x20)	 Buff[1] |= 0x2;
+
+printfpd("\n\r load baud : %d", baud);
+  
+   
+// Buff[1] |= baud;
+
+
+
+BufferData = &Buff[0];  //	length_of_data = 2;
 
 IOSpiSendR(chnl, 2, 0, BufferData, BufferData);
 
 
 }
 
+
 extern "C" void LoadBaudO(unsigned long rate, unsigned char chnl)
 {
 
  unsigned char code;
 // code = ((((rate/1000000l)) * 6l) + 5l) / 10l + 1;
- code = ((((rate)) * 6l) + 5l) / 10l + 1;
-
+//t code = ((((rate)) * 6l) + 5l) / 10l + 1;
+   code = rate;
 
  if(code > 63) code = 63;  //160301
 
