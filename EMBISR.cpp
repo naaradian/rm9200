@@ -2807,10 +2807,22 @@ void EmbSerialMD2::AddTransit(unsigned char byte)
 
 #endif
 
-#ifdef IncEmbSerialPU_M
+
 extern unsigned long tmc, ttzc;
 
 
+
+#ifdef IncEmbSerialPU_M
+
+#ifdef  PROG_VNV1
+
+
+
+#include "vnv_embisr.cpp"
+
+
+
+#else	   //  PROG_VNV1
 
 #define KSS_TANZIT_STATUS1	(8)
 #define KSS_TANZIT_STATUS2	(10)
@@ -3337,7 +3349,7 @@ UnEmbSerialPU_MIRQ mask;
 }
 
 
-
+#endif //vnv1 
 
 #endif
 

@@ -478,11 +478,14 @@ extern "C" unsigned char inportb(unsigned int a1)
 extern "C" unsigned char inportb3(unsigned int a1)
 {
    char* port;
+#ifndef MD3416_TEST
+
  if(a1 < XILINX_SIZE)
    {
    port = pxilinx3 + (a1);
    }
   //   return read_xil_char((uint_32)(a1));
+#endif
 	return *port;
 }
 
@@ -2804,15 +2807,25 @@ void EmbSerialMD2::AddTransit(unsigned char byte)
 
 #endif
 
-#ifdef IncEmbSerialPU_M
+
 extern unsigned long tmc, ttzc;
-
-
 
 #define KSS_TANZIT_STATUS1	(8)
 #define KSS_TANZIT_STATUS2	(10)
 #define KSS_TANZIT_STATUS3	(12)
 #define KSS_TANZIT_STATUS4	(14)
+
+
+#ifdef IncEmbSerialPU_M
+
+#ifdef  PROG_VNV1
+
+#include "vnv_embisr.cpp"
+
+
+
+#else	   //  PROG_VNV1
+
 
 
 
@@ -3334,7 +3347,7 @@ UnEmbSerialPU_MIRQ mask;
 }
 
 
-
+#endif //vnv1 
 
 #endif
 

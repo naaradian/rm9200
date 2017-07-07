@@ -11428,7 +11428,12 @@ extern "C" AnyStrings::Init()
 #ifdef PROG_PU_M710_MUX
         strcpy(cLogoLd,   "         MD-34E-16      ");
 #else
+#ifdef PROG_VNV1
+		 strcpy(cLogoLd,   "          VNV           ");
+#else
+
 		 strcpy(cLogoLd,   "         PU-M-MUX       ");
+#endif
 #endif
 #endif // PROG_PUM
 

@@ -1611,7 +1611,33 @@ EmbInit();	 //embrs232 embrs485
 	embTimerCallback0.count = 0;
 	embTimer.SetCallBack0(&embTimerCallback0);
 
-	InitTLF();
+//wait while load xilinx
+  //	delay_mcs(1000000);
+//	delay_mcs(5000000);
+
+ 
+// printfp("\n\rStart mirrortest:");
+
+ for(i=0; i<200; i++)
+  {
+//  printfpd(" %d", i);
+//   if(MirrorTest())
+  if(inportb(1) == 0xb6) 
+  // if(0)
+ {
+ //   printfpd("\n\r mrrortest ok %d", i);
+  break;
+ }
+   delay_mcs(30000);
+  //ok  delay_mcs(5000);
+
+  }
+   //	  OperateBuffers_usart0t();
+ 
+
+  InitTLF();
+
+
 //	Ring();
 	for(tlf_counter=0; tlf_counter<6; tlf_counter++) tlf_number[tlf_counter] = 0xFF;
 	tlf_counter=0;
@@ -1671,6 +1697,8 @@ if(GetNeedWriteDevId())
 
 if(!(cnt% SCAN_PERIOD))
 {
+// InitTLF();	  //for test
+
  ReadE1Losses();
  ReadE1AISes();
 }
@@ -1697,9 +1725,6 @@ if(!(cnt% SCAN_PERIOD))
 			}
 			if((aaa[3]&0x80)&&(aaa[5]&0x80))
 			{
-//	unsigned char tlf_number[4];
-//	unsigned char tlf_counter=0;
-//					Ring();
 				switch(aaa[5]&0xFC)
 				{
 					case 196: tlf_counter++; tlf_number[2]=tlf_number[1]; tlf_number[1]=tlf_number[0]; tlf_number[0] = 1; break;
@@ -1720,13 +1745,8 @@ if(!(cnt% SCAN_PERIOD))
 			unStateBMD155.stateBMD155.demPI = (unsigned)tlf_number[1]*10+(unsigned)tlf_number[0];
 			unStateBMD155.stateBMD155.statePI = tlf_number[1];
 
-	  //		unsigned char * nbase = (unsigned char *)(NVRAM_BASE);
-
-
 				if(tlf_counter>=2) 
 				{
-//		if(((unsigned)tlf_number[1]*10+(unsigned)tlf_number[0]) == unEmb2TypeVer.emb2TypeVer.signature_software[1]) // = self_tlf_number
-	 // 	    if(((unsigned)tlf_number[1]*10+(unsigned)tlf_number[0]) == (*(nbase + 1))) // = self_tlf_number
 	   			 if(((unsigned)tlf_number[1]*10+(unsigned)tlf_number[0]) ==  self_tlf)
 					{
 						presto = 1;
@@ -1850,9 +1870,6 @@ void t2ms(unsigned long d)
 {
  delay_mcs(d * 2000l);
 }
-
-
-
 
 void StartTestTlf()
 {
@@ -2006,9 +2023,9 @@ if (i != ( inportb(0x500)) )
 for (i=0; i<20; i++)
 //for (i=0; i<200; i++)
 	{
-   n=inportb(0x507);
-   n=inportb(0x50B);
-   n=inportb(0x50d);
+   n=inportb(0x511);
+ //  n=inportb(0x50B);
+ //  n=inportb(0x50d);
    n=inportb(0x509);
   }
 
@@ -2022,6 +2039,7 @@ unsigned long rmc, tmc, rtzc,  ttzc, tup0c, rup0c, tup1c, rup1c;
 void test_PU37_interrupt_ovner()
 {
     char cnt = 16;
+  /*
 	while (((inportb(0x505) &  0x10) != 0) && cnt)  // RX up0
 				{
 				 	rup0=inportb(0x50b);
@@ -2047,10 +2065,13 @@ void test_PU37_interrupt_ovner()
 					rup1o=rup1;
 					cnt--;
 				}
+
+	*/
+
 		cnt = 16; //t16;
 		while (((inportb(0x505) &  0x01) != 0) && cnt)  // RX MODEM
 				{
-				 	rm=inportb(0x507);
+				 	rm=inportb(0x511);
 					rmc++;
 					if (rmo!=rm)
  						{		
@@ -2085,6 +2106,7 @@ void test_PU37()
  if(PeriodCounter > TEST_PERIOD)
   {
  PeriodCounter = 0l;
+	/*
  if((embSerialACT155.UsedSendUD1() < 5)) 
 			     {
 				embSerialACT155.AddUD1(tup0++);
@@ -2103,6 +2125,8 @@ void test_PU37()
 				embSerialACT155.AddUD2(tup1++);
 				tup1c += 5;   
 				 } 
+
+		 */
 		   if(embSerialACT155.UsedSendMod() < 5)
 				 {
 		  		  embSerialACT155.AddMod(tm++);

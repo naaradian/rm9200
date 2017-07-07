@@ -8248,6 +8248,12 @@ IPAddressUDP.ChangingValue =  IPAddressUDP.Value;
  
 #endif
 
+#ifdef	PROG_VNV1
+  Buf[778] =  self_tlf; 
+#endif
+
+
+
 
 
 

@@ -177,18 +177,18 @@
 //262 : remove 10 symbols in parse rs232
 
 //#define SOFT_VER (0x509)	 
-#define SOFT_VER (0x1168)    
+#define SOFT_VER (0x1171)    
 #ifndef PROG_PU_MSAT    
 //#define SOFT_VER_STRING    "   14.12.01.1-800 ADESTO"//263 : maked init counter and data for write_buffer_char1()
 //#ifndef PROG_PUPM3_1_ADESTO	
 //#ifndef PROG_PU_MSAT1
-#define SOFT_VER_STRING      "      17.07.03.1-1168    "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING      "      17.07.07.1-1171    "//263 : maked init counter and data for write_buffer_char1()
 #else
 //#define SOFT_VER_STRING "Radian Ver. 01.00        "//263 : maked init counter and data for write_buffer_char1()
 #ifdef	PROG_VNV1
-#define SOFT_VER_STRING      "      17.07.03.1-1168    "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING      "      17.07.07.1-1171    "//263 : maked init counter and data for write_buffer_char1()
 #else
-#define SOFT_VER_STRING   "Radian v1168.70703       "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING   "Radian v1170.70707       "//263 : maked init counter and data for write_buffer_char1()
 #endif
 #endif
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -310,7 +310,7 @@
 
 //#define DEBUG_WRITE_XIL
 //#define TEST_HANGING
-//#define WITHOUT_INTERRUPTS //
+#define WITHOUT_INTERRUPTS //
 //#define XIL_FLASH
 //#define TEST_PRM
 //#define START_PRINT
@@ -3444,7 +3444,7 @@ extern "C" void PU_M(void);
 
 #ifdef	PROG_VNV1
 
-#define WITHOUT_INTERRUPTS 	   //temporary
+//#define WITHOUT_INTERRUPTS 	   //temporary
 
 extern unsigned char self_tlf; 
 
