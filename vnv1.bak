@@ -1381,16 +1381,30 @@ extern "C" void FillAISes(unsigned char addr, char* palarms)
 extern "C" void ReadE1Losses(void)
 {
 // fill unEmb2MuxVNV.emb2MuxVNV.state_e1[i]
+ int i;
  AT91F_SpiEnable(3);
  char * pret;
  char Buff[3];
- Buff[1] = BIT_READ  +  ADDR_LOSSES; //	 0x80 + 0x04; //read bit + addr
+ //Buff[1] = BIT_READ  +  ADDR_LOSSES; //	 0x80 + 0x04; //read bit + addr
  unsigned char addr;
- for(addr = ADDR_IDT; addr < ADDR_IDT + IDT_QUANTITY; addr++)
+// for(addr = ADDR_IDT; addr < ADDR_IDT + IDT_QUANTITY; addr++)
+ for(i = 0; i < IDT_QUANTITY; i++)
   {
-	Buff[0] = addr;
+	addr = 	 ADDR_IDT + (i<<1) +1;
+	Buff[0] = addr | 0x01;
+	Buff[1] = ADDR_LOSSES;
+
 	pret = SpiWriteReadCS3(3, Buff);
+   /*
+    printfpd("\n\r %02X>", addr); 
+	printfpd(" %02X ", *pret); 
+	printfpd(" %02X ", *(pret+1)); 
+	printfpd(" %02X ", *(pret+2)); 
+	 */
+
+
 	FillAlarms(addr - ADDR_IDT, pret+2);
+
 	Buff[0] = ADDR_LED + addr -  ADDR_IDT ;
 	Buff[1] = * (pret + 2);
 	Buff[2] = 0xff;   			//set all right leds on
@@ -1400,19 +1414,57 @@ extern "C" void ReadE1Losses(void)
 
 extern "C" void ReadE1AISes(void)
 {
+ int i;
+
 // fill unEmb2MuxVNV.emb2MuxVNV.state_e1[i]
  AT91F_SpiEnable(3);
  char * pret;
  char Buff[3];
- Buff[1] = BIT_READ  +  ADDR_AISES; //	 0x80 + 0x04; //read bit + addr
+ //Buff[1] = BIT_READ  +  ADDR_AISES; //	 0x80 + 0x04; //read bit + addr
  unsigned char addr;
  for(addr = ADDR_IDT; addr < ADDR_IDT + IDT_QUANTITY; addr++)
+ for(i = 0; i < IDT_QUANTITY; i++)
   {
-	Buff[0] = addr;
+	addr = 	 ADDR_IDT + (i<<1) + 1;
+ 	Buff[0] = addr | 0x01;
+	Buff[1] = ADDR_AISES;
 	pret = SpiWriteReadCS3(3, Buff);
+    printfpd("\n\r %02X>", addr); 
+	printfpd(" %02X ", *pret); 
+	printfpd(" %02X ", *(pret+1)); 
+	printfpd(" %02X ", *(pret+2)); 
+
 	FillAISes(addr - ADDR_IDT, pret+2);
   }
 }
+
+extern "C" void ReadE1IDs(void)
+{
+// fill unEmb2MuxVNV.emb2MuxVNV.state_e1[i]
+ AT91F_SpiEnable(3);
+ char * pret;
+ char Buff[3];
+// Buff[1] =  ADDR_ID; //	 read bit setted to addr to addr
+ Buff[1] =  ADDR_LOSSES; //	 read bit setted to addr to addr
+
+ unsigned char addr;
+ for(addr = ADDR_IDT; addr < ADDR_IDT + IDT_QUANTITY; addr++)
+  {
+ //t	Buff[0] = addr | 0x80; //read bit hier
+  //ok	Buff[0] = 0x10 | 0x01; //read bit hier
+	Buff[0] = 0x10 | 0x01; //read bit hier
+
+	pret = SpiWriteReadCS3(3, Buff);
+	printfpd("\n\r %02X>", addr); 
+	printfpd(" %02X ", *pret); 
+	printfpd(" %02X ", *(pret+1)); 
+	printfpd(" %02X ", *(pret+2)); 
+  }
+}
+
+
+
+
 
 extern "C" void InitE1VNV(void)
 {
@@ -1430,6 +1482,7 @@ unsigned char self_tlf;   //keep in flash
  
 extern "C" void Init_PU_M()
 {
+printfp("\n\r Init_PU_M()");
 //return; //t
  tBuffRS485.Init();
  time_lastsend_rs485 = 0;
@@ -1618,17 +1671,17 @@ EmbInit();	 //embrs232 embrs485
  
 // printfp("\n\rStart mirrortest:");
 
- for(i=0; i<200; i++)
+ for(i=0; i<100; i++)
   {
 //  printfpd(" %d", i);
-//   if(MirrorTest())
+   if(MirrorTest())
 //  if(inportb(1) == 0xb6) 
   // if(0)
-  // {
- //   printfpd("\n\r mrrortest ok %d", i);
-  //  break;
-  // }
-   delay_mcs(30000);
+ {
+    printfpd("\n\r mrrortest ok %d", i);
+  break;
+ }
+   delay_mcs(3000);
   //ok  delay_mcs(5000);
 
   }
@@ -1687,7 +1740,33 @@ for(i=0; i<unEmb2MuxVNV.emb2MuxVNV.numE1; i++)
 
 extern "C" void PU_M()
 {
+//return;
+
 static unsigned long cnt;
+//#ifndef TEMPORARY_DO_NOT_STOP_RECEIVE
+
+ /* 
+static unsigned char maskcnt;
+
+if(maskcnt)
+{
+//MaskReceive();
+embSerialACT155.ChangeReceive1();
+maskcnt = 0;
+}
+else
+{
+//UnMaskReceive();
+embSerialACT155.ChangeReceive2();
+maskcnt = 1;
+}
+  */
+//#endif
+
+
+
+
+
 cnt++;
 if(GetNeedWriteDevId())
 {
@@ -2105,28 +2184,12 @@ void test_PU37()
  PeriodCounter++;
  if(PeriodCounter > TEST_PERIOD)
   {
- PeriodCounter = 0l;
-	/*
- if((embSerialACT155.UsedSendUD1() < 5)) 
-			     {
-				embSerialACT155.AddUD1(tup0++);
-			    embSerialACT155.AddUD1(tup0++);
-			    embSerialACT155.AddUD1(tup0++);
-				embSerialACT155.AddUD1(tup0++);
-				embSerialACT155.AddUD1(tup0++);
-				tup0c += 5;   
-				 } 
- 	if((embSerialACT155.UsedSendUD2() < 5)) 
-			     {
-				embSerialACT155.AddUD2(tup1++);
-			    embSerialACT155.AddUD2(tup1++);
-			    embSerialACT155.AddUD2(tup1++);
-				embSerialACT155.AddUD2(tup1++);
-				embSerialACT155.AddUD2(tup1++);
-				tup1c += 5;   
-				 } 
+ // printfpd("\r test transit ttzc  %d", ttzc);
+    OperateBuffers_usart0t();
 
-		 */
+
+ PeriodCounter = 0l;
+			
 		   if(embSerialACT155.UsedSendMod() < 5)
 				 {
 		  		  embSerialACT155.AddMod(tm++);
@@ -2136,6 +2199,9 @@ void test_PU37()
 				  embSerialACT155.AddMod(tm++);
 				  tmc += 5;
 		  		  }
+		
+
+
 	  	  if(embSerialACT155.UsedSendTransit() < 5)
 			     {
 			   	   embSerialACT155.AddTransit(ttz++);
@@ -2147,6 +2213,7 @@ void test_PU37()
  			    }
 } //PeriodCounter
 
+   
 
 	if( embSerialACT155.m_RBuffMod.Used()) 
 	{
@@ -2159,6 +2226,7 @@ void test_PU37()
 					rm++;
 					rmo=rm;
 }
+
 
    if( embSerialACT155.m_RBuffTransit.Used()) 
  {	

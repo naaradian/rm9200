@@ -1803,13 +1803,7 @@ root_dir[1,1] = 0;
   
    
   
-   #ifdef PROG_PU_M_MUX
    
-// 4444  
-   
-  Init_PU_M();
-  #endif //PROG_PU_M_MUX  
-  
   
   
 
@@ -2203,7 +2197,7 @@ SetE14();
 
 
  #ifdef PROG_PU_MSAT
-   printfp("\n\r go Init_PU_M();");
+  // printfp("\n\r go Init_PU_M();");
 
   Init_PU_M();
   #endif //PROG_PU_MSAT 
@@ -2278,9 +2272,8 @@ OperateBuffers_usart0t();
    Init_BMD35();
 #endif //PROG_BMD35 
 
-#ifdef PROG_PU_M
-  Init_PU_M();
-#endif //PROG_PU_M 
+
+  
 
 //#ifdef PROG_PU_M_MUX
 //  Init_PU_M();
@@ -2649,32 +2642,7 @@ result = bind(socklist[2], &local_sin, sizeof (sockaddr_in));
 
 
 
- /*
-#ifdef YOURNAL        //before init
-
-  Add_Event(EV_POWER_ON, 0, NULL);
-  
-  Add_Event(EV_COMMAND_CONFIG, 0, NULL);
-  Add_Event(EV_COMMAND_CONFIG, 0, NULL);
-  Add_Event(EV_COMMAND_CONFIG, 0, NULL);
-  Add_Event(EV_COMMAND_CONFIG, 0, NULL);
-  Add_Event(EV_COMMAND_CONFIG, 0, NULL);
-  Add_Event(EV_COMMAND_CONFIG, 0, NULL);
-  Add_Event(EV_COMMAND_CONFIG, 0, NULL);
-  Add_Event(EV_COMMAND_CONFIG, 0, NULL);
-  Add_Event(EV_COMMAND_CONFIG, 0, NULL);
-  Add_Event(EV_COMMAND_CONFIG, 0, NULL);
-  Add_Event(EV_COMMAND_CONFIG, 0, NULL);
-  Add_Event(EV_COMMAND_CONFIG, 0, NULL);
-   
-  
-  
-  
-  
-#endif //YOURNAL 
-
-*/
-//#endif
+ //#endif
 
 //t cashe_on();
  //ok  outportb(0x506, 0x55); //ok
@@ -2733,9 +2701,35 @@ result = bind(socklist[2], &local_sin, sizeof (sockaddr_in));
  
 #endif // TESTSTART 
 
+// printfp("\n\r go  step1 ();");
+
+#ifdef PROG_PU_M
+// printfp("\n\r go  step2 ();");
+
+  Init_PU_M();
+#endif //PROG_PU_M 
+
+
+#ifdef PROG_PU_M_MUX
+//   printfp("\n\r go  step2 ();");
+ 
+// 4444  
+   
+  Init_PU_M();
+ #endif //PROG_PU_M_MUX  
+
+ /*
+#ifdef PROG_VNV1
+ printfp("\n\r go  step2 ();");
+
+  Init_PU_M();
+#endif //PROG_PU_M 
+  */
+
+
 //t150901 AT91F_DataflashPrintInfo ();
 #ifdef PROG_BMDN
-  printfp("\n\r go  step2 BMDN();");
+ // printfp("\n\r go  step2 BMDN();");
   OperateBuffers_usart0t();
 #endif //PROG_BMDN 
  BlinkLED(100, 1); 

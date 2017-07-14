@@ -177,18 +177,18 @@
 //262 : remove 10 symbols in parse rs232
 
 //#define SOFT_VER (0x509)	 
-#define SOFT_VER (0x1171)    
+#define SOFT_VER (0x1176)    
 #ifndef PROG_PU_MSAT    
 //#define SOFT_VER_STRING    "   14.12.01.1-800 ADESTO"//263 : maked init counter and data for write_buffer_char1()
 //#ifndef PROG_PUPM3_1_ADESTO	
 //#ifndef PROG_PU_MSAT1
-#define SOFT_VER_STRING      "      17.07.07.1-1171    "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING      "      17.07.14.1-1176    "//263 : maked init counter and data for write_buffer_char1()
 #else
 //#define SOFT_VER_STRING "Radian Ver. 01.00        "//263 : maked init counter and data for write_buffer_char1()
 #ifdef	PROG_VNV1
-#define SOFT_VER_STRING      "      17.07.07.1-1171    "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING      "      17.07.14.1-1176    "//263 : maked init counter and data for write_buffer_char1()
 #else
-#define SOFT_VER_STRING   "Radian v1170.70707       "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING   "Radian v1176.70714       "//263 : maked init counter and data for write_buffer_char1()
 #endif
 #endif
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -310,7 +310,7 @@
 
 //#define DEBUG_WRITE_XIL
 //#define TEST_HANGING
-#define WITHOUT_INTERRUPTS //
+//#define WITHOUT_INTERRUPTS //
 //#define XIL_FLASH
 //#define TEST_PRM
 //#define START_PRINT
@@ -3443,17 +3443,24 @@ extern "C" void PU_M(void);
 #endif //PROG_PU_M
 
 #ifdef	PROG_VNV1
+extern "C" void ReadE1IDs(void);
+
 
 //#define WITHOUT_INTERRUPTS 	   //temporary
 
 extern unsigned char self_tlf; 
 
-#define BIT_READ 		(0x80)
-#define ADDR_LOSSES   	(0x04)
-#define ADDR_AISES		(0x13)
-#define ADDR_IDT		(8)
+#define BIT_READ 	   	(0x01)//	(0x80)
+#define ADDR_LOSSES     (0x20) //low bit first	(0x04)
+#define ADDR_AISES		(0xC8)//low bit first (0x13)
+#define ADDR_ID 		(0)
+
+
+
+//#define ADDR_IDT		(8)
+#define ADDR_IDT		(0x10)
 #define IDT_QUANTITY	(6)
-#define ADDR_LED		(8)
+#define ADDR_LED		(0x20)
 #define ADDR_E1			(0x40)
 #define E1_QUANTITY		(48)
 

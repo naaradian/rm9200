@@ -15,18 +15,19 @@ void EmbSerialPU_M::IsrXX()
  status_transit1 = inportb(VNV_MODEM_STATUS);
  status_transit2 = inportb(VNV_TANZIT_STATUS);
 
-#ifdef TEST_PUM
+//#ifdef TEST_PUM
 //  printfpd("\n\r %02x", status.byte);
 //   printfpd("\n\r 5: %02x", irq.byte);
-    printfpd(" %02x", mask.byte);
+  //  printfpd("m %02x", mask.byte);
 //	OperateBuffers_usart1t();
   //	  printfp("I");
 
-#endif
+//#endif
 
  if(irq.bit.IRQ_TX_mod) 
  {
  	wd = 15;
+	
 	  while((status_transit1 & TX_READY_BIT) && wd && irq.bit.IRQ_TX_mod)
     {
 	if(m_TBuffMod.Used())
@@ -41,6 +42,7 @@ void EmbSerialPU_M::IsrXX()
 	status_transit1 = inportb(VNV_MODEM_STATUS);
    } //while
  }
+ 
 
  if(irq.bit.IRQ_TX_trans)
   {
@@ -57,7 +59,7 @@ void EmbSerialPU_M::IsrXX()
 	status_transit2 = inportb(VNV_TANZIT_STATUS);
    }   //while
  }
-
+ 
  if(irq.bit.IRQ_RX_mod)
  {
 	 wd = 128;
@@ -67,8 +69,9 @@ void EmbSerialPU_M::IsrXX()
 	 irq.byte  = inportb(0x505);
 	 wd--;
 	 }
-  	 mask.bit.IRQ_RX_mod=0;	   //temporary commented
+  //	 mask.bit.IRQ_RX_mod=0;	   //temporary commented
     }
+ 
 
  if(irq.bit.IRQ_RX_trans)
  {
@@ -79,7 +82,7 @@ void EmbSerialPU_M::IsrXX()
      irq.byte  = inportb(0x505);
 	 wd--;
 	}
-   mask.bit.IRQ_RX_trans=0;	   //temporary commented
+//   mask.bit.IRQ_RX_trans=0;	   //temporary commented
  }
   	outportb(0x506,mask.byte);
 	count++;
@@ -95,237 +98,95 @@ void EmbSerialPU_M::Init()
 	mask.bit.IRQ_RX_mod=1;
 	mask.bit.IRQ_RX_trans=1;
   	outportb(0x506,mask.byte);
+ // printfpd("\n\r init_ints mask-> 0x06 : %02X", mask.byte);
+
 } 
 
 void EmbSerialPU_M::AddMod(unsigned char byte)
 { 
-
-#ifdef PROG_PU_M_V_A	
- return;
-#endif
-
-
-//printfpd("M:%d", byte);
-//#ifdef TEST_PUM
-//  printfpd("\n\r 4: %02x", status.byte);
- //  printfpd("\n\r add m: %02x", byte);
- // 	OperateBuffers_usart1t();
-
-//#endif
-
-//my_int_disable_irq0();
 	m_TBuffMod.Add(byte); 	
-//151006 #ifndef PROG_COMMUTATOR1
 	UnEmbSerialPU_MIRQ mask;
 	mask.byte = inportb(0x506);
 	mask.bit.IRQ_TX_mod = 1;
 	outportb(0x506,mask.byte);
-//151006 #endif
-//my_int_enable_irq0();
 }
 
 void EmbSerialPU_M::AddModM(unsigned char byte)
 { 
-// return; //151006
-
-#ifdef PROG_PU_M_V_A	
-  return;
-#endif
-//printfpd("M:%d", byte);
-//#ifdef TEST_PUM
-//  printfpd("\n\r 4: %02x", status.byte);
- //  printfpd("\n\r add m: %02x", byte);
- // 	OperateBuffers_usart1t();
-
-//#endif
-
-//my_int_disable_irq0();
 	m_TBuffMod.Add(byte); 	
 	UnEmbSerialPU_MIRQ mask;
 	mask.byte = inportb(0x506);
 	mask.bit.IRQ_TX_mod = 1;
 	outportb(0x506,mask.byte);
-//my_int_enable_irq0();
 }
 
 void EmbSerialPU_M::AddTransit(unsigned char byte)
 { 
-
-#ifdef PROG_PU_M_V_A	
- return;
-#endif
-
-//#ifdef TEST_PUM
-//  printfpd("\n\r 4: %02x", status.byte);
-//   printfpd("\n\r add m: %02x", byte);
- //  	OperateBuffers_usart1t();
-
-//#endif
-
-//printfpd("T:%d", byte);
-//my_int_disable_irq0();
 	m_TBuffTransit.Add(byte); 
-//#ifndef PROG_COMMUTATOR1
 	UnEmbSerialPU_MIRQ mask;
 	mask.byte = inportb(0x506);
 	mask.bit.IRQ_TX_trans = 1;
 	outportb(0x506,mask.byte);
-//#endif
-//my_int_enable_irq0();
+ // 	printfpd("\n\r add transit mask -> 0x06 : %02X", mask.byte);
+
 }
 
 void EmbSerialPU_M::AddTransitM(unsigned char byte)
 { 
-#ifdef PROG_PU_M_V_A	
- return;
-#endif
-
-
-//#ifdef TEST_PUM
-//  printfpd("\n\r 4: %02x", status.byte);
-//   printfpd("\n\r add m: %02x", byte);
- //  	OperateBuffers_usart1t();
-
-//#endif
-
-//printfpd("T:%d", byte);
-//my_int_disable_irq0();
 	m_TBuffTransit.Add(byte); 
 	UnEmbSerialPU_MIRQ mask;
 	mask.byte = inportb(0x506);
 	mask.bit.IRQ_TX_trans = 1;
 	outportb(0x506,mask.byte);
-//my_int_enable_irq0();
 }
 
 
 void EmbSerialPU_M::AddUD1(unsigned char byte)
 {
-//printfpd("1:%d", byte); 
-//my_int_disable_irq0();
-	m_TBuffUD1.Add(byte); 
-//#ifndef PROG_COMMUTATOR1
-//#ifdef PROG_PU_M_V_A
-	UnEmbSerialPU_MIRQ mask;
-	mask.byte = inportb(0x506);
-	mask.bit.IRQ_TX_UD1 = 1;
-	outportb(0x506,mask.byte);
-//#endif
-
-//#endif
-//my_int_enable_irq0();
 }
 
 void EmbSerialPU_M::SetTransmitUD1()
 {
-//printfpd("1:%d", byte); 
-//my_int_disable_irq0();
- //	m_TBuffUD1.Add(byte); 
-//#ifndef PROG_COMMUTATOR1
-	UnEmbSerialPU_MIRQ mask;
-	mask.byte = inportb(0x506);
-	mask.bit.IRQ_TX_UD1 = 1;
-	outportb(0x506,mask.byte);
-//#endif
-//my_int_enable_irq0();
 }
 
 void EmbSerialPU_M::SetTransmitUD2()
 {
-#ifdef PROG_PU_M_V_A	
-return;
-#endif
-//printfpd("1:%d", byte); 
-//my_int_disable_irq0();
- //	m_TBuffUD1.Add(byte); 
-//#ifndef PROG_COMMUTATOR1
-	UnEmbSerialPU_MIRQ mask;
-	mask.byte = inportb(0x506);
-	mask.bit.IRQ_TX_UD2 = 1;
-	outportb(0x506,mask.byte);
-//#endif
-//my_int_enable_irq0();
 }
 
 
 
 void EmbSerialPU_M::AddUD1M(unsigned char byte)
 {
-//printfpd("1:%d", byte); 
-//my_int_disable_irq0();
-	m_TBuffUD1.Add(byte); 
-	UnEmbSerialPU_MIRQ mask;
-	mask.byte = inportb(0x506);
-	mask.bit.IRQ_TX_UD1 = 1;
-	outportb(0x506,mask.byte);
-//my_int_enable_irq0();
 }
 
 
 void EmbSerialPU_M::AddUD2(unsigned char byte)
 { 
-
-#ifdef PROG_PU_M_V_A	
-return;
-#endif
-
-//printfpd("2:%d", byte);
-//my_int_disable_irq0();
-	m_TBuffUD2.Add(byte); 
-//#ifndef PROG_COMMUTATOR1
-	UnEmbSerialPU_MIRQ mask;
-	mask.byte = inportb(0x506);
-	mask.bit.IRQ_TX_UD2 = 1;
-	outportb(0x506,mask.byte);
-//#endif
-//my_int_enable_irq0();
 }
 
 void EmbSerialPU_M::AddUD2M(unsigned char byte)
 { 
-#ifdef PROG_PU_M_V_A	
-return;
-#endif
-
-//printfpd("2:%d", byte);
-//my_int_disable_irq0();
-	m_TBuffUD2.Add(byte); 
-	UnEmbSerialPU_MIRQ mask;
-	mask.byte = inportb(0x506);
-	mask.bit.IRQ_TX_UD2 = 1;
-	outportb(0x506,mask.byte);
-//my_int_enable_irq0();
 }
 
 
 void EmbSerialPU_M::ChangeReceive1() 
 {
-UnEmbSerialPU_MIRQ mask;
-	  mask.byte = inportb(0x506);
-#ifndef PROG_PU_M_V_A	
-      mask.bit.IRQ_RX_trans=1;
-      mask.bit.IRQ_RX_mod=0;
-#endif
-	  mask.bit.IRQ_RX_UD1=1;
-#ifndef PROG_PU_M_V_A	
-	  mask.bit.IRQ_RX_UD2=0;
-#endif
-	  outportb(0x506,mask.byte);	//hier need add writing mask to every modem
+  UnEmbSerialPU_MIRQ mask;
+  mask.byte = inportb(0x506);
+  mask.bit.IRQ_RX_trans=1;
+  mask.bit.IRQ_RX_mod=0;
+  outportb(0x506,mask.byte);	//hier need add writing mask to every modem
+ //	printfpd("\n\r ChangeReceive1 -> 0x06 : %02X", mask.byte);
+
 }
 
 void EmbSerialPU_M::ChangeReceive2() 
 {
-UnEmbSerialPU_MIRQ mask;
-	  mask.byte = inportb(0x506);
-#ifndef PROG_PU_M_V_A	
-      mask.bit.IRQ_RX_trans=0;
-      mask.bit.IRQ_RX_mod=1;
-#endif
-	  mask.bit.IRQ_RX_UD1=0;
-#ifndef PROG_PU_M_V_A	
-	  mask.bit.IRQ_RX_UD2=1;
-#endif
-	  outportb(0x506,mask.byte);	//hier need add writing mask to every modem
+  UnEmbSerialPU_MIRQ mask;
+  mask.byte = inportb(0x506);
+  mask.bit.IRQ_RX_trans=0;
+  mask.bit.IRQ_RX_mod=1;
+  outportb(0x506,mask.byte);	//hier need add writing mask to every modem
 }
 
 

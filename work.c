@@ -9021,7 +9021,7 @@ AT91RM9200_MC_REG_STRUCT_PTR mc_ptr;   //memory controller
 #endif // PROG_UPS   
 
 #ifdef	PROG_VNV1
- //  mc_ptr->EBI.SMC.CSR[2] = 0x77014384l; //without ready
+  // mc_ptr->EBI.SMC.CSR[2] = 0x77014384l; //without ready
    mc_ptr->EBI.SMC.CSR[2] = 0x77014387l; //without ready
 #endif  
 

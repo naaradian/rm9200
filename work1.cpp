@@ -5789,6 +5789,8 @@ extern "C" void EnableInterrupts()
 
 #ifdef PROG_PU_M
 #ifndef PROG_PU_M710_MUX
+#ifndef	PROG_VNV1
+
 
 
 //     if(CheckDone())
@@ -5810,7 +5812,8 @@ extern "C" void EnableInterrupts()
                 //         AT91RM9200_AIC_SMR_SRCTYPE_LLS, //low level sensitive
                    					      AT91RM9200_AIC_SMR_PRIO_MIN );  
                //    		 			      AT91RM9200_AIC_SMR_PRIO_MAX ); 
-     }                                       
+     }     
+#endif                                       
 #endif                                     
 #endif //PROG_PU_M 
 
@@ -5899,6 +5902,7 @@ extern "C" void EnableInterrupts()
 
 #ifdef PROG_PU_M_MUX
 #ifndef PROG_PU_M710_MUX
+#ifndef	PROG_VNV1
 
   // ppp
   //   if(CheckDone())
@@ -5911,7 +5915,8 @@ extern "C" void EnableInterrupts()
                 //         AT91RM9200_AIC_SMR_SRCTYPE_LLS, //low level sensitive
                    					      AT91RM9200_AIC_SMR_PRIO_MIN );  
                //    		 			      AT91RM9200_AIC_SMR_PRIO_MAX ); 
-     }                                       
+     } 
+#endif                                           
 #endif                                     
 #endif //PROG_PU_M_MUX 
 
@@ -5942,6 +5947,8 @@ extern "C" void EnableInterrupts()
 
 #ifdef PROG_PUM
 #ifndef PROG_PU_M710_MUX
+#ifndef	PROG_VNV1
+
 
 //rrr
   //    if(CheckDone())
@@ -5954,7 +5961,8 @@ extern "C" void EnableInterrupts()
                 //         AT91RM9200_AIC_SMR_SRCTYPE_LLS, //low level sensitive
                    					      AT91RM9200_AIC_SMR_PRIO_MIN );  
                   // 		 			      AT91RM9200_AIC_SMR_PRIO_MAX ); 
-     }                                       
+     } 
+#endif                                           
 #endif                                     
 #endif //PROG_PUM  
 
@@ -6019,7 +6027,19 @@ extern "C" void EnableInterrupts()
                                      
 #endif 
 
+#ifdef	PROG_VNV1
 
+ if(MirrorTest())
+     { 
+        _at91rm9200_int_enable(AT91RM9200_IRQ0_VECTOR, IRQ, 
+                      AT91RM9200_AIC_SMR_SRCTYPE_LLS, //low level sensitive
+                   					      AT91RM9200_AIC_SMR_PRIO_MIN );  
+     }                                       
+                          
+
+
+
+#endif
 
  //___________________________________
 
@@ -13823,13 +13843,23 @@ case 0x44l:
 		 break;
  				#endif 
 
-/*
 
-case 0x45l:    
-				#ifdef PROG_DTVM
-				  tstep5();
-				  break;
- 				#endif //PROG_DTVM
+
+case 0x45l:  
+  
+#ifdef PROG_VNV1
+
+	  for(tm=0;tm<1000000;tm++) 
+  	  {
+  		 wd_reset();
+	     ReadE1IDs();
+		 OperateBuffers_usart0t();
+	  }
+	  break;
+#endif //PROG_DTVM
+
+
+/*
 case 0x46l:    
 				#ifdef PROG_DTVM
 				  tstep6();
@@ -14317,6 +14347,8 @@ case 0x8Al:
 		//		protection_mode = MODE_NO_PROT;
 		 //		SetNeedInitAllProt(); 
 #endif //PROG_BMDN
+
+
 				break;
 
 case 0x8Bl:
