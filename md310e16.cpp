@@ -5590,7 +5590,7 @@ unsigned long SetACMCounter;
 
 extern "C" void Init_BMDN(void)
 {
-//  return;	//t
+ // return;	//t
   cnt_mod = 0;
 
   #ifdef PROG_MD310_SAT
@@ -5949,6 +5949,8 @@ EmbInit(); //my
 // return;
  //   mod_en = ModemIsUsed(0);
 //____________________________h i e r e n a b l i n g i  n t e r r u p t s  i n x i l i n x !!  
+// return;
+
 	embSerialACT155.Init();	//120608   //hier hangt!!!!
    
 //bad 120608 return;   
@@ -5971,6 +5973,7 @@ EmbInit(); //my
 
 //////////////////////
 //131227#ifndef PROG_MD310
+  /*
 #ifdef PROG_BMDN6	//131227
 #ifndef PROG_BMDN6M
 
@@ -5980,7 +5983,7 @@ EmbInit(); //my
 	tlf_counter=0;
 #endif
 #endif
-
+	*/
 	for(i=0; i<MODEM_QUANTITY<<1; i++)
 //101212	for(i=0; i<16; i++)
 	{
@@ -6031,10 +6034,12 @@ EmbInit(); //my
 			unEmb2TypeVer.emb2TypeVer.signature_hardware[13] = read_xil_char(1);
 			unEmb2TypeVer.emb2TypeVer.signature_hardware[14] = read_xil_char(2);
 
-	unEmb2TypeVer.emb2TypeVer.signature_hardware[15] =  read_nvram_char(RESTARTS_NVRAM_ADDRESS);
-	write_nvram_char(RESTARTS_NVRAM_ADDRESS, (unEmb2TypeVer.emb2TypeVer.signature_hardware[15] + 1));
+ //	unEmb2TypeVer.emb2TypeVer.signature_hardware[15] =  read_nvram_char(RESTARTS_NVRAM_ADDRESS);
+ //	write_nvram_char(RESTARTS_NVRAM_ADDRESS, (unEmb2TypeVer.emb2TypeVer.signature_hardware[15] + 1));
+ 
   //	bt = (unsigned char far*)0x80000000;
 //131227#ifndef PROG_MD310
+ /*
 #ifdef PROG_BMDN6	//131227
 #ifndef PROG_BMDN6M
 
@@ -6060,10 +6065,11 @@ EmbInit(); //my
 	unEmb2TypeVer.emb2TypeVer.signature_software[15] = *(bt+ETH_TRANZIT_ON_ADDRESS); 
 #endif
 #endif 
-
+   */
  //	embMsgTemp.Init();
 
 //131227#ifndef PROG_MD310
+/*
 #ifdef PROG_BMDN6	//131227
 #ifndef PROG_BMDN6M
 
@@ -6073,6 +6079,7 @@ EmbInit(); //my
 	presto_time = time1;
 #endif
 #endif
+*/
 //______________________________Init All EmbMsgObjekts
 
    embMsg232.Init();
@@ -6115,6 +6122,7 @@ for(i=0; i<unEmb2Mux34.emb2Mux34.numE1; i++)
 		unEmb2Mux34.emb2Mux34.state_e1[i] = 0;
 	}
 
+//return; //t
 
  if(!MirrorTest())	return;
 
@@ -12378,6 +12386,7 @@ else
 
 //__________________________________________________________________
 //131227#ifndef PROG_MD310
+/*
 #ifdef PROG_BMDN6	//131227
 #ifndef PROG_BMDN6M
 
@@ -12402,7 +12411,7 @@ bt = (unsigned char *)(NVRAM_BASE);
 	unEmb2TypeVer.emb2TypeVer.signature_software[15] = *(bt+ETH_TRANZIT_ON_ADDRESS); 
 #endif
 #endif
-
+		*/
    if(GetNeedWriteDevId())
 		   {
 	 //  	 printf("\n\r Write!!");
@@ -15248,6 +15257,45 @@ extern "C" unsigned char GetStmPhyReg(unsigned char deviceindex)
   return read_xil_char( offset + STM_PHY_ADDR);
 }
 
+
+extern "C" void SetStmFarLoop(unsigned char deviceindex)
+{
+//  printfp("\n\r SetStmFarLoop");
+  unsigned long offset;
+  offset = BLOCK_SWEEP1 * ((deviceindex)+1);
+  write_xil_char( offset + STM_PHY_ADDR, read_xil_char( offset + STM_PHY_ADDR) | FAR_LOOP);
+}
+
+extern "C" void ClearStmFarLoop(unsigned char deviceindex)
+{
+ unsigned char val;
+  unsigned long offset;
+  offset = BLOCK_SWEEP1 * ((deviceindex)+1);
+  val =  read_xil_char( offset + STM_PHY_ADDR) & (~(FAR_LOOP));
+//  printfpd("\n\r clear Far %02X", val);
+  write_xil_char( offset + STM_PHY_ADDR, val);
+}
+
+
+extern "C" void SetStmNearLoop(unsigned char deviceindex)
+{
+//printfp("\n\r SetStmNearLoop");
+  unsigned long offset;
+  offset = BLOCK_SWEEP1 * ((deviceindex)+1);
+  write_xil_char( offset + STM_PHY_ADDR, read_xil_char( offset + STM_PHY_ADDR) | NEAR_LOOP);
+}
+
+extern "C" void ClearStmNearLoop(unsigned char deviceindex)
+{
+ unsigned char val;
+  unsigned long offset;
+  offset = BLOCK_SWEEP1 * ((deviceindex)+1);
+  val =  read_xil_char( offset + STM_PHY_ADDR) & (~(NEAR_LOOP));
+//  printfpd("\n\r clear Near  %02X", val);
+  write_xil_char( offset + STM_PHY_ADDR, val);
+}
+
+
 extern "C" unsigned char GetEthReg(unsigned char deviceindex)
 {
   unsigned long offset;
@@ -17302,10 +17350,17 @@ extern "C" void printcurtxt()
 #define ETH_COMMAND_PORT (0x7f)
 #define ETH_STATE_PORT   (0x7E)
 
+
 void WritePort()
 {
+//printfpd("\n\rWP %02X",embMsgRequest->Body(0));
+//printfpd(": %02X",embMsgRequest->Body(1));
+//printfpd(": %02X",embMsgRequest->Body(4));
+
+
 	if((embMsgRequest->Body(1)&0xC0)==0x80)
 	{
+//	printfp("--->1");
 		embMsg485Request_1.Init();
 		embMsg485Request_1.SetAddr(0);//0x01);
 		embMsg485Request_1.SetLength(4);//4
@@ -17321,6 +17376,8 @@ void WritePort()
 	{
 		if((embMsgRequest->Body(1)&0xC0)==0xC0)
 		{
+  //		printfp("--->2");
+
 			embMsg485Request_2.Init();
 			embMsg485Request_2.SetAddr(0);//0x02);
 			embMsg485Request_2.SetLength(4);//4
@@ -17362,7 +17419,34 @@ void WritePort()
 		  */
 		else
 		{
+   //		printfp("--->3");
+  //ok		return; //t
+ // printfpd("--> %04X ", embMsgRequest->Body(0)+(embMsgRequest->Body(1)<<8))	;
+//  printfpd(", %02X ", embMsgRequest->Body(4));
+
+			if((embMsgRequest->Body(0)+(embMsgRequest->Body(1)<<8)) != 0x525)
+			{
 			outportb(embMsgRequest->Body(0)+(embMsgRequest->Body(1)<<8), embMsgRequest->Body(4));
+			}
+			else
+			{
+			  if(embMsgRequest->Body(4) == 4)	   //local loop
+			  {
+		        ClearStmFarLoop(0);
+			    SetStmNearLoop(0);
+			  }
+			  else if(embMsgRequest->Body(4) == 8)	   //far loop
+			  {
+ 			    ClearStmNearLoop(0);
+				SetStmFarLoop(0);
+			  }
+			  else	   //no loop
+			  {
+			  ClearStmFarLoop(0);
+              ClearStmNearLoop(0);
+		   	  }
+			}
+	//   return;
 	  //		SaveParameterToNVRAM(embMsgRequest->Body(0)+(embMsgRequest->Body(1)<<8) , embMsgRequest->Body(4));
 			embMsgAns.SetType(0x0A);
 			embMsgAns.SetBody(0,embMsgRequest->Body(0));

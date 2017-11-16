@@ -1067,6 +1067,7 @@ char cMACMMRes[26];
  	char c4d[5];
 	char c4dd[4];
 	char c6d[4];
+	char c7d[4];
 	char cRemSpi[3];
 	char cRemSpiCs[3];
 	char cRemLEDData[3];

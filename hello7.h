@@ -39,9 +39,9 @@
 //#define PROG_BMDN5	 //act155051 1+0 use PVG710 maked mode 1+1  bmdn5.cpp!!!+ pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 //#define PROG_BMDN6	 // 155052 //try md310e.cpp+ filters act155051 1+0 use PVG710 maked mode 1+1 + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 //#define PROG_MD310	  //+ filters act155051 1+0 use PVG710 maked mode 1+1  md310e.cpp!!!+ pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
-//#define PROG_MD310E16	   //e_16 sets as pragma + filters act155051 1+0 use PVG710 maked mode 1+1  md310e16.cpp!!!+ pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
+//#define PROG_MD310E16	   //e_16 sets as pragma + filters act155051  md310e16.cpp!!!+ pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 
-//#define PROG_KAZAH			// 155052 //try md310e.cpp => kazah.cpp + filters act155051 1+0 use PVG710 maked mode 1+1 + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
+//#define PROG_KAZAH			// 155052 //try  kazah.cpp + filters act155051 1+0 use PVG710 maked mode 1+1 + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 
 
 
@@ -88,7 +88,7 @@
 //#define PROG_PU_MSAT3	// pu_msat.cpp	  linkdoubler 3		2048
 //#define PROG_PU_MSAT4 //pu_msat1.cpp linkdoubler 4 = linkdoubler2(menu with 1024)	 menu	
 
-//#define PROG_PU_MSAT5	 // linkdoubler1 1024 tfs_data.c web interface  file need copy!!!! pu_msat5.cpp  1024
+#define PROG_PU_MSAT5	 // linkdoubler1 1024 tfs_data.c web interface  file need copy!!!! pu_msat5.cpp  1024
 
 
 
@@ -170,28 +170,29 @@
 //#define	PROG_PRM_PCH_DEM_XIL_CHN_DMU5  //prm_pch_dem_chn_dmu5.cpp  dmu + 10G
 //#define	PROG_DMU6  //  dmu5.1 dmu6.cpp + dmu6plus.cpp ( provingent + demodulator)	 + pvg610_api.c	hostdriverforpc.cpp   utils.c endian.c
 
-#define	PROG_VNV1 //vnosvinos vnv1.cpp	=> vnv1.cpp (from pum.cpp)
+//#define	PROG_VNV1 //vnosvinos vnv1.cpp	=> vnv1.cpp (from pum.cpp)
 
 
 //#define PROG_PROV  //prov.cpp PVG610_API.c  hostDriverForPc.cpp	utils.c	  endian.c	basic.cpp
 //262 : remove 10 symbols in parse rs232
 
 //#define SOFT_VER (0x509)	 
-#define SOFT_VER (0x1176)    
+#define SOFT_VER (0x1202)    
 #ifndef PROG_PU_MSAT    
 //#define SOFT_VER_STRING    "   14.12.01.1-800 ADESTO"//263 : maked init counter and data for write_buffer_char1()
 //#ifndef PROG_PUPM3_1_ADESTO	
 //#ifndef PROG_PU_MSAT1
-#define SOFT_VER_STRING      "      17.07.14.1-1176    "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING      "      17.10.27.1-1202    "//263 : maked init counter and data for write_buffer_char1()
 #else
 //#define SOFT_VER_STRING "Radian Ver. 01.00        "//263 : maked init counter and data for write_buffer_char1()
 #ifdef	PROG_VNV1
-#define SOFT_VER_STRING      "      17.07.14.1-1176    "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING      "      17.10.27.1-1202    "//263 : maked init counter and data for write_buffer_char1()
 #else
-#define SOFT_VER_STRING   "Radian v1176.70714       "//263 : maked init counter and data for write_buffer_char1()
+#define SOFT_VER_STRING      "Radian v1202.71027       "//263 : maked init counter and data for write_buffer_char1()
 #endif
 #endif
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//#define KSS_PRINT_LOG 
 //#define MD3416_TEST
 //#define TUTS_PRINT
 
@@ -281,11 +282,9 @@
 //#define DEBUG_COUNTERS
 //#define TEMPORARY_DO_NOT_STOP_RECEIVE
 
-#ifdef PROG_PU_MSAT5
-
-#define NO_USE_WD
-
-#endif
+//#ifdef PROG_PU_MSAT5
+//#define NO_USE_WD
+//#endif
 
 //#define CHECK_LOSS_MEM
 //#define KSS_PRINT_LOG
@@ -3444,6 +3443,8 @@ extern "C" void PU_M(void);
 
 #ifdef	PROG_VNV1
 extern "C" void ReadE1IDs(void);
+extern "C" void InitTLF(void);
+
 
 
 //#define WITHOUT_INTERRUPTS 	   //temporary
@@ -3595,6 +3596,7 @@ extern "C" void LoadIFMdt(void);
 
 extern "C" void InitLoadIF();
 extern "C" void LoadIFDmd(unsigned long freq);
+extern "C" void LoadIFDmd1(unsigned long freq);
 extern "C" void LoadIFMd(unsigned long freq);
 extern "C" void LoadIFDAC(unsigned long freq);
 extern "C" void LoadIFADC(unsigned long freq);
@@ -5249,7 +5251,7 @@ extern "C"   void m_load_xilinx3t (char  , char );
 #define MIN_MOUTLEVOS	  0//(-30.0)
 #define MAX_MOUTLEVOS	  1//(-5.0)
 
-//#define UP_140	   //for test
+#define UP_140	   //for test
 
 #define MIN_MTDRATE	 (0.0001)
 #define MAX_MTDRATE	 (100.0)
@@ -5262,7 +5264,7 @@ extern "C"   void m_load_xilinx3t (char  , char );
 #ifndef UP_140
 #define MAX_MTFREQ	 (88.0)
 #else
-#define MAX_MTFREQ	 (180.0)
+#define MAX_MTFREQ	 (200.0)
 #endif
 
 #define MIN_MRFREQ	 (52.0l)
@@ -5270,7 +5272,7 @@ extern "C"   void m_load_xilinx3t (char  , char );
 #ifndef UP_140
 #define MAX_MRFREQ	 (88.0l)
 #else
-#define MAX_MRFREQ	 (180.0l)
+#define MAX_MRFREQ	 (200.0l)
 #endif
 
 #define MIN_MTMODUL	 (0)
@@ -5603,6 +5605,13 @@ extern "C" void SetBand(unsigned char im, unsigned long rate);
 #endif
 
 #ifdef PROG_KAZAH
+
+
+extern "C" void SetStmFarLoop(unsigned char);
+extern "C" void SetStmNearLoop(unsigned char);
+extern "C" void ClearStmFarLoop(unsigned char);
+extern "C" void ClearStmNearLoop(unsigned char);
+
 
 #define RS485E_ENABLED
 

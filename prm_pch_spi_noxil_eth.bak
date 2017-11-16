@@ -1460,8 +1460,8 @@ unsigned char EmbMsgN::ChkCRCN(unsigned long pos)
   }
 }
 
-#define HARD_V	(1)
-//#define HARD_V	(0)
+//170928 #define HARD_V	(1)
+#define HARD_V	(0)
 
 void EmbMsgN::RunCommandN0(void)
 {

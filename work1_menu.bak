@@ -3066,8 +3066,12 @@ SatSet3.Init( &theAnyStrings.c2d[0],  //aver distance  //debug keys
 			 MAX_SATSET3,
 			 1);
 
-
-SatSet4.Init( &theAnyStrings.c6d[0],  //tr freq
+#ifndef PROG_PU_MSAT5
+SatSet4.Init( &theAnyStrings.c6d[0],
+#else
+SatSet4.Init( &theAnyStrings.c7d[0],  //tr freq
+//SatSet4.Init( "%07d",  //tr freq  
+#endif
   				  8, 2,  //x,y
 				  1 ,		//  changable
 	   			  ZeroStorage, //sweep in storage - new
@@ -3095,7 +3099,12 @@ SatSet4.Init( &theAnyStrings.c6d[0],  //tr freq
 			 MAX_SATSET4,
 			 1);
 
-SatSet5.Init( &theAnyStrings.c6d[0],  //format
+#ifndef PROG_PU_MSAT5
+SatSet5.Init( &theAnyStrings.c6d[0],
+#else
+SatSet5.Init( &theAnyStrings.c7d[0],  //tr freq
+//SatSet4.Init( "%07d",  //tr freq  
+#endif
   				  8, 2,  //x,y
 				  1 ,		//  changable
 	   			  ZeroStorage, //sweep in storage - new
@@ -3521,9 +3530,17 @@ SatTiming.Init( &theAnyStrings.cs[0],
 					9, 2, //x,y
 				    1 , //changable
 					ZeroStorage,		//hier is zero - not saved
+#ifndef PROG_PU_MSAT5	
 					&theAnyStrings.cSatTimingV[0], //variants
+#else
+					&theAnyStrings.cSatSoundV[0],	 //offon
+#endif
 					0, //init value
+#ifndef PROG_PU_MSAT5	
 					6, //chars in one on indikator
+#else
+				    3, //chars in one on indikator
+#endif
 					2, // 
 					&theCntFunc, //pControl
 					162,//157, //cntnum control of value
@@ -4733,11 +4750,14 @@ SatSet3Item.Init(&theAnyStrings.cSatSet3[0],
 //130415    &SatSet2Item, &SatSet4Item, &SatSystemItem, NULL,
 //140227    &TestItem, &XilinxItem, &ConfigItem, NULL,	  //130415 moved to system menu group
  //&SatTimingItem, &XilinxItem, &SatSystemItem, NULL,	
+
 #ifndef RECEIVE_MOD_LOCK
     &SatTimingItem, &SatSoundItem, &SatSystemItem, NULL,	//130412
 #else
     &SatTimingItem, &SatExtLockItem, &SatSystemItem, NULL,	//130412
 #endif
+
+
 
 
   	NULL, NULL, NULL,  NULL, NULL,     &SatSet3, NULL, NULL, NULL,      NULL, NULL);
@@ -4858,8 +4878,22 @@ SatTimingItem.Init(&theAnyStrings.cSatTiming[0],
 //t 	 &LossItem, &CommandItem, &LogoItem, &ConfClkItem,
  //   &SatPCItem, &SatSet0Item, &SatSystemItem, NULL,
 //130412    &SatPCItem, &SatSoundItem, &SatSystemItem, NULL,
-
+#ifndef PROG_PU_MSAT5	
      &SatTestModeItem,  &SatSet3Item,  &SatSystemItem, NULL,	//140227
+#else
+
+#ifndef RECEIVE_MOD_LOCK
+    &SatTestModeItem,  &SatSoundItem,  &SatSystemItem, NULL,	//140227
+
+ //   &SatTimingItem, &SatSoundItem, &SatSystemItem, NULL,	//130412
+#else
+	  &SatTestModeItem,  &SatExtLockItem,  &SatSystemItem, NULL,	//140227
+
+ //   &SatTimingItem, &SatExtLockItem, &SatSystemItem, NULL,	//130412
+#endif
+
+
+#endif
 
 
 //#ifndef RECEIVE_MOD_LOCK
@@ -4878,7 +4912,13 @@ SatExtLockItem.Init(&theAnyStrings.cSatExtLock[0],
   	&theAnyStrings.cEmpty[0],
 	1,
 // 140227   &SatTimingItem, &SatExtLockPItem, &SatSystemItem, NULL,	//130412
+#ifndef PROG_PU_MSAT5	  	
     &SatSet3Item, &SatExtLockPItem, &SatSystemItem, NULL,	//130412
+#else
+    &SatTimingItem, &SatExtLockPItem, &SatSystemItem, NULL,	//130412
+#endif
+
+
   	&SatExtLock, NULL, NULL, NULL, NULL,   NULL, NULL, NULL,  NULL,  NULL, NULL);
 	
 	 
@@ -4901,6 +4941,7 @@ SatSoundItem.Init(&theAnyStrings.cSatSound[0],
  //   &SatTimingItem, &SatTFItem, &SatSystemItem, NULL,
   //140227  &SatTimingItem, &SatLowPItem, &SatSystemItem, NULL,	
 
+#ifndef PROG_PU_MSAT5
 #ifdef PROG_PU_MSAT1	
     &SatSet3Item, &SatLowPItem, &SatSystemItem, NULL,	
 #else
@@ -4910,9 +4951,12 @@ SatSoundItem.Init(&theAnyStrings.cSatSound[0],
 #else
      &SatSet3Item, &SatLowPItem, &SatSystemItem, NULL,	
 #endif
-
-
 #endif    
+
+#else
+
+	 &SatTimingItem, &SatLowPItem, &SatSystemItem, NULL,	
+#endif
     
      
   #else
@@ -4940,6 +4984,10 @@ SatSoundItem.Init(&theAnyStrings.cSatSound[0],
 #endif    
 
 #endif
+
+
+
+
 
   	&SatSound, NULL, NULL, NULL, NULL,   NULL, NULL, NULL,  NULL,  NULL, NULL);
 
@@ -11428,7 +11476,12 @@ extern "C" AnyStrings::Init()
 #ifdef PROG_PU_M710_MUX
         strcpy(cLogoLd,   "         MD-34E-16      ");
 #else
+#ifdef PROG_VNV1
+		 strcpy(cLogoLd,   "          VNV           ");
+#else
+
 		 strcpy(cLogoLd,   "         PU-M-MUX       ");
+#endif
 #endif
 #endif // PROG_PUM
 
@@ -11685,7 +11738,11 @@ extern "C" AnyStrings::Init()
 		strcpy(cSatGet6   ,  "     SatGet6    :       ");
 		strcpy(cSatGet7     ,"     SatGet7    :       ");
 		strcpy(cSatTestMode, "       Test Mode:       ");
+#ifndef PROG_PU_MSAT5	
  		strcpy(cSatTiming,   "      UPLink Mode:      ");
+#else
+		strcpy(cSatTiming,   "   Spectrum Invert      ");
+#endif
 		strcpy(cSatSound,    "        Alarm:          ");
 		strcpy(cSatFactory,  "    Factory setting:    ");
 		strcpy(cSatDF,       "  Digital Filter (kHz): ");
@@ -12190,6 +12247,7 @@ strcpy(cRemIPAddressUDP, "LP12345");
 	   	strcpy(c4d,	   	   "%04d");
 		strcpy(c4dd,	   	   "%4d");
 		strcpy(c6d,	   	   "%6d");
+		strcpy(c7d,	   	   "%7d");
 		strcpy(c08X,   	   "%08X");
 		strcpy(c30c,   	   "%30c");
 	  	strcpy(c514c,  	   "%514c");

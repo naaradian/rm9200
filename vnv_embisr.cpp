@@ -1,9 +1,14 @@
 
 #define VNV_TANZIT_STATUS	(10)
 #define VNV_MODEM_STATUS	(12)
+#define VNV_MODEM_DATA		(11)
+#define VNV_TRANZIT_DATA 	(9)
+
+
 
 void EmbSerialPU_M::IsrXX() 
 {
+//printfp(".");
  unsigned char status_transit1;
  unsigned char status_transit2;
  UnEmbSerialPU_MIRQ irq,mask;
@@ -18,7 +23,7 @@ void EmbSerialPU_M::IsrXX()
 //#ifdef TEST_PUM
 //  printfpd("\n\r %02x", status.byte);
 //   printfpd("\n\r 5: %02x", irq.byte);
-  //  printfpd("m %02x", mask.byte);
+  // printfpd("ms %02x", mask.byte);
 //	OperateBuffers_usart1t();
   //	  printfp("I");
 
@@ -32,8 +37,8 @@ void EmbSerialPU_M::IsrXX()
     {
 	if(m_TBuffMod.Used())
 	 { 
-	 outportb(0x511,m_TBuffMod.Get());
-	  tmc++;
+	 outportb(VNV_MODEM_DATA,m_TBuffMod.Get());
+  //	  tmc++;
    	 }
 	  else { mask.bit.IRQ_TX_mod=0; break;}
  
@@ -43,15 +48,17 @@ void EmbSerialPU_M::IsrXX()
    } //while
  }
  
-
+	
  if(irq.bit.IRQ_TX_trans)
   {
+ //  printfp(">");
+
    wd = 15;
    while((status_transit2 & TX_READY_BIT) && wd && irq.bit.IRQ_TX_trans)
    {
 	 if(m_TBuffTransit.Used()) 
 	 { 
-	 outportb(0x509,m_TBuffTransit.Get());
+	 outportb(VNV_TRANZIT_DATA,m_TBuffTransit.Get());
  	 } 
 	  else { mask.bit.IRQ_TX_trans=0; break;}
     irq.byte  = inportb(0x505);
@@ -65,7 +72,7 @@ void EmbSerialPU_M::IsrXX()
 	 wd = 128;
   	 while(irq.bit.IRQ_RX_mod && wd)
 	 {
-	 m_RBuffMod.Add(inportb(0x511)); 
+	 m_RBuffMod.Add(inportb(VNV_MODEM_DATA)); 
 	 irq.byte  = inportb(0x505);
 	 wd--;
 	 }
@@ -75,20 +82,24 @@ void EmbSerialPU_M::IsrXX()
 
  if(irq.bit.IRQ_RX_trans)
  {
+ //printfp("<");
    	wd = 128;
 	while(irq.bit.IRQ_RX_trans && wd)
 	{
-	 m_RBuffTransit.Add(inportb(0x509));
+	 m_RBuffTransit.Add(inportb(VNV_TRANZIT_DATA));
      irq.byte  = inportb(0x505);
 	 wd--;
 	}
 //   mask.bit.IRQ_RX_trans=0;	   //temporary commented
  }
+  //  printfpd("mf %02x", mask.byte);
   	outportb(0x506,mask.byte);
 	count++;
 }
 
-void EmbSerialPU_M::Init() 
+ 
+
+  void EmbSerialPU_M::Init() 
 { 
 	count=0;
 	Empty(); 
@@ -98,12 +109,16 @@ void EmbSerialPU_M::Init()
 	mask.bit.IRQ_RX_mod=1;
 	mask.bit.IRQ_RX_trans=1;
   	outportb(0x506,mask.byte);
- // printfpd("\n\r init_ints mask-> 0x06 : %02X", mask.byte);
+ printfpd("\n\r write init_ints mask-> 0x06 : %02X", mask.byte);
+  mask.byte = inportb(0x506);
+   printfpd("\n\r read init_ints mask-> 0x06 : %02X", mask.byte);
 
+   	 
 } 
 
 void EmbSerialPU_M::AddMod(unsigned char byte)
 { 
+
 	m_TBuffMod.Add(byte); 	
 	UnEmbSerialPU_MIRQ mask;
 	mask.byte = inportb(0x506);
@@ -113,6 +128,7 @@ void EmbSerialPU_M::AddMod(unsigned char byte)
 
 void EmbSerialPU_M::AddModM(unsigned char byte)
 { 
+
 	m_TBuffMod.Add(byte); 	
 	UnEmbSerialPU_MIRQ mask;
 	mask.byte = inportb(0x506);
@@ -122,17 +138,20 @@ void EmbSerialPU_M::AddModM(unsigned char byte)
 
 void EmbSerialPU_M::AddTransit(unsigned char byte)
 { 
+
 	m_TBuffTransit.Add(byte); 
 	UnEmbSerialPU_MIRQ mask;
 	mask.byte = inportb(0x506);
+ //	printfpd("\n\r add transit read mask ->  %02X", mask.byte);
 	mask.bit.IRQ_TX_trans = 1;
 	outportb(0x506,mask.byte);
- // 	printfpd("\n\r add transit mask -> 0x06 : %02X", mask.byte);
+  //	printfpd("\n\r add transit write mask -> %02X", mask.byte);
 
 }
 
 void EmbSerialPU_M::AddTransitM(unsigned char byte)
 { 
+
 	m_TBuffTransit.Add(byte); 
 	UnEmbSerialPU_MIRQ mask;
 	mask.byte = inportb(0x506);

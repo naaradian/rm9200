@@ -1878,8 +1878,8 @@ void SetUsart2BaudRate(unsigned long rate)
 *
 *END*----------------------------------------------------------------------*/
 //t 130828 void SetUsart2RS485(void)
-/*
-void SetUsart2ToRS485(void)   //t130828
+ /*
+void Set_Usart2_To_RS485(void)   //t130828
 {
 //printfp("\n\r SetUsart2_To_RS485");
 
@@ -1894,7 +1894,7 @@ void SetUsart2ToRS485(void)   //t130828
   usart2_ptr->MR = mr | 1;   //set over = 8
 } 
 
-      */
+ */    
 
 
 #ifdef USART0_TRY_PDC
@@ -9022,7 +9022,11 @@ AT91RM9200_MC_REG_STRUCT_PTR mc_ptr;   //memory controller
 
 #ifdef	PROG_VNV1
   // mc_ptr->EBI.SMC.CSR[2] = 0x77014384l; //without ready
-   mc_ptr->EBI.SMC.CSR[2] = 0x77014387l; //without ready
+ //  mc_ptr->EBI.SMC.CSR[2] = 0x77014387l; //without ready
+ //ok1  mc_ptr->EBI.SMC.CSR[2] = 0x77014381l;
+  mc_ptr->EBI.SMC.CSR[2] = 0x22014385l;
+
+
 #endif  
 
 

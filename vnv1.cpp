@@ -497,7 +497,8 @@ struct Emb2MuxVNV
 	unsigned char softVer;
 	unsigned char numE1;
 	unsigned char numEth;
-  	unsigned char reserv[4];
+  //	unsigned char reserv[4];
+	unsigned short state_Link[2];
 	unsigned char state_e1[48];
 	unsigned long state_eth[8];
 };
@@ -1355,11 +1356,11 @@ extern "C" void FillAlarms(unsigned char addr, char* palarms)
  {
    if(*palarms & mask)
    {
-	 unEmb2MuxVNV.emb2MuxVNV.state_e1[i + (addr << 3)] = 0;
+	 unEmb2MuxVNV.emb2MuxVNV.state_e1[i + (addr << 3)] = 3;
    }
    else
    {
-	 unEmb2MuxVNV.emb2MuxVNV.state_e1[i + (addr << 3)] = 3;
+	 unEmb2MuxVNV.emb2MuxVNV.state_e1[i + (addr << 3)] = 0;
    }
 	 mask <<= 1;
  }
@@ -1386,12 +1387,14 @@ extern "C" void ReadE1Losses(void)
  char * pret;
  char Buff[3];
  //Buff[1] = BIT_READ  +  ADDR_LOSSES; //	 0x80 + 0x04; //read bit + addr
- unsigned char addr;
-// for(addr = ADDR_IDT; addr < ADDR_IDT + IDT_QUANTITY; addr++)
+ //unsigned char addr;
+ unsigned char addr1;
+
+ //for(addr = ADDR_IDT; addr < ADDR_IDT + IDT_QUANTITY; addr++)
  for(i = 0; i < IDT_QUANTITY; i++)
   {
-	addr = 	 ADDR_IDT + (i<<1) +1;
-	Buff[0] = addr | 0x01;
+	addr1 = 	 ADDR_IDT + (i<<1) +1;
+	Buff[0] = addr1 | 0x01;
 	Buff[1] = ADDR_LOSSES;
 
 	pret = SpiWriteReadCS3(3, Buff);
@@ -1403,12 +1406,14 @@ extern "C" void ReadE1Losses(void)
 	 */
 
 
-	FillAlarms(addr - ADDR_IDT, pret+2);
+  //	FillAlarms(addr - ADDR_IDT, pret+2);
+  FillAlarms(i, pret+2);
 
-	Buff[0] = ADDR_LED + addr -  ADDR_IDT ;
-	Buff[1] = * (pret + 2);
-	Buff[2] = 0xff;   			//set all right leds on
-	SpiWriteReadCS3(3, Buff);   //operate leds
+
+//	Buff[0] = ADDR_LED + addr -  ADDR_IDT ;
+//	Buff[1] = * (pret + 2);
+//	Buff[2] = 0xff;   			//set all right leds on
+//	SpiWriteReadCS3(3, Buff);   //operate leds
   }
 }
 
@@ -1421,12 +1426,14 @@ extern "C" void ReadE1AISes(void)
  char * pret;
  char Buff[3];
  //Buff[1] = BIT_READ  +  ADDR_AISES; //	 0x80 + 0x04; //read bit + addr
- unsigned char addr;
- for(addr = ADDR_IDT; addr < ADDR_IDT + IDT_QUANTITY; addr++)
+// unsigned char addr;
+ unsigned char addr1;
+
+ //for(addr = ADDR_IDT; addr < ADDR_IDT + IDT_QUANTITY; addr++)
  for(i = 0; i < IDT_QUANTITY; i++)
   {
-	addr = 	 ADDR_IDT + (i<<1) + 1;
- 	Buff[0] = addr | 0x01;
+	addr1 = 	 ADDR_IDT + (i<<1) + 1;
+ 	Buff[0] = addr1 | 0x01;
 	Buff[1] = ADDR_AISES;
 	pret = SpiWriteReadCS3(3, Buff);
 	/*
@@ -1435,7 +1442,9 @@ extern "C" void ReadE1AISes(void)
 	printfpd(" %02X ", *(pret+1)); 
 	printfpd(" %02X ", *(pret+2)); 
    */
-	FillAISes(addr - ADDR_IDT, pret+2);
+  //	FillAISes(addr - ADDR_IDT, pret+2);
+	 FillAISes(i, pret+2);
+
   }
 }
 
@@ -1448,19 +1457,92 @@ extern "C" void ReadE1IDs(void)
 // Buff[1] =  ADDR_ID; //	 read bit setted to addr to addr
  Buff[1] =  ADDR_LOSSES; //	 read bit setted to addr to addr
 
- unsigned char addr;
- for(addr = ADDR_IDT; addr < ADDR_IDT + IDT_QUANTITY; addr++)
+ unsigned char addr; 
+  unsigned char addr1; 
+ printfp("\n\r");
+ /*
+  for(addr = ADDR_IDT; addr < ADDR_IDT + IDT_QUANTITY; addr++)
   {
- //t	Buff[0] = addr | 0x80; //read bit hier
+ 	Buff[0] = addr | 0x80; //read bit hier
   //ok	Buff[0] = 0x10 | 0x01; //read bit hier
-	Buff[0] = 0x10 | 0x01; //read bit hier
+ //	Buff[0] = 0x10 | 0x01; //read bit hier
 
 	pret = SpiWriteReadCS3(3, Buff);
-	printfpd("\n\r %02X>", addr); 
-	printfpd(" %02X ", *pret); 
-	printfpd(" %02X ", *(pret+1)); 
+   //	printfpd("\n\r %02X>", addr); 
+   //	printfpd(" %02X ", *pret); 
+   //	printfpd(" %02X ", *(pret+1)); 
 	printfpd(" %02X ", *(pret+2)); 
   }
+	*/
+
+ for(i = 0; i < IDT_QUANTITY; i++)
+  {
+	addr1 = 	 ADDR_IDT + (i<<1) +1;
+	Buff[0] = addr1 | 0x01;
+	Buff[1] = ADDR_LOSSES;
+
+	pret = SpiWriteReadCS3(3, Buff);
+   
+   // printfpd("\n\r %02X>", addr); 
+   //	printfpd(" %02X ", *pret); 
+   //	printfpd(" %02X ", *(pret+1)); 
+	printfpd(" %02X ", *(pret+2)); 
+   
+
+ }
+
+
+}
+
+
+extern "C" void ReadEthRegs(void)
+{
+unsigned char a,b,c;
+
+//printfpd("\n\r0x20:%02X", inportb(0x20)); 
+//printfpd(" 0x21:%02X", inportb(0x21)); 
+  a = inportb(0x20);
+  b = inportb(0x21);
+  unEmb2MuxVNV.emb2MuxVNV.state_Link[0] = a + (b << 8);
+			
+//printfpd(" 0x24:%02X", inportb(0x24)); 
+//printfpd(" 0x25:%02X", inportb(0x25)); 
+  a = inportb(0x24);
+  b = inportb(0x25);
+  unEmb2MuxVNV.emb2MuxVNV.state_Link[1] = a + (b << 8);
+
+//printfpd("\n\r0x28:%02X", inportb(0x28)); 
+//printfpd(" 0x29:%02X", inportb(0x29)); 
+//printfpd(" 0x2a:%02X", inportb(0x2a)); 
+  a = inportb(0x28);
+  b = inportb(0x29);
+  c = inportb(0x2a);
+  unEmb2MuxVNV.emb2MuxVNV.state_eth[0] = a + (b << 8) + (c << 16);
+
+//printfpd(" 0x2c:%02X", inportb(0x2c)); 
+//printfpd(" 0x2d:%02X", inportb(0x2d)); 
+//printfpd(" 0x2e:%02X", inportb(0x2e)); 
+  a = inportb(0x2c);
+  b = inportb(0x2d);
+  c = inportb(0x2e);
+  unEmb2MuxVNV.emb2MuxVNV.state_eth[1] = a + (b << 8) + (c << 16);
+
+//printfpd("\n\r0x30:%02X", inportb(0x30)); 
+//printfpd(" 0x31:%02X", inportb(0x31)); 
+//printfpd(" 0x32:%02X", inportb(0x32)); 
+  a = inportb(0x30);
+  b = inportb(0x31);
+  c = inportb(0x32);
+  unEmb2MuxVNV.emb2MuxVNV.state_eth[2] = a + (b << 8) + (c << 16);
+
+//printfpd(" 0x34:%02X", inportb(0x34)); 
+//printfpd(" 0x35:%02X", inportb(0x35)); 
+//printfpd(" 0x36:%02X", inportb(0x36)); 
+  a = inportb(0x34);
+  b = inportb(0x35);
+  c = inportb(0x36);
+  unEmb2MuxVNV.emb2MuxVNV.state_eth[3] = a + (b << 8) + (c << 16);
+
 }
 
 
@@ -1643,7 +1725,8 @@ EmbInit();	 //embrs232 embrs485
 	tBuffEmbMsgWest.Init();
 	tBuffEmbMsgEast.Init();
 	rBuffEmbMsg.Init();
-	embSerialACT155.Init();
+
+ //	embSerialACT155.Init();
 
 	 embMsg.Init();
      embMsgWest.Init();
@@ -1665,16 +1748,19 @@ EmbInit();	 //embrs232 embrs485
 	embTimerCallback0.count = 0;
 	embTimer.SetCallBack0(&embTimerCallback0);
 
+//embSerialACT155.Init();	
+
+
 //wait while load xilinx
   //	delay_mcs(1000000);
 //	delay_mcs(5000000);
 
  
-// printfp("\n\rStart mirrortest:");
+ printfp("\n\rStart mirrortest:\n\r");
 
- for(i=0; i<100; i++)
+ for(i=0; i<200; i++)
   {
-//  printfpd(" %d", i);
+  printfpd("\r %d", i);
    if(MirrorTest())
 //  if(inportb(1) == 0xb6) 
   // if(0)
@@ -1682,14 +1768,46 @@ EmbInit();	 //embrs232 embrs485
     printfpd("\n\r mrrortest ok %d", i);
   break;
  }
-   delay_mcs(3000);
+   delay_mcs(30000l);
+   wd_reset;
+   OperateBuffers_usart0t();
   //ok  delay_mcs(5000);
+     printfpd("\r mrrortest wrong  %d", i);
 
   }
    //	  OperateBuffers_usart0t();
- 
+     delay_mcs(300000l);
+
 
   InitTLF();
+  /*
+    delay_mcs(300000l);
+
+
+  InitTLF();
+
+   delay_mcs(300000l);
+
+
+  InitTLF();
+
+    delay_mcs(300000l);
+
+
+  InitTLF();
+
+
+   delay_mcs(300000l);
+
+
+  InitTLF();
+
+    delay_mcs(300000l);
+
+
+  InitTLF();
+   */
+
 
 
 //	Ring();
@@ -1728,12 +1846,22 @@ EmbInit();	 //embrs232 embrs485
 	unStatePUM.statePUM.reserv = 0x20;
 
    	unEmb2MuxVNV.emb2MuxVNV.numE1 = 48;
+ 	unEmb2MuxVNV.emb2MuxVNV.numEth = 3;
+
 
 for(i=0; i<unEmb2MuxVNV.emb2MuxVNV.numE1; i++)
 	{
 		unEmb2MuxVNV.emb2MuxVNV.state_e1[i] = 0;
 	}
+
+for(i=0; i<8; i++)
+	{
+		unEmb2MuxVNV.emb2MuxVNV.state_eth[i] = 0;
+	}
+
+
  //	 InitE1VNV();
+ embSerialACT155.Init();
 
 } //add this
 
@@ -1781,6 +1909,8 @@ if(!(cnt% SCAN_PERIOD))
 
  ReadE1Losses();
  ReadE1AISes();
+ ReadEthRegs();
+
 }
  
 		if(time1 - wait_time >= 40) 
@@ -1891,8 +2021,17 @@ if(!(cnt% SCAN_PERIOD))
 		ProtocolFromTransitACT155();
 		i232=0;
    
-#include checkremotevnv.cpp
-#include answervnv.cpp
+//#include checkremotevnv.cpp
+//#include answervnv.cpp
+
+//#include bmdn4_rem.c //100110
+
+ #include checkremotemod.inc
+// #include answermod.inc
+#include answerpum.inc
+
+
+
 }
 
 //}
@@ -2116,38 +2255,10 @@ unsigned int   merc, zerc,up0erc,up1erc;
 unsigned char rup0, rup0o,  rup1, rup1o;
 unsigned long rmc, tmc, rtzc,  ttzc, tup0c, rup0c, tup1c, rup1c;
 
+/*
 void test_PU37_interrupt_ovner()
 {
     char cnt = 16;
-  /*
-	while (((inportb(0x505) &  0x10) != 0) && cnt)  // RX up0
-				{
-				 	rup0=inportb(0x50b);
-					rup0c++;
-					if (rup0o!=rup0)
-						{			
-							if (up0erc <0xfffe) up0erc++;
-						}
-					rup0++;
-					rup0o=rup0;
-					cnt--;
-				}
-	   cnt = 16;
-		while(((inportb(0x505) &  0x40) != 0) && cnt) // RX up1
-				{
-				 	rup1=inportb(0x50d);
-					rup1c++;
-					if (rup1o!=rup1)
-							{			
-									if (up1erc <0xfffe) up1erc++;
-							}
-					rup1++;
-					rup1o=rup1;
-					cnt--;
-				}
-
-	*/
-
 		cnt = 16; //t16;
 		while (((inportb(0x505) &  0x01) != 0) && cnt)  // RX MODEM
 				{
@@ -2176,6 +2287,7 @@ void test_PU37_interrupt_ovner()
 				}
 	    my_int_enable_irq0();
 }
+*/
 
 void test_PU37()
 {
@@ -2185,12 +2297,12 @@ void test_PU37()
  PeriodCounter++;
  if(PeriodCounter > TEST_PERIOD)
   {
- // printfpd("\r test transit ttzc  %d", ttzc);
+// printfpd("\r test transit ttzc  %d", ttzc);
     OperateBuffers_usart0t();
 
 
  PeriodCounter = 0l;
-			
+		  	
 		   if(embSerialACT155.UsedSendMod() < 5)
 				 {
 		  		  embSerialACT155.AddMod(tm++);
@@ -2198,13 +2310,23 @@ void test_PU37()
 				  embSerialACT155.AddMod(tm++);
 				  embSerialACT155.AddMod(tm++);
 				  embSerialACT155.AddMod(tm++);
-				  tmc += 5;
+			 //	  tmc += 5;
+// if(!(tmc %5))
+//  {
+//  printfpd("\n\rt : %02X>", tmc);
+//  printfpd("t : %02X", tm);
+ 
+ // }
+			    tmc += 5;
+
 		  		  }
 		
-
+		   
 
 	  	  if(embSerialACT155.UsedSendTransit() < 5)
 			     {
+
+//printfpd("\rsend trz: %d",  ttzc);
 			   	   embSerialACT155.AddTransit(ttz++);
 				     embSerialACT155.AddTransit(ttz++);
   					embSerialACT155.AddTransit(ttz++);
@@ -2220,8 +2342,19 @@ void test_PU37()
 	{
 	rm=embSerialACT155.m_RBuffMod.Get();
 					rmc++;
+  if(!(rmc %5))
+  {
+	   //		printfpd("\n\r %d>", rmc);
+		//	printfpd("  %02X", rm);
+		//  	printfpd("=  %02X", rmo);
+}
+
+
 					if (rmo!=rm)
-							{		
+							{
+					   //		printfpd("\n\r %02X", rm);
+					  //		printfpd("!=  %02X", rmo);
+		
 									if (merc <0xfffe) merc++;
  							}
 					rm++;
@@ -2235,6 +2368,7 @@ void test_PU37()
 					rtzc++;
 					if (rtzo!=rtz)
 				  	{
+
 				  		if (zerc <0xfffe) 	zerc++;
 				  	}
 				rtz++;
@@ -2252,8 +2386,9 @@ OperateBuffers_usart0t();
 			ttzc=0;rtzc=0; zerc=0;
 	}
 	
-	if (tmc>20000)
-		{
+  	if (tmc>20000)
+ // if (tmc>300)
+	{
   printfp("\n\rSend MOD --"); 
   printfpd("%d",tmc);
   printfp(" RX--"); 

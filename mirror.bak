@@ -7,11 +7,11 @@ extern "C" unsigned char MirrorTest()
  unsigned char ret = 1;
  unsigned char test = 0x5A;
  outportb(MIRROR_PORT, test);
-// printfpd("\n\r mt 5a: %02X", inportb(MIRROR_PORT) );
+ printfpd("\n\r mt 5a: %02X", inportb(MIRROR_PORT) );
  if(test != inportb(MIRROR_PORT))  ret = 0;
  test = 0xA5;
  outportb(MIRROR_PORT, test);
-// printfpd("\n\r mt a5: %02X", inportb(MIRROR_PORT) );
+ printfpd("\n\r mt a5: %02X", inportb(MIRROR_PORT) );
  if(test != inportb(MIRROR_PORT))  ret = 0;
 
 //printfpd("\n\r>%d", ret); //for test

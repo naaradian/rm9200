@@ -6,7 +6,7 @@ command_counter++;
              embMsgAns.SetLength(0); //121023 - if have wrong command - set as default minimum length
 			
          
-          // printf("\n\r command : 0x%02X", embMsgRequest->Type());
+  //         printfpd("\n\r command : 0x%02X", embMsgRequest->Type());
                 //  	printEthLongHex(embMsgRequest->Type());
 
           	switch(embMsgRequest->Type())

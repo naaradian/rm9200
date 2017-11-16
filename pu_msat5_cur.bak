@@ -6083,7 +6083,7 @@ IOSpiSendR(8 , 3, 0, DataADC, DataADC);	  //soft reset
 delay_mcs(2);
 
 pData = DataADC;
-*pData++ = 0x01;  *pData++ = 0x0C;  //write 1 byte to addr 0x10c
+*pData++ = 0x01;  *pData++ = 0x0C;  //write 1 byte to addr 0x10C
 *pData = 0x00;  // 	00100100  dc correction disable
 IOSpiSendR(7 , 3, 0, DataADC, DataADC);	  //soft reset
 IOSpiSendR(8 , 3, 0, DataADC, DataADC);	  //soft reset
@@ -6458,7 +6458,7 @@ pData = DataDDS;
 IOSpiSendR(3  , 3,  0,  DataDDS, DataDDS);	  //channel D
 
 pData = DataDDS;
-*pData++ = 0x42;   *pData++ = 0;	 *pData = 0x29;// 0x09;  //addr 21
+*pData++ = 0x42;   *pData++ = 0;	 *pData = 0x28;//0x29;// 0x09;  //addr 21
 IOSpiSendR(3  , 3,  0,  DataDDS, DataDDS);	  //channel D
 
 pData = DataDDS;

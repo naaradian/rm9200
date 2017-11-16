@@ -55,6 +55,79 @@ void ResetWatchDog()
  unsigned long cnt_rcv;
 
 
+//#define RELAY_Q	(6)
+#define RELAY_Q	(40)
+#define DIR_Q	(3)
+#define NAME_LENGTH   (32)
+#define NAME_LENGTH   (32)
+#define BER_LENGTH    (12)
+
+
+
+typedef struct direction
+{
+uint_32 dstate;
+uint_32 dnumber;
+uint_32 dstation;
+//uint_32 dname;
+unsigned char dname[NAME_LENGTH];
+uint_32 dwnumber;
+uint_32 dmodtype;
+uint_32 dmodstate;
+uint_32 dfpd1;
+uint_32 dfpm1;
+int_32 dpwpd1;
+int_32 dlwpm1;
+int_32 dzpwin1;
+uint_32 dfpd2;
+uint_32 dfpm2;
+int_32 dpwpd2;
+int_32 dlwpm2;
+int_32 dzpwin2;
+uint_32 drate;
+uint_32 dmodul;
+uint_32 dbound;
+uint_32 drateth;
+uint_32 de1;
+uint_32 dstm;
+uint_32 derrors;
+//uint_32 dber;
+unsigned char dber[BER_LENGTH];
+uint_32 dtber;
+uint_32 drez1;
+uint_32 drez2;
+uint_32 drez3;
+uint_32 drez4;
+}  DIRECTOION, _PTR_ DIRECTION_PTR;   
+
+
+typedef struct relay
+{
+uint_32 index;
+uint_32 type;
+unsigned char name[NAME_LENGTH];
+uint_32 state;
+struct direction d[DIR_Q];
+
+}  RELAY, _PTR_ RELAY_PTR; 
+
+typedef union urelay
+{
+struct relay r;
+unsigned char  b[4 * 4 + 4 * 30 * DIR_Q ];
+}  URELAY, _PTR_ URELAY_PTR; 
+      
+
+//struct relay  rrs[RELAY_Q]; 
+urelay  urrs[RELAY_Q];
+
+unsigned char relay_q;    
+
+
+
+     
+
+
 struct sendcash
 {
 	unsigned long cnum;
@@ -1341,6 +1414,314 @@ unsigned long time3BlankUp2=0;
 
 
 
+
+extern "C" unsigned char SetRelayq(unsigned char r)	   //body(3)
+{
+ //  printfpd("\n\r SetRelayq : %d", r);
+
+//return;
+int i;
+unsigned char num = embMsgRequest->Body(0);
+if(num > RELAY_Q) { return 0;} 
+urrs[num].r.index = embMsgRequest->Body(2);
+
+
+for(i = 0; i < NAME_LENGTH; i++)
+{
+   	urrs[num].r.name[i] =  embMsgRequest->Body(i+ 4);
+ //	printfpd("%02X ", urrs[num].r.name[i]);
+	urrs[num].r.d[0].dname[i] =  embMsgRequest->Body(i+ 4 + NAME_LENGTH);
+	urrs[num].r.d[1].dname[i] =  embMsgRequest->Body(i+ 4 + NAME_LENGTH + NAME_LENGTH);
+	urrs[num].r.d[2].dname[i] =  embMsgRequest->Body(i+ 4 + NAME_LENGTH + NAME_LENGTH + NAME_LENGTH);
+}
+
+
+
+
+  urrs[num].r.name[31] = 0;
+if(r > RELAY_Q) { return 0;}  //quantity
+relay_q = r;
+
+return 1;
+}
+
+extern "C" unsigned char SetDir(void)
+{
+
+struct Emb4StateSnmp /// State  192
+{
+ //  unsigned long indexSt; // 1. [byte] ????? ???????
+  //	unsigned long stateSt; // 3. [byte] ????????? ??????? // 2
+
+	unsigned char indexSt; // 1. [byte] ????? ???????
+	unsigned char stateSt; // 3. [byte] ????????? ??????? // 2
+	unsigned char dir1diap1;
+	unsigned char dir1diap2;
+	unsigned char dir2diap1;
+	unsigned char dir2diap2;
+	unsigned char dir3diap1;
+	unsigned char dir3diap2;
+
+
+
+
+
+//  unsigned short reserv; // 1. [byte] ????? ???????
+
+	unsigned char stateDir_0; // 4.1. [byte] ????????? ???????????
+    unsigned char numDir_0; // 4.2. [byte]
+	unsigned char numStConnect_0; // 4.3. [byte] ??????? ?? ??????? ????????
+	unsigned char numDirConnect_0; // 4.5. [byte] ????? ??????????? ?? ??????? ????????
+
+	unsigned char typeMod_0; // 4.6. [byte] ??? ?????? (??310IP-1 , ??34?-2)
+	unsigned char stateMod_0; // 4.7. [byte] ????????? ?????? («?????», «??? ???????», «??????», «??????????? ??????», «??????», «??? ??????», «??????????»)
+	unsigned char freqPd1_0; // 4.8. [byte] ??????? ??1 ? ???
+	unsigned char freqPm1_0; // 4.9. [byte] ??????? ??1 ? ???
+//
+	unsigned char power1_0; // 4.10. [byte] ???????? ??1
+	unsigned char level1_0; // 4.11. [byte] ??????? ?? ????? ??1
+	unsigned char margin1_0;// 4.12. [byte] ????? ???????? ? ?? ?????1
+	unsigned char freqPd2_0; // 4.13. [byte] ??????? ??2 ? ???
+
+	unsigned char freqPm2_0; // 4.14. [byte] ??????? ??2 ? ???
+	unsigned char power2_0; // 4.15. [byte] ???????? ??2
+	unsigned char level2_0; // 4.16. [byte] ??????? ?? ????? ??2
+	unsigned char margin2_0;// 4.17. [byte] ????? ???????? ? ?? ????? 2 // 13
+//
+	unsigned char bandwidth_0;// 4.20. [byte] ?????? ??????
+	unsigned char modulate_0; // 4.19. [byte] ??? ????????? (QPSK, 32QAM, 64QAM, 128QAM, 256QAM, ACM)
+	unsigned char numE1_0;// 4.22. [byte] ????? E1
+	unsigned char numSTM1_0; // 4.23. [byte] ????? STM-1
+
+	unsigned long rateAll_0; // 4.18. [short] ???????? ????? ????/?
+//
+	unsigned long rateEth_0; // 4.21. [short] ???????? Eth   // 17
+	unsigned long err_0; // 4.24. [long] ?????????? ?????? ?? ?????? // 21
+//
+	unsigned long second_0;// 4.26. [long] ????? ????????? BER //27
+	unsigned long ber_0;// 4.25. [byte+byte] BER 5.3e-12 [53 + 12]// 23
+//
+/// ??????????? 1
+	unsigned char stateDir_1; // 4.1. [byte] ????????? ???????????
+  unsigned char numDir_1; // 4.2. [byte]
+	unsigned char numStConnect_1; // 4.3. [byte] ??????? ?? ??????? ????????
+	unsigned char numDirConnect_1; // 4.5. [byte] ????? ??????????? ?? ??????? ????????
+
+	unsigned char typeMod_1; // 4.6. [byte] ??? ?????? (??310IP-1 , ??34?-2)
+	unsigned char stateMod_1; // 4.7. [byte] ????????? ?????? («?????», «??? ???????», «??????», «??????????? ??????», «??????», «??? ??????», «??????????»)
+	unsigned char freqPd1_1; // 4.8. [byte] ??????? ??1 ? ???
+	unsigned char freqPm1_1; // 4.9. [byte] ??????? ??1 ? ???
+//	
+	unsigned char power1_1; // 4.10. [byte] ???????? ??1
+	unsigned char level1_1; // 4.11. [byte] ??????? ?? ????? ??1
+	unsigned char margin1_1;// 4.12. [byte] ????? ???????? ? ?? ?????1
+	unsigned char freqPd2_1; // 4.13. [byte] ??????? ??2 ? ???
+
+	unsigned char freqPm2_1; // 4.14. [byte] ??????? ??2 ? ???
+	unsigned char power2_1; // 4.15. [byte] ???????? ??2
+	unsigned char level2_1; // 4.16. [byte] ??????? ?? ????? ??2
+	unsigned char margin2_1;// 4.17. [byte] ????? ???????? ? ?? ????? 2 // 13
+//	
+	unsigned char bandwidth_1;// 4.20. [byte] ?????? ??????
+	unsigned char modulate_1; // 4.19. [byte] ??? ????????? (QPSK, 32QAM, 64QAM, 128QAM, 256QAM, ACM)
+	unsigned char numE1_1;// 4.22. [byte] ????? E1
+	unsigned char numSTM1_1; // 4.23. [byte] ????? STM-1
+
+	unsigned long rateAll_1; // 4.18. [short] ???????? ????? ????/?
+//
+	unsigned long rateEth_1; // 4.21. [short] ???????? Eth   // 17
+	unsigned long err_1; // 4.24. [long] ?????????? ?????? ?? ?????? // 21
+//
+	unsigned long second_1;// 4.26. [long] ????? ????????? BER //27
+	unsigned long ber_1;// 4.25. [byte+byte] BER 5.3e-12 [53 + 12]// 23
+/// ??????????? 2
+	unsigned char stateDir_2; // 4.1. [byte] ????????? ???????????
+    unsigned char numDir_2; // 4.2. [byte]
+	unsigned char numStConnect_2; // 4.3. [byte] ??????? ?? ??????? ????????
+	unsigned char numDirConnect_2; // 4.5. [byte] ????? ??????????? ?? ??????? ????????
+
+	unsigned char typeMod_2; // 4.6. [byte] ??? ?????? (??310IP-1 , ??34?-2)
+	unsigned char stateMod_2; // 4.7. [byte] ????????? ?????? («?????», «??? ???????», «??????», «??????????? ??????», «??????», «??? ??????», «??????????»)
+	unsigned char freqPd1_2; // 4.8. [byte] ??????? ??1 ? ???
+	unsigned char freqPm1_2; // 4.9. [byte] ??????? ??1 ? ???
+//
+	unsigned char power1_2; // 4.10. [byte] ???????? ??1
+	unsigned char level1_2; // 4.11. [byte] ??????? ?? ????? ??1
+	unsigned char margin1_2;// 4.12. [byte] ????? ???????? ? ?? ?????1
+	unsigned char freqPd2_2; // 4.13. [byte] ??????? ??2 ? ???
+
+	unsigned char freqPm2_2; // 4.14. [byte] ??????? ??2 ? ???
+	unsigned char power2_2; // 4.15. [byte] ???????? ??2
+	unsigned char level2_2; // 4.16. [byte] ??????? ?? ????? ??2
+	unsigned char margin2_2;// 4.17. [byte] ????? ???????? ? ?? ????? 2 // 13
+//	
+	unsigned char bandwidth_2;// 4.20. [byte] ?????? ??????
+	unsigned char modulate_2; // 4.19. [byte] ??? ????????? (QPSK, 32QAM, 64QAM, 128QAM, 256QAM, ACM)
+	unsigned char numE1_2;// 4.22. [byte] ????? E1
+	unsigned char numSTM1_2; // 4.23. [byte] ????? STM-1
+
+	unsigned long rateAll_2; // 4.18. [short] ???????? ????? ????/?
+//
+	unsigned long rateEth_2; // 4.21. [short] ???????? Eth   // 17
+	unsigned long err_2; // 4.24. [long] ?????????? ?????? ?? ?????? // 21
+//
+	unsigned long second_2;// 4.26. [long] ????? ????????? BER //27
+	unsigned long ber_2;// 4.25. [byte+byte] BER 5.3e-12 [53 + 12]// 23
+};
+
+union UnEmb4StateSnmp
+{
+	unsigned char byte[128];
+	Emb4StateSnmp e;
+};    
+
+UnEmb4StateSnmp u;   
+
+for(int i = 0; i < 128; i++)
+{
+ u.byte[i] =  embMsgRequest->Body(i);
+}                 
+
+//printfp("\n\r SetDir ");
+//return;
+
+unsigned char num = u.e.indexSt;  //embMsgRequest->Body(0);
+if(num > RELAY_Q) { return 0;} 
+
+urrs[num].r.state = (unsigned long)u.e.stateSt;
+
+unsigned long d11 =  (u.e.dir1diap1 == 6) ? 5671500 : 7908500;
+unsigned long d12 =  (u.e.dir1diap2 == 6) ? 5671500 : 7908500;
+unsigned long d21 =  (u.e.dir2diap1 == 6) ? 5671500 : 7908500;
+unsigned long d22 =  (u.e.dir2diap2 == 6) ? 5671500 : 7908500;
+unsigned long d31 =  (u.e.dir3diap1 == 6) ? 5671500 : 7908500;
+unsigned long d32 =  (u.e.dir3diap2 == 6) ? 5671500 : 7908500;
+
+
+
+
+
+signed char l1 =  u.e.level1_0;
+sprintf(urrs[num].r.d[0].dber,"%1d.%1dE-%1d%1d",u.e.ber_0>>24, (u.e.ber_0 & 0xFFFFFF)>>16,(u.e.ber_0 & 0xFFFF)>>8, u.e.ber_0 & 0xFF);
+sprintf(urrs[num].r.d[1].dber,"%1d.%1dE-%1d%1d",u.e.ber_1>>24, (u.e.ber_1 & 0xFFFFFF)>>16,(u.e.ber_1 & 0xFFFF)>>8, u.e.ber_1 & 0xFF);
+sprintf(urrs[num].r.d[2].dber,"%1d.%1dE-%1d%1d",u.e.ber_2>>24, (u.e.ber_2 & 0xFFFFFF)>>16,(u.e.ber_2 & 0xFFFF)>>8, u.e.ber_2 & 0xFF);
+
+
+urrs[num].r.d[0].dstate = u.e.stateDir_0;
+urrs[num].r.d[0].dnumber = u.e.numDir_0;
+urrs[num].r.d[0].dstation =  u.e.numStConnect_0;
+urrs[num].r.d[0].dwnumber = u.e.numDirConnect_0;
+urrs[num].r.d[0].dmodtype = u.e.typeMod_0;
+urrs[num].r.d[0].dmodstate = u.e.stateMod_0;
+urrs[num].r.d[0].dfpd1 = u.e.freqPd1_0 * 3500 + d11;
+urrs[num].r.d[0].dfpm1 = u.e.freqPm1_0 * 3500 + d11;
+urrs[num].r.d[0].dpwpd1 =  (signed int)(signed char)u.e.power1_0;
+urrs[num].r.d[0].dlwpm1 = (signed int)(signed char)u.e.level1_0;	//need make signed
+urrs[num].r.d[0].dzpwin1 = (signed int)(signed char)u.e.margin1_0;
+urrs[num].r.d[0].dbound = u.e.bandwidth_0;
+urrs[num].r.d[0].dfpd2 = u.e.freqPd2_0 * 3500 + d12;
+urrs[num].r.d[0].dfpm2 = u.e.freqPm2_0 * 3500 + d12; 
+urrs[num].r.d[0].dpwpd2 = (signed int)(signed char)u.e.power2_0; 
+urrs[num].r.d[0].dlwpm2 = (signed int)(signed char)u.e.level2_0; 
+urrs[num].r.d[0].dzpwin2 = (signed int)(signed char)u.e.margin2_0; 
+urrs[num].r.d[0].drate =  u.e.rateAll_0; 
+urrs[num].r.d[0].dmodul = u.e.modulate_0; 
+urrs[num].r.d[0].drateth =  u.e.rateEth_0; 
+urrs[num].r.d[0].derrors = u.e.err_0; 
+//urrs[num].r.d[0].dber = u.e.ber_0; 
+urrs[num].r.d[0].dtber = u.e.second_0; 
+urrs[num].r.d[0].de1 = u.e.numE1_0; 
+urrs[num].r.d[0].dstm = u.e.numSTM1_0; 
+
+urrs[num].r.d[1].dstate = u.e.stateDir_1;
+urrs[num].r.d[1].dnumber = u.e.numDir_1;
+urrs[num].r.d[1].dstation =  u.e.numStConnect_1;
+urrs[num].r.d[1].dwnumber = u.e.numDirConnect_1;
+urrs[num].r.d[1].dmodtype = u.e.typeMod_1;
+urrs[num].r.d[1].dmodstate = u.e.stateMod_1;
+urrs[num].r.d[1].dfpd1 = u.e.freqPd1_1 * 3500 + d21;
+urrs[num].r.d[1].dfpm1 = u.e.freqPm1_1 * 3500 + d21;
+urrs[num].r.d[1].dpwpd1 =  (signed int)(signed char)u.e.power1_1;
+urrs[num].r.d[1].dlwpm1 =  (signed int)(signed char)u.e.level1_1;
+urrs[num].r.d[1].dzpwin1 = (signed int)(signed char)u.e.margin1_1;
+urrs[num].r.d[1].dbound = u.e.bandwidth_1;
+urrs[num].r.d[1].dfpd2 = u.e.freqPd2_1 * 3500 + d22;
+urrs[num].r.d[1].dfpm2 = u.e.freqPm2_1 * 3500 + d22; 
+urrs[num].r.d[1].dpwpd2 = (signed int)(signed char)u.e.power2_1; 
+urrs[num].r.d[1].dlwpm2 = (signed int)(signed char)u.e.level2_1; 
+urrs[num].r.d[1].dzpwin2 = (signed int)(signed char)u.e.margin2_1; 
+urrs[num].r.d[1].drate =  u.e.rateAll_1; 
+urrs[num].r.d[1].dmodul = u.e.modulate_1; 
+urrs[num].r.d[1].drateth =  u.e.rateEth_1; 
+urrs[num].r.d[1].derrors = u.e.err_1; 
+//urrs[num].r.d[1].dber = u.e.ber_1; 
+urrs[num].r.d[1].dtber = u.e.second_1; 
+urrs[num].r.d[1].de1 = u.e.numE1_1; 
+urrs[num].r.d[1].dstm = u.e.numSTM1_1; 
+
+
+urrs[num].r.d[2].dstate = u.e.stateDir_2;
+urrs[num].r.d[2].dnumber = u.e.numDir_2;
+urrs[num].r.d[2].dstation =  u.e.numStConnect_2;
+urrs[num].r.d[2].dwnumber = u.e.numDirConnect_2;
+urrs[num].r.d[2].dmodtype = u.e.typeMod_2;
+urrs[num].r.d[2].dmodstate = u.e.stateMod_2;
+urrs[num].r.d[2].dfpd1 = u.e.freqPd1_2 * 3500 + d31;
+urrs[num].r.d[2].dfpm1 = u.e.freqPm1_2 * 3500 + d31;
+urrs[num].r.d[2].dpwpd1 =  (signed int)(signed char)u.e.power1_2;
+urrs[num].r.d[2].dlwpm1 =  (signed int)(signed char)u.e.level1_2;
+urrs[num].r.d[2].dzpwin1 = (signed int)(signed char)u.e.margin1_2;
+urrs[num].r.d[2].dbound = u.e.bandwidth_2;
+urrs[num].r.d[2].dfpd2 = u.e.freqPd2_2 * 3500 + d32;
+urrs[num].r.d[2].dfpm2 = u.e.freqPm2_2 * 3500 + d32; 
+urrs[num].r.d[2].dpwpd2 = (signed int)(signed char)u.e.power2_2; 
+urrs[num].r.d[2].dlwpm2 = (signed int)(signed char)u.e.level2_2; 
+urrs[num].r.d[2].dzpwin2 = (signed int)(signed char)u.e.margin2_2; 
+urrs[num].r.d[2].drate =  u.e.rateAll_2; 
+urrs[num].r.d[2].dmodul = u.e.modulate_2; 
+urrs[num].r.d[2].drateth =  u.e.rateEth_2; 
+urrs[num].r.d[2].derrors = u.e.err_2; 
+//urrs[num].r.d[2].dber = u.e.ber_2; 
+urrs[num].r.d[2].dtber = u.e.second_2; 
+urrs[num].r.d[2].de1 = u.e.numE1_2; 
+urrs[num].r.d[2].dstm = u.e.numSTM1_2; 
+
+ if((u.e.dir1diap1 != 6) && (u.e.dir1diap1 != 8)) 
+ {
+ urrs[num].r.d[0].dfpd1 = 0;
+ urrs[num].r.d[0].dfpm1 = 0;
+ }
+
+ if((u.e.dir1diap2 != 6) && (u.e.dir1diap2 != 8)) 
+ {
+ urrs[num].r.d[0].dfpd2 = 0;
+ urrs[num].r.d[0].dfpm2 = 0;
+ }
+
+ if((u.e.dir2diap1 != 6) && (u.e.dir2diap1 != 8)) 
+ {
+ urrs[num].r.d[1].dfpd1 = 0;
+ urrs[num].r.d[1].dfpm1 = 0;
+ }
+
+ if((u.e.dir2diap2 != 6) && (u.e.dir2diap2 != 8)) 
+ {
+ urrs[num].r.d[1].dfpd2 = 0;
+ urrs[num].r.d[1].dfpm2 = 0;
+ }
+
+if((u.e.dir3diap1 != 6) && (u.e.dir3diap1 != 8)) 
+ {
+ urrs[num].r.d[2].dfpd1 = 0;
+ urrs[num].r.d[2].dfpm1 = 0;
+ }
+
+ if((u.e.dir3diap2 != 6) && (u.e.dir3diap2 != 8)) 
+ {
+ urrs[num].r.d[2].dfpd2 = 0;
+ urrs[num].r.d[2].dfpm2 = 0;
+ }
+}
 
 //__________________________________________________
 void ProtocolFromUD1ACT155()
@@ -2828,8 +3209,8 @@ struct StateDev
 StateDev statedev[DEVCONFIG_QUANTITY];
 
 
-EmbRS232 embRS232S;
-//EmbRS485 embRS232S;
+//t EmbRS232 embRS232S;
+EmbRS485 embRS232S;  //170530
 
 #ifndef CHANGE_USART12
 EmbMsg485 embMsg232S;
@@ -2921,8 +3302,13 @@ unsigned char NeedWriteID;
 
 //unsigned long cnt_rcv;
 
+ char HELLO[32];
+
+extern unsigned char commut_snmp;
+
 extern "C" void Init_PU_M(void)
 {
+//printfp2("\n\r Init PU_M");
 tmc = 0;
 cnt_rcv = 0;
 
@@ -3414,8 +3800,8 @@ cur_req_pointer = 0;
 //return;
 //#endif
 #ifndef MAKET_PLATA	
- Set_Usart2_To_RS485();
-#endif
+ Set_Usart2_To_RS485();		
+ #endif
 
  time1old232S = 0l;
  embMsg485RequestS.Init();
@@ -3431,6 +3817,126 @@ for(long in = 0; in < DEVCONFIG_QUANTITY; in++)
 
 
 #endif // USE_USART2
+
+
+ commut_snmp = 1;	   //to do not lost snmp
+  relay_q = 0; //RELAY_Q;   
+
+ // relay_q = 1;
+  HELLO[0] = 'H'; //{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32 };//"Hello!";
+  HELLO[0] = 'E';
+  HELLO[0] = 'L';
+  HELLO[0] = 'L';
+  HELLO[0] = '0'; 
+
+signed char l1 = -22;
+    for(i = 0; i <RELAY_Q; i++)
+            {
+        //     urrs[i].r.type = i;
+ 		//	 urrs[i].r.index = i<<1;
+		//	 urrs[i].r.name = i<<2;
+ 		//	 urrs[i].r.state = i<<3;
+		//	 urrs[i].r.d[0].dstate = i<<4;
+		//	 urrs[i].r.d[0].dnumber = i<<5;
+				for(int j = 0; j <4 * 4 + 4 * 30 * DIR_Q ; j++)
+            {
+             urrs[i].b[j] = 0;// i+j;
+            }
+        }
+
+    
+ 		    for(i = 0; i <RELAY_Q; i++)
+            {
+             urrs[i].r.type = 0;
+			   urrs[i].r.d[0].dlwpm1 = (signed int) l1;
+
+ 		//	 urrs[i].r.index = i<<1;
+		//	 urrs[i].r.name = i<<2;
+ 		//	 urrs[i].r.state = i<<3;
+		//	 urrs[i].r.d[0].dstate = i<<4;
+		//	 urrs[i].r.d[0].dnumber = i<<5;
+
+	  		  	 urrs[i].r.name[0] = 'h';
+  		  	     urrs[i].r.name[1] = 'e';
+		   	     urrs[i].r.name[2] = 'l';
+			     urrs[i].r.name[3] = 'l';
+ 				 urrs[i].r.name[4] = 'o';
+ 				 urrs[i].r.name[5] =  0;
+
+				 urrs[i].r.d[0].dname[0] = 'd';
+  		  	     urrs[i].r.d[0].dname[1] = 'i';
+		   	     urrs[i].r.d[0].dname[2] = 'r';
+			     urrs[i].r.d[0].dname[3] = ' ';
+ 				 urrs[i].r.d[0].dname[4] = '1';
+ 				 urrs[i].r.d[0].dname[5] =  0;
+
+	 			 urrs[i].r.d[1].dname[0] = 'd';
+  		  	     urrs[i].r.d[1].dname[1] = 'i';
+		   	     urrs[i].r.d[1].dname[2] = 'r';
+			     urrs[i].r.d[1].dname[3] = ' ';
+ 				 urrs[i].r.d[1].dname[4] = '2';
+ 				 urrs[i].r.d[1].dname[5] =  0;
+
+	 			 urrs[i].r.d[2].dname[0] = 'd';
+  		  	     urrs[i].r.d[2].dname[1] = 'i';
+		   	     urrs[i].r.d[2].dname[2] = 'r';
+			     urrs[i].r.d[2].dname[3] = ' ';
+ 				 urrs[i].r.d[2].dname[4] = '3';
+ 				 urrs[i].r.d[2].dname[5] =  0;
+
+				 urrs[i].r.d[0].dber[0] = 'b';
+  		  	     urrs[i].r.d[0].dber[1] = 'e';
+		   	     urrs[i].r.d[0].dber[2] = 'r';
+			     urrs[i].r.d[0].dber[3] = ' ';
+ 				 urrs[i].r.d[0].dber[4] = '1';
+ 				 urrs[i].r.d[0].dber[5] =  0;
+
+				 urrs[i].r.d[1].dber[0] = 'b';
+  		  	     urrs[i].r.d[1].dber[1] = 'e';
+		   	     urrs[i].r.d[1].dber[2] = 'r';
+			     urrs[i].r.d[1].dber[3] = ' ';
+ 				 urrs[i].r.d[1].dber[4] = '2';
+ 				 urrs[i].r.d[1].dber[5] =  0;
+
+				 urrs[i].r.d[2].dber[0] = 'b';
+  		  	     urrs[i].r.d[2].dber[1] = 'e';
+		   	     urrs[i].r.d[2].dber[2] = 'r';
+			     urrs[i].r.d[2].dber[3] = ' ';
+ 				 urrs[i].r.d[2].dber[4] = '3';
+ 				 urrs[i].r.d[2].dber[5] =  0;
+	 		 
+
+
+
+     		 }
+
+//sprintf((char *)&urrs[0].r.d[0].dber[0]," %1d.%1dE",1, 2);
+//sprintf((char *)&urrs[0].r.d[0].dber[4],"-%1d%1d",3 , 4);
+
+sprintf(urrs[0].r.d[0].dber," %1d.%1dE-%1d%1d",1, 2, 3, 4);
+sprintf(urrs[1].r.d[0].dber," %1d.%1dE-%1d%1d",1, 2, 3, 4);
+sprintf(urrs[2].r.d[0].dber," %1d.%1dE-%1d%1d",1, 2, 3, 4);
+
+
+         
+   /*
+   rrs[0].type = 0;
+   rrs[1].type = 11;
+   rrs[2].type = 22;
+   rrs[3].type = 33;
+   rrs[4].type = 44;
+   rrs[5].type = 55;
+
+
+   rrs[0].index = 0;
+   rrs[1].index = 1;
+   rrs[2].index = 2;
+   rrs[3].index = 3;
+   rrs[4].index = 4;
+   rrs[5].index = 5;
+	 */
+                              
+
 
 if(MirrorTest()) {SetLEDs(NORMA_LED);}
 else {SetLEDs(0);}
@@ -3535,9 +4041,9 @@ extern "C" void PU_M(void)
 	{
 
 
-#ifdef FIND_KSS_ERR
-return;
-#endif
+//#ifdef FIND_KSS_ERR
+//return;
+//#endif
 
 //tmc = 0;
 
@@ -3573,16 +4079,16 @@ maskcnt = 1;
 
 
 
- /* 
+  
 count1++;
 if(!(count1%1000))
 {
- printfpd("\n\r%d", time1);
-//  printfp(".");
+ printfpd("\n\r%d>", time1);
+ // printfp2(".");
 //  printfp1("*");
-
+ printfpd("\>%d",commut_snmp);
 }
-   */
+ 
 if(timepasing > time1 )	 timepasing = time1;
 
 if((time1 - timepasing) > PERIOD_TEST_PARSING)
@@ -3594,7 +4100,7 @@ if((time1 - timepasing) > PERIOD_TEST_PARSING)
    //  TestParsing();
  //   ToPdcTu1('1');
  //	 ToPdcTu1('2');
-
+  //	printfpd2("\n\r>%d",commut_snmp);
 
 }
 

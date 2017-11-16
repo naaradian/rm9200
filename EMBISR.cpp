@@ -2873,7 +2873,7 @@ unsigned char status_transit4;
 	if(m_TBuffMod.Used())
 	 { 
 	 outportb(0x507,m_TBuffMod.Get());
-	  tmc++;
+ //	  tmc++;
    	 }
 	  else { mask.bit.IRQ_TX_mod=0; break;}
 	//  else mask.bit.IRQ_TX_mod=1;

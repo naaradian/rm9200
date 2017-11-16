@@ -624,15 +624,15 @@ extern "C" unsigned char ReadSPIDevR(unsigned char cs,  unsigned char bitsval)
 extern "C" unsigned char IOSpiSend(unsigned char cs, 
  unsigned long length_of_data,	 unsigned char * BufferData, unsigned char * ReadBuffer)
 {
-  printfpd("\n\r IOSpiSend cs :", cs);
+ // printfpd("\n\r IOSpiSend cs :", cs);
  while(length_of_data--)
  {
    if(!(length_of_data % 10))	printfp("\n\r");
-   printfpd(" %02X",(unsigned char)(* BufferData));
+ //  printfpd(" %02X",(unsigned char)(* BufferData));
 
 	LoadSPIDev( cs, * BufferData++, 8);
  }
-   printfp("\n\r");
+ //  printfp("\n\r");
  return 0;
 }
 
@@ -642,7 +642,7 @@ extern "C" unsigned char IOSpiSendR(unsigned char cs,
  unsigned long length_of_data_send,	 unsigned long length_of_data_receive,
   unsigned char * BufferData, unsigned char * ReadBuffer)
 {
-  printfpd("\n\r IOSpiSendR cs : %d   >>>", cs);
+ //171023  printfpd("\n\r IOSpiSendR cs : %d   >>>", cs);
   AT91RM9200_PIO_REG_STRUCT_PTR  pio_ptr;
   AT91RM9200_PIO_REG_STRUCT_PTR  pio_ptra;
   AT91RM9200_PIO_REG_STRUCT_PTR  pio_ptrc;
@@ -716,7 +716,8 @@ switch (cs)
  while((length_of_data_send)--)
  {
  //  if(!(length_of_data_send % 10))	printfp("\n\r");
-   printfpd(" %02X",(unsigned char)(* BufferData));
+
+ //171023  printfpd(" %02X",(unsigned char)(* BufferData));
 
 	LoadSPIDevR( cs, * BufferData++, 8);
  }
@@ -754,7 +755,7 @@ delay_mcs(2);
   default :   break;
 }
 
-    printfp("\n\r");
+ //171023   printfp("\n\r");
 
  return 0;
 }
@@ -801,7 +802,7 @@ if(baud > 63) baud = 63;
  
 Buff[0] = 0xdf; //0xFB;
 
- /*
+ 
 Buff[1] = 0x80;
 if(baud > 31)  Buff[1] |= 0x40;
 
@@ -811,8 +812,8 @@ if(baud & 0x4)	 Buff[1] |= 0x8;
 if(baud & 0x8)	 Buff[1] |= 0x4;
 if(baud & 0x10)	 Buff[1] |= 0x2;
 if(baud & 0x20)	 Buff[1] |= 0x1;
-	 */
-
+	 
+/*
 Buff[1] = 0x80;
 if(baud > 31)  Buff[1] |= 0x40;
   
@@ -822,8 +823,8 @@ if(baud & 0x4)	 Buff[1] |= 0x4;
 if(baud & 0x8)	 Buff[1] |= 0x2;
 if(baud & 0x10)	 Buff[1] |= 0x1;
 //if(baud & 0x20)	 Buff[1] |= 0x2;
-
-printfpd("\n\r load baud : %d", baud);
+ */
+//printfpd("\n\r load baud : %d", baud);
   
    
 // Buff[1] |= baud;
@@ -2438,11 +2439,17 @@ else              { SetAny(tmp1, 0, tmp2 ,300l);}
 if     (tmp < 25000 ){ SetAny(1, 10, 195694l, 45l,7l);}
 else if(tmp < 50000 ){ SetAny(1, 11, 195694l, 60l,6l);}
 else if(tmp < 100000){ SetAny(1, 11, 195694l, 70l,5l);}
-else if(tmp < 250000){ SetAny(1, 12, tmp3,100l,2l);}
-else if(tmp < 450000){ SetAny(1, 0, tmp3,200l,2l);}
-else if(tmp < 600000){ SetAny(1, 0, tmp3,300l,2l);}
+
+//else if(tmp < 250000){ SetAny(1, 12, tmp3,100l   ,2l);}
+//else if(tmp < 450000){ SetAny(1, 0, tmp3,200l    ,2l);}
+//else if(tmp < 600000){ SetAny(1, 0, tmp3,300l    ,2l);}
+else if(tmp < 250000){ SetAny(1, 12, tmp3,100l   ,3l);}
+else if(tmp < 450000){ SetAny(1, 0, tmp3,200l    ,3l);}
+else if(tmp < 600000){ SetAny(1, 0, tmp3,300l    ,3l);}
+
+
 //140226else              { SetAny(tmp1, 0, tmp4 ,300l,2l);}
-else              { SetAny(tmp1, 0, tmp4 ,300l,3l);}
+else                 { SetAny(tmp1, 0, tmp4 ,300l,3l);}
 
 
 
@@ -2749,7 +2756,22 @@ LoadIFDAC((unsigned long) ((SatSet4.Value + SatSet8.Value) * MULT_VALF));
 #ifndef PROG_PU_MSAT5	
  LoadDDSN3a();
 #else
- LoadIFMd((unsigned long) ((SatSet4.Value + SatSet8.Value) * MULT_VALF));
+//170816 LoadIFMd((unsigned long) ((SatSet4.Value + SatSet8.Value) * MULT_VALF));
+if(SatTiming.Value)
+{
+   printfpd("SetTrFrequency invert %d", SatTiming.Value);
+
+ LoadIFDmd((unsigned long)((SatSet4.Value - SatSet8.Value) * MULT_VALF));	 //spectrum invert
+ }
+else
+{
+ printfp("SetTrFrequency normal");
+
+ LoadIFDmd((unsigned long)((SatSet4.Value + SatSet8.Value) * MULT_VALF));	 //170816
+ }
+
+
+
 #endif
 
 //need write to xilinx mod_en
@@ -2771,6 +2793,8 @@ signed short tmp8 = SatSet8.Value;
 }
 extern "C" void LoadDDSN3();
 
+
+
 extern "C" void  SetRcvFrequency() 
 {
 LoadIFADC((unsigned long)((SatSet5.Value + SatSet8.Value) * MULT_VALF));
@@ -2778,7 +2802,9 @@ LoadIFADC((unsigned long)((SatSet5.Value + SatSet8.Value) * MULT_VALF));
 #ifndef PROG_PU_MSAT5	
  LoadDDSN3();
 #else
- LoadIFDmd((unsigned long)((SatSet5.Value + SatSet8.Value) * MULT_VALF));
+ LoadIFDmd1((unsigned long)((SatSet5.Value + SatSet8.Value) * MULT_VALF));
+ LoadIFMd((unsigned long) ((SatSet5.Value + SatSet8.Value) * MULT_VALF));	//170816
+
 
 
 #endif

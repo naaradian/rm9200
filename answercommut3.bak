@@ -113,9 +113,9 @@
 
                   //   printfp("\n\r>");
                   
-#ifdef KSS_PRINT_LOG                         
-                         printfp("\n\r Send to tuts 2:");
-#endif                     
+//#ifdef KSS_PRINT_LOG                         
+//                         printfp("\n\r Send to tuts 2:");
+//#endif                     
                   
 							embRS232.TransEC(0x55);
 							embRS232.TransEC(0xAA);
@@ -606,7 +606,7 @@
 						embMsgAns.SetAddrI(SelfID());
 						embMsgAns.SetAddrS(embMsgRequest->AddrI());					
 					}
-			   //ok 1			printf("\n\r     embMsgRequest->Type:%d ",embMsgRequest->Type());
+			  // 			printfpd("\n\r     embMsgRequest->Type:%02X ",embMsgRequest->Type());
 
 					//	embMsgAns.SetAddrI(SelfID());  //t
 					//	embMsgAns.SetAddrS(SelfID());  //t
@@ -625,6 +625,26 @@
 						embMsgAns.SetLength(44);
 						for(i=0; i<44; i++) embMsgAns.SetBody(i,unEmb2TypeVer.byte[i]);
 						break;
+                  
+                  
+                  
+	case 0x81 :
+                 //    printfp("_______________81");
+                 //     SetRelayq(embMsgRequest->Body(1));
+						   embMsgAns.SetType(0x81);
+                     embMsgAns.SetLength(1);
+                     embMsgAns.SetBody(0, SetRelayq(embMsgRequest->Body(3)));
+                  						     
+                     break;
+                     
+   case 0x82 :
+                      printfp("_______________82");
+
+						   embMsgAns.SetType(0x82);
+                     embMsgAns.SetLength(1);
+                     embMsgAns.SetBody(0, SetDir());                   						     
+                     break;
+                  
 
 		  //			case 0x05: // Загрузка файла (запись в устройство) 
 
@@ -970,68 +990,7 @@
 							 }
 						  break;
 
-       /*
-#ifdef USdef US5
-
-					case 0x39: // request rs125 state
-
-			   		// printEthLongHex(0x01);
-					//	embMsgAns.SetAddrI(SelfID());  //t
-					//	embMsgAns.SetAddrS(SelfID());  //t
-
-						embMsgAns.SetType(0x39);
-						embMsgAns.SetLength(MES_MAX_LEN);
-						for(i=0; i<MES_MAX_LEN; i++) embMsgAns.SetBody(i,StatBuffer[i]);
-						break;
-
-					case 0x40: // request rs125 state
-
-			   //		printEthLongHex(0x01);
-			   //		embMsgAns.SetAddrI(SelfID());  //t
-			   //		embMsgAns.SetAddrS(SelfID());  //t
-
-						embMsgAns.SetType(0x40);
-						embMsgAns.SetLength(MES_OCT_LEN);
-						for(i=0; i<MES_OCT_LEN; i++) embMsgAns.SetBody(i,StatBuffer[i]);
-						break;
-
-					case 0x41: // request rs125 state
-
-			   		// printEthLongHex(0x01);
-					//	embMsgAns.SetAddrI(SelfID());  //t
-					//	embMsgAns.SetAddrS(SelfID());  //t
-						im = 0;
-						embMsgAns.SetType(0x41);
-						embMsgAns.SetLength(REAL_MES_LEN);
-						for(i=0; i<MES_MAX_LEN; i++) 
-						{
-						if(IsNotRezerved(i))
-							{
-							embMsgAns.SetBody(im++,StatBuffer[i]);
-							}
-						}
-						break;
-
-					case 0x42: // request max, min , centered values of period of keep
-
-			   			embMsgAns.SetType(0x42);
-						embMsgAns.SetLength(MAX_MIN_CENTER_LEN);
-						MakeStat();
-				   		 for(i=0; i<MAX_MIN_CENTER_LEN; i++) 
-				   		 {
-				   	  		embMsgAns.SetBody(i,ukeep_st.byte[i]);
-				   	  	 }
-						
-						break;
-
-
-
-
-
-
-#endif //USE_RS125
-                      */
-                      
+                          
 	case 0x4C: 
             	  embMsgAns.SetType(0x4C);
                  embMsgAns.SetLength((DEVCONFIG_QUANTITY << 1) + 2);
@@ -1095,61 +1054,7 @@
             }
             } 
 			   break;
-        /*
-	case 0x4E: // 
-
-			   //		printEthLongHex(0x4e);
-
-					 //	embMsgAns.SetAddrI(SelfID());  //t
-					 //	embMsgAns.SetAddrS(SelfID());  //t
-
-						embMsgAns.SetType(0x4E);
-						embMsgAns.SetLength(32);
-						for(i=0; i<44; i++) embMsgAns.SetBody(i,uemb4pumfabinfo.byte[i]);
-						break;
-
-            */
-                 
-                      
-    /*                  
-	case 0x4D: 
-            	  embMsgAns.SetType(0x4D);
-                 embMsgAns.SetLength(DEV_INFO_SIZE + 4);
-                 embMsgAns.SetBody(0,embMsgRequest->Body(0));
-//_______________________________________________________________
-           if((embMsgRequest->Body(0) <= DEVCONFIG_QUANTITY) && embMsgRequest->Body(0))
-           {
-           cur_rem_pointer = GetDevPointer(embMsgRequest->Body(0));
-           
-           if(cur_rem_pointer != BAD_POINTER)
-            {
-            embMsgAns.SetBody(1,GetDevType(cur_rem_pointer));
-            embMsgAns.SetBody(2,devstate[embMsgRequest->Body(0) - 1]); 
-            embMsgAns.SetBody(3,0);
-            
-            for(i = 0; i < DEV_INFO_SIZE; i++)
-            {
-             embMsgAns.SetBody(4 + i,statedev[embMsgRequest->Body(0) - 1].byte[i]);  //addr from 1 to 16
-            }
-           
-            }    // BAD_POINTER
-            else
-            { 
-             for(i = 0; i < DEV_INFO_SIZE + 3; i++)
-            {
-             embMsgAns.SetBody(1 + i,0);  //addr from 1 to 16
-            }
-            } 
-           } // DEVCONFIG_QUANTITy
-            else
-            { 
-             for(i = 0; i < DEV_INFO_SIZE + 3; i++)
-            {
-             embMsgAns.SetBody(1 + i,0);  //addr from 1 to 16
-            }
-            } 
-             */         
-              case 0x53: // request max, min , centered values of period of keep
+        case 0x53: // request max, min , centered values of period of keep
 
 			   			embMsgAns.SetType(0x53);
                      
@@ -1264,7 +1169,10 @@
                    		 break;
                    case 0x54:
 //hier need keep addresses af future answer and make request for ant
-//future ansver vill be send in parser answers from antenna                   
+//future ansver vill be send in parser answers from antenna       
+                     embMsgAns.SetType(0x54);
+
+            
                      keep_is485 = embMsgRequest->IsRS485();
                      keep_addri = embMsgAns.AddrI();
                      keep_addrs = embMsgAns.AddrS();
@@ -1298,7 +1206,19 @@
 					{
 	    	  		 embMsg232S.Init();	//090122
  			 	   }	   // ==3
-    break;        
+    break;   
+    
+    
+               /*
+     	case 0x57 :
+						   embMsgAns.SetType(0x57);
+                     embMsgAns.SetLength(1);
+                     embMsgAns.SetBody(0, SetDirDiff(embMsgRequest->Body(0),(char *) embMsgRequest->Body(1)));
+                   						     
+                     break;
+                     
+            */
+         
                           
     default:   
     break;

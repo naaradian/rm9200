@@ -6031,10 +6031,16 @@ extern "C" void EnableInterrupts()
 
  if(MirrorTest())
      { 
+	 printfp("\n\r Interrupts Enabled");
         _at91rm9200_int_enable(AT91RM9200_IRQ0_VECTOR, IRQ, 
                       AT91RM9200_AIC_SMR_SRCTYPE_LLS, //low level sensitive
                    					      AT91RM9200_AIC_SMR_PRIO_MIN );  
-     }                                       
+     } 
+     else
+     {
+	    printfp("\n\r Interrupts Disabled");
+
+     }                                      
                           
 
 
@@ -7614,6 +7620,8 @@ unsigned char config_flag = 0;
 	 
      return;
 	 }
+   wd_deinit();
+
 		}
 #endif
 #endif
@@ -9732,27 +9740,27 @@ if(modem == MODEM_QUANTITY)
 {
 for(unsigned long im = 0; im < MODEM_QUANTITY; im++)
 {
- if(ModemIsUsed(im))
- {
+// if(ModemIsUsed(im))
+// {
 
 // ir = im << 1;
- FillData(im);
+  FillData(im);
 //  ir += 1;
 // FillData(ir);
 
- }	  //used
+// }	  //used
 
 }  //for
 }  //if
 else
 {
- if(ModemIsUsed(modem)) //can test xilinx?
- {
+// if(ModemIsUsed(modem)) //can test xilinx?
+// {
 // ir = modem << 1;
  FillData(modem);
 //  ir += 1;
 // FillData(ir);
- }	  //used
+// }	  //used
 }	 //else	 <--- need check is used
 
 }
@@ -11956,6 +11964,7 @@ Buff[b] = b;
 				 test_PU37();
 			  	 wd_reset();
 			  	}
+				
 //				printf("\n\rTest Transit is finished.\r\r");
 				Init_PU_M();
 			 //	#endif // FULL_TEST_TRANZIT
@@ -12209,7 +12218,7 @@ Buff[b] = b;
 				 test_PU37();
 			  	 wd_reset();
 			  	}
-//				printf("\n\rTest Transit is finished.\r\r");
+			   //				printf("\n\rTest Transit is finished.\r\r");
 			   	Init_PU_M();
 				#endif //	PROG_PU_M
 
@@ -12322,8 +12331,8 @@ Buff[b] = b;
 				 test_PU37();
 			  	 wd_reset();
 			  	}
-//				printf("\n\rTest Transit is finished.\r\r");
-			   	Init_PU_M();
+			   //				printf("\n\rTest Transit is finished.\r\r");
+			  // 	Init_PU_M();
 				#endif //	PROG_PU_M_MUX
 
 
@@ -13848,14 +13857,32 @@ case 0x44l:
 case 0x45l:  
   
 #ifdef PROG_VNV1
+
 	  for(tm=0;tm<1000000;tm++) 
   	  {
   		 wd_reset();
+		 delay_mcs(200000l);
 	     ReadE1IDs();
 		 OperateBuffers_usart0t();
 	  }
 	  break;
 #endif //PROG_DTVM
+
+
+case 0x46l:  
+  
+#ifdef PROG_VNV1
+
+	  for(tm=0;tm<1000000;tm++) 
+  	  {
+  		 wd_reset();
+	     InitTLF();
+		 OperateBuffers_usart0t();
+	  }
+	  break;
+#endif //PROG_DTVM
+
+
 
 
 /*
@@ -16365,11 +16392,13 @@ int32 tmp;
 	
 	if(!DgAftPnt) //not have point
 	{
-
-//printfpd("\n\r__cv:%d", ChangingValue);	  //mbere
-
 	 tmp = ChangingValue;	
-	sprintf(pResultStr, pFormat, tmp);
+   if(start_main_loop)
+   {
+printfpd( " %07d" , tmp);	  //mbere
+  }
+
+	 	sprintf(pResultStr, pFormat, tmp);
 	}
 	else
 	{
@@ -21334,6 +21363,7 @@ while(cnt_data--)
 
 //#ifdef USE_USART2
   //  my_rx_usart2_int( * pData++);
+
 #ifndef PULT_USART2
   	embRS232S_rcvbuf_Add(SetChar);
 #else

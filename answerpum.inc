@@ -774,13 +774,28 @@
 
 						embMsgAns.SetType(0x01);
 						embMsgAns.SetLength(44);
-						for(i=0; i<44; i++) embMsgAns.SetBody(i,unEmb2TypeVer.byte[i]);
+				   //		printfp("\n\r");
+						for(i=0; i<44; i++)
+						{
+						 embMsgAns.SetBody(i,unEmb2TypeVer.byte[i]);
+					//	 printfpd(" %02X", unEmb2TypeVer.byte[i]);
+						 }
 						break;
 
 		  //			case 0x05: // Загрузка файла (запись в устройство) 
 
 		  //				SaveFile();
 		  //				break;
+#ifdef	PROG_VNV1 
+					case 0x62: 	embMsgAns.SetType(0x62);
+							   	embMsgAns.SetLength(88);
+								for(i=0; i<88; i++) 
+								{
+								embMsgAns.SetBody(i,unEmb2MuxVNV.byte[i]);
+								}
+								break;
+
+#endif
 					 
 
 //______________________________________________________________________________________________						
@@ -985,7 +1000,9 @@
 							{
 					//   		printEthLongHex(0x5000 + embMsgRequest->Body(4));
 								outportb3(embMsgRequest->Body(0)+(embMsgRequest->Body(1)<<8), embMsgRequest->Body(4));
+#ifndef PROG_VNV1			
 								SaveParameterToNVRAM(embMsgRequest->Body(0)+(embMsgRequest->Body(1)<<8) , embMsgRequest->Body(4));
+#endif
 #ifdef PROG_PU_M_MUX_TEST
 			   //		          printf("\n\r port : 0x%X  data : 0x%X", (embMsgRequest->Body(0)+(embMsgRequest->Body(1)<<8)),embMsgRequest->Body(4));
 #endif //PROG_PU_M_MUX_TEST							
@@ -1244,6 +1261,14 @@
 						break;
 
 
+ 					case 0x62: 	embMsgAns.SetType(0x62);
+							   	embMsgAns.SetLength(88);
+								for(i=0; i<42; i++) 
+								{
+								embMsgAns.SetBody(i,unEmb2MuxVNV.byte[i]);
+								}
+								break;
+
 
 
 
@@ -1254,11 +1279,15 @@
 
  case 0x55: // trunks
 			 //	  printEthLongHex((unsigned long)embMsgRequest->Body(0));
+#ifndef PROG_VNV1	
                   SetModForSS((unsigned long)embMsgRequest->Body(0));
+#endif
 						embMsgAns.SetType(0x55);
               //    embMsgAns.SetLength(8);
                   embMsgAns.SetLength(1);
+#ifndef PROG_VNV1	
                   embMsgAns.SetBody(0,(unsigned char) GetModForSS());
+#endif
                     break;
 
 

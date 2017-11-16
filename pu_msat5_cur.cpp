@@ -6458,7 +6458,7 @@ pData = DataDDS;
 IOSpiSendR(3  , 3,  0,  DataDDS, DataDDS);	  //channel D
 
 pData = DataDDS;
-*pData++ = 0x42;   *pData++ = 0;	 *pData = 0x29;// 0x09;  //addr 21
+*pData++ = 0x42;   *pData++ = 0;	 *pData = 0x08;//0x29;// 0x09;  //addr 21
 IOSpiSendR(3  , 3,  0,  DataDDS, DataDDS);	  //channel D
 
 pData = DataDDS;

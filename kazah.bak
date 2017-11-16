@@ -897,7 +897,7 @@ unsigned char crcud;
 struct Mode15504
 {
  unsigned char mode;
- unsigned char interf;	   //&0x3f
+ unsigned char interf;
 //120203 unsigned long rateEth;
  unsigned char rateEth0;
  unsigned char rateEth1;
@@ -1650,11 +1650,6 @@ printfpd("\n\r destroy : %d", variant);
 
 unsigned long ratesymbol_far;
 
-#ifdef E1_16
-unsigned char e1_quantity;
-#endif
-
-
 extern "C" void ConfigFileLoadm(unsigned long variant, unsigned char flagm)
 {
 PVG610_MODEM_STATUS_STRUCT	Ms;
@@ -1707,28 +1702,6 @@ if(!hot_restart)
   {
   SetOptics(im, 1);
   }
-
-#ifdef E1_16
-e1_quantity =	  (unsigned char)modemp[0].configfilefext.ConfigTxtData.emb4md15504cfg.mode15504[0].interf & 0x3F;
-if(e1_quantity > MAX_E1) e1_quantity = MAX_E1;
-unsigned short leds = 0;
-unsigned char tmpq =  e1_quantity;
-//printfpd("\n\r e1_quantity = %d ", e1_quantity);
-
-
-while(tmpq--)
-{
-  leds += (1 << tmpq);
-}
-
-outportb(E1LED_RA_port, leds & 0xff);
-outportb(E1LED_RB_port, leds >> 8);    
-//printfpd("\n\r e1_quantity = %d ", e1_quantity);
-
-
-#endif
-
-
 
 unsigned long rateEth = 
  ((unsigned long)modemp[im].configfilefext.ConfigTxtData.emb4md15504cfg.mode15504[0].rateEth0)+
@@ -4477,29 +4450,6 @@ union UnBmdState
 	BmdState bmdState;
 };
 
-
-struct Emb2Mux34
-{
-	unsigned char type;
-	unsigned char softVer;
-	unsigned char numE1;
-	unsigned char e3;
-	unsigned short err_e3;
-	unsigned char reserv[2];
-	unsigned char state_e1[16];
-	unsigned char ctrl_e1[16];
-};
-
-union UnEmb2Mux34
-{
-	Emb2Mux34 emb2Mux34;
-	unsigned char byte[40];
-};
-
-	UnEmb2Mux34 unEmb2Mux34;
-
-
-
 //#include "embmsg485.cpp"
 
 /////////////////////
@@ -5590,7 +5540,7 @@ unsigned long SetACMCounter;
 
 extern "C" void Init_BMDN(void)
 {
- // return;	//t
+//  return;	//t
   cnt_mod = 0;
 
   #ifdef PROG_MD310_SAT
@@ -5949,8 +5899,6 @@ EmbInit(); //my
 // return;
  //   mod_en = ModemIsUsed(0);
 //____________________________h i e r e n a b l i n g i  n t e r r u p t s  i n x i l i n x !!  
-// return;
-
 	embSerialACT155.Init();	//120608   //hier hangt!!!!
    
 //bad 120608 return;   
@@ -5965,15 +5913,9 @@ EmbInit(); //my
 	embTimer.SetCallBack0(&embTimerCallback0);
 
 //bad 120608 return;
-//#ifdef E1_16
-
-// e1_quantity = 0;
-
-//#endif
 
 //////////////////////
 //131227#ifndef PROG_MD310
-  /*
 #ifdef PROG_BMDN6	//131227
 #ifndef PROG_BMDN6M
 
@@ -5983,7 +5925,7 @@ EmbInit(); //my
 	tlf_counter=0;
 #endif
 #endif
-	*/
+
 	for(i=0; i<MODEM_QUANTITY<<1; i++)
 //101212	for(i=0; i<16; i++)
 	{
@@ -6034,12 +5976,10 @@ EmbInit(); //my
 			unEmb2TypeVer.emb2TypeVer.signature_hardware[13] = read_xil_char(1);
 			unEmb2TypeVer.emb2TypeVer.signature_hardware[14] = read_xil_char(2);
 
- //	unEmb2TypeVer.emb2TypeVer.signature_hardware[15] =  read_nvram_char(RESTARTS_NVRAM_ADDRESS);
- //	write_nvram_char(RESTARTS_NVRAM_ADDRESS, (unEmb2TypeVer.emb2TypeVer.signature_hardware[15] + 1));
- 
+	unEmb2TypeVer.emb2TypeVer.signature_hardware[15] =  read_nvram_char(RESTARTS_NVRAM_ADDRESS);
+	write_nvram_char(RESTARTS_NVRAM_ADDRESS, (unEmb2TypeVer.emb2TypeVer.signature_hardware[15] + 1));
   //	bt = (unsigned char far*)0x80000000;
 //131227#ifndef PROG_MD310
- /*
 #ifdef PROG_BMDN6	//131227
 #ifndef PROG_BMDN6M
 
@@ -6065,11 +6005,10 @@ EmbInit(); //my
 	unEmb2TypeVer.emb2TypeVer.signature_software[15] = *(bt+ETH_TRANZIT_ON_ADDRESS); 
 #endif
 #endif 
-   */
+
  //	embMsgTemp.Init();
 
 //131227#ifndef PROG_MD310
-/*
 #ifdef PROG_BMDN6	//131227
 #ifndef PROG_BMDN6M
 
@@ -6079,7 +6018,6 @@ EmbInit(); //my
 	presto_time = time1;
 #endif
 #endif
-*/
 //______________________________Init All EmbMsgObjekts
 
    embMsg232.Init();
@@ -6114,15 +6052,6 @@ PVG610_API_ComConfigure(0, PVG610_COM_MEDIA_UART_E, 200000000l);
 InitOperProg();
 
 //bad 120608 return;
-unEmb2Mux34.emb2Mux34.numE1 = 16;
-
-for(i=0; i<unEmb2Mux34.emb2Mux34.numE1; i++)
-	{
-		unEmb2Mux34.emb2Mux34.ctrl_e1[i] = 0;
-		unEmb2Mux34.emb2Mux34.state_e1[i] = 0;
-	}
-
-//return; //t
 
  if(!MirrorTest())	return;
 
@@ -6410,13 +6339,7 @@ SetCurrentTrunk(1); //get on trunk
 //#define SCAN_PERIOD (1000) //1c
 #define SCAN_PERIOD (10000) //10c
 //#define READ_ERRORS_PERIOD (1000) //1c
-
-#ifndef PROG_MD310E16
 #define READ_ERRORS_PERIOD (3000) //1c
-#else
-#define READ_ERRORS_PERIOD (800) //1c
-#endif
-
 
 extern "C" void UpdateErrors(unsigned char mod)
 {
@@ -6671,60 +6594,17 @@ extern "C" void FillLock(unsigned char mod, unsigned char status)
 
 }
 
-extern "C" void ReadE1PM(unsigned char mod, UINT32 e1IndexMask)
-{
-   PVG610_NET_E1_PM_STRUCT  Pm;
- unsigned char ans;
- UINT16 OneSecondPeriodCounter = 1;	 //?
- ans =  PVG610_API_NetE1PmGet(mod, 0,  e1IndexMask, &Pm, &OneSecondPeriodCounter);
- if(ans) return;
-//hier use Pm
-}
-
-extern "C" unsigned char NetE1Stm1SignalsForce(unsigned char mod, BYTE ifIndex, BYTE  signal, 
-											 BOOLEAN toTheAir)
-{
- //signal : PVG610_NET_TEST_SIGNAL_ENUM
-// ifIndex : PVG610_NET_TRIB_INDEX_ENUM
-                                                    
-return PVG610_API_NetE1Stm1SignalsForce(mod, 0, ifIndex,	signal,	toTheAir);
-}
-
-extern "C" unsigned char NetE1PrbsMonitorConnect(unsigned char mod,  BOOLEAN connect,
-                                                         BYTE  e1Index,	BOOLEAN fromTheAir)
-{
- return PVG610_API_NetE1PrbsMonitorConnect( mod, 0, connect,	e1Index,  fromTheAir);
-}
-
-extern "C" unsigned char NetE1PrbsGeneratorConnect(unsigned char mod,  BOOLEAN connect,
-                                                         BYTE  e1Index,	BOOLEAN fromTheAir)
-{
- return  PVG610_API_NetE1PrbsGeneratorConnect( mod, 0, connect,	e1Index,  fromTheAir);
-}
-
-
-extern "C" unsigned char  NetE1CableConfig(unsigned char mod, BYTE e1Index, BYTE cableConfig)
-{
- return PVG610_API_NetE1CableConfig(mod, 0, e1Index, cableConfig);
-}
-
-
 extern "C" void ReadErrors(unsigned char mod)
 {
 PVG610_MODEM_FEC_COUNTERS_STRUCT Fc;
 PVG610_MODEM_STATUS_STRUCT	Ms;
 PVG610_MODEM_ACQUIRE_COUNTERS_STRUCT Ac;
 PVG610_NET_E1_ALARMS_STRUCT  Stat[E1_LINES_QUANTITY];
-#ifdef E1_16
-
-unsigned char E1LED_LA, E1LED_LB;
-#endif
 
 //PVG610_API_ModemAcquireCountersGet(0, 0, &Ac);
 unsigned char ans, ans1;
-	
-	unStatePUM.statePUM.state[4] = GetStmPhyReg(mod);//inportb(0x524);
 
+	unStatePUM.statePUM.state[4] = GetStmPhyReg(mod);//inportb(0x524);
 	if(unStatePUM.statePUM.state[4] & FAR_LOOP)
 	{
 	  unStatePUM.statePUM.state[5] |= OLD_FAR_LOOP;
@@ -6743,8 +6623,6 @@ unsigned char ans, ans1;
 	   unStatePUM.statePUM.state[5] &= ~(OLD_NEAR_LOOP);
 	}
   	unStatePUM.statePUM.state[6] = GetEthReg(mod);
-
-   
 #ifndef PROG_MD310
 #ifndef PROG_BMDN6M
 
@@ -6768,74 +6646,17 @@ unsigned char ans, ans1;
 //#ifdef USART0_TRY_PDC_1T
 //  printfpd("\n\rss%ld", time1);
 //#endif
-
-
-//ok return; //t 170622 
- 
-
 //___________________________________________________
  ans = PVG610_API_NetE1AlarmsGet(deviceindex,0, 0x1fffffl, &Stat[0]);
 if(ans) return;
- 
-//for(i = 0; i < E1_LINES_QUANTITY; i++)
-//{
-// modemp[deviceindex].netE1Alarms[i] = Stat[i].netE1Alarms;
-//}
 
-// printfpd ("\n\r e1_quantity : %d", e1_quantity);
- 
-for(i = 0; i < E1_LINES_QUANTITY; i++)		 //now 21
+for(i = 0; i < E1_LINES_QUANTITY; i++)
 {
- unEmb2Mux34.emb2Mux34.state_e1[i] = 3;
-}
-
-E1LED_LA = 0;
-E1LED_LB = 0;
-
-for(i = 0; i < 8; i++)		 //now 21
-{
-if(i == e1_quantity)
- {break;}
-
-// printfpd("\n\r%d> :", i);
- //printfpd("%X",Stat[i].netE1Alarms);
  modemp[deviceindex].netE1Alarms[i] = Stat[i].netE1Alarms;
- if(!(Stat[i].netE1Alarms == LOSS_BIT)) {E1LED_LA |= (1 << i); 
- unEmb2Mux34.emb2Mux34.state_e1[i] = 0;
-// printfp(" 0");
-}
- if(Stat[i].netE1Alarms ==  E1_AIS) unEmb2Mux34.emb2Mux34.state_e1[i] = 1;
- 
-//}
-}
-
-for(i = 8; i < e1_quantity; i++)		 //now 21
-{
-// printfpd("\n\r%d> :", i);
-// printfpd("%X",Stat[i].netE1Alarms);
- modemp[deviceindex].netE1Alarms[i] = Stat[i].netE1Alarms;
- if(!(Stat[i].netE1Alarms == LOSS_BIT)) {E1LED_LB |= (1 << (i - 8));
-  unEmb2Mux34.emb2Mux34.state_e1[i] = 0;
-//  printfp("!");
- }
-   if(Stat[i].netE1Alarms ==  E1_AIS) unEmb2Mux34.emb2Mux34.state_e1[i] = 1;
-// }
 }
 
 
-//wrong return; //t 170622 
 
-
-#ifdef E1_16
-outportb(E1LED_LA_port, E1LED_LA);
-outportb(E1LED_LB_port, E1LED_LB); 
-//printfpd("\n\r E1LEDLA : 0x%02X ", E1LED_LA); 
-//printfpd(" E1LEDLB : 0x%02X ", E1LED_LB);
-  
-#endif
-	
-
-//wrong//return; //t 170622 
 //____________________________________________________
 
  ans = PVG610_API_ModemStatusGet((deviceindex), 0, &Ms);
@@ -8991,7 +8812,7 @@ if(currenttrunk)
 			    embMsg485Request_1.SetBody(1,st);
 				embMsg485Request_1.CalcCRC();
 			//	embMsg485Request_1.SetReadyToSend();
-				   tBuffEmbMsg485Request_1.Add(embMsg485Request_1);
+				 tBuffEmbMsg485Request_1.Add(embMsg485Request_1);
 				/*
 			 if(GetTestMode() == 0x50)
 			{
@@ -9176,85 +8997,47 @@ cur_err = 0;	//clear errors!!!!
 
 extern "C" void OperateTrunks()
 {
-//   return; //for test
-//printEthLongHex(2);
-//printfp("\n\rOpTr ");
-
-#ifdef PROG_MD310	//do not use one trunk mode
-  
-#ifndef PROG_BMDN6
-  if(GetModForSS())
- {
-	SetModForSS(0);
-//printfp("\n\r________________________3");
-
- }
-  return;
-#endif
-
 #ifdef TWO_TRUNKS
   if(GetModForSS())
  {
 	SetModForSS(0);
-//printfp("\n\r________________________3");
-
  }
   return;
 #endif
 
-
-
-
-
-
-#endif
-
-
-	#ifdef PROG_BMDN6M	   //do not use one trunk mode
-
-  if(GetModForSS())
- {
-	SetModForSS(0);
-//printfp("\n\r________________________3");
-
- }
-#endif
-  
-  if(GetModForSS())
- {
-
-   if(!CheckCurrentTrunk())
- {
- // if(HaveEnoverTrunks())
-  if(HaveEnoverTrunks()  || (currenttrunk))
+  if(GetModForSS())	  //one trunk
   {
-  	ChangeCurrentTrunk();
-  }
- }
+   	if(!CheckCurrentTrunk())
+ 	{
+//wrong if do not have second trunc  if(HaveEnoverTrunks()  || (currenttrunk))
+ 		if(HaveEnoverTrunks()) 
+  			{
+  				ChangeCurrentTrunk();
+  			}
+ 	} //current trunk - wrong!!!!
 
-  if(!CheckNotCurrentTrunk())
- {
-  SetNotCurrentTrunk(0);
- }
 
- //printfp("\n\r________________________2");
- 
-  
- // return;
+ 		  if(HaveEnoverTrunks() &&  (currenttrunk))		 //priority of zero trunk
+ 	   		{
+  				ChangeCurrentTrunk();
+  			}
+
+
+
+  	if(!CheckNotCurrentTrunk())
+ 	{
+  		SetNotCurrentTrunk(0);	 //send any command
+ 	}
+
   } 
-    else
+    else   //use two trunks
   {
      if( (!trunk1.modetrunk.onpd) )
 			{
-//printEthLongHex(12);
-//printfp("\n\r________________________0");
 			    SetTrunk(0, 1);
    			}
      if( (!trunk2.modetrunk.onpd) )
 			{
-//printEthLongHex(13);
-//printfp("\n\r________________________1");
-
 			    SetTrunk(1, 1);
    			}
   }
@@ -9286,19 +9069,17 @@ timescan = time1;
 
 
 
-//timer_config += READ_ERRORS_PERIOD / 1000l;
- timer_config += 1;
+timer_config += READ_ERRORS_PERIOD / 1000l;
+
 #ifdef TEST_TIME_CONFIG
  SetThreshold(8, timer_config);  //for test only!!!!!!!!!!!!!!!
-
-
 #endif
 
-// printfpd("\n\rread errors: %d", curmod);
+ //printf("\n\rread errors: %d", curmod);
 
 
-	
-	  switch(curmod)
+
+  switch(curmod)
   {
 	case 0 :   if(!(used_modems & MASK_BIT_0)){ClearStats(curmod);curmod++;} else{ ReadErrors(curmod); curmod++; break;}
 	case 1 :   if(!(used_modems & MASK_BIT_1)){ClearStats(curmod);curmod++;} else{ ReadErrors(curmod); curmod++; break;}
@@ -9312,7 +9093,7 @@ timescan = time1;
 
 	default : curmod = 0; 
   }
-	
+
  
 }
 
@@ -12271,7 +12052,7 @@ if((time1 - timescan1) > SEND_STATUS_PERIOD)
 
 extern "C" void BMDN()
  {
- return;
+// return;
 
 #ifndef TEMPORARY_DO_NOT_STOP_RECEIVE
 
@@ -12386,7 +12167,6 @@ else
 
 //__________________________________________________________________
 //131227#ifndef PROG_MD310
-/*
 #ifdef PROG_BMDN6	//131227
 #ifndef PROG_BMDN6M
 
@@ -12411,7 +12191,7 @@ bt = (unsigned char *)(NVRAM_BASE);
 	unEmb2TypeVer.emb2TypeVer.signature_software[15] = *(bt+ETH_TRANZIT_ON_ADDRESS); 
 #endif
 #endif
-		*/
+
    if(GetNeedWriteDevId())
 		   {
 	 //  	 printf("\n\r Write!!");
@@ -12444,7 +12224,7 @@ if (periodcnt1 > 20)
 }
 
 #endif
-   /*
+
 #ifdef PROG_MD310_SAT
  
  
@@ -12463,7 +12243,7 @@ else
   }
 }
 #endif	
-	*/
+
 
 static unsigned long periodcnt;
  periodcnt++;
@@ -12516,7 +12296,6 @@ static unsigned long periodcnt;
 
  if(ReadingEnabled(1))
  {
-
 #ifndef PROG_BMDN4
   ReadStateEasy();  //110131
 #else
@@ -12525,17 +12304,8 @@ static unsigned long periodcnt;
 
 
  }
-
   ScanErrors();	//110725 //read errors on roulette prinzip
 
-#ifndef PROG_BMDN4
-// if(protection_mode == MODE_N_PLUS_1)
- if((protection_mode == MODE_N_PLUS_1) && (ModemIsUsed(currentrezerv)))
- {
-  OperateRezerv1(); //compare noises to treshholds and set modems to rezerv
-//t110214  ParseRequestsRezervResponses();
- }
-#endif
 //bad!!!!return;
 
   PeriodicControl();	//110131
@@ -15233,15 +15003,11 @@ extern "C" void CommonResetOn(unsigned char deviceindex)
 {
 //ok printf("\n\r CommonResetOn %d", deviceindex);
 // delay_mcs(100000l);
-
-  unsigned long offset;
+    unsigned long offset;
  //  offset =  (deviceindex) << 4;
   //  write_xil_char((BLOCK_SWEEP + offset + RESET_ADDR), COMMON_RESET);
 	  offset = BLOCK_SWEEP1 * ((deviceindex)+1);
 	write_xil_char(( offset + RESET_ADDR), COMMON_RESET);
-
-
-
 }
 
 extern "C" void EnablePhone(void)
@@ -15254,9 +15020,9 @@ extern "C" unsigned char GetStmPhyReg(unsigned char deviceindex)
 {
   unsigned long offset;
   offset = BLOCK_SWEEP1 * ((deviceindex)+1);
+//  printfpd("\n\r stm phy : %02X",  read_xil_char( offset + STM_PHY_ADDR));
   return read_xil_char( offset + STM_PHY_ADDR);
 }
-
 
 extern "C" void SetStmFarLoop(unsigned char deviceindex)
 {
@@ -15280,6 +15046,7 @@ extern "C" void ClearStmFarLoop(unsigned char deviceindex)
 extern "C" void SetStmNearLoop(unsigned char deviceindex)
 {
 //printfp("\n\r SetStmNearLoop");
+
   unsigned long offset;
   offset = BLOCK_SWEEP1 * ((deviceindex)+1);
   write_xil_char( offset + STM_PHY_ADDR, read_xil_char( offset + STM_PHY_ADDR) | NEAR_LOOP);
@@ -15294,6 +15061,12 @@ extern "C" void ClearStmNearLoop(unsigned char deviceindex)
 //  printfpd("\n\r clear Near  %02X", val);
   write_xil_char( offset + STM_PHY_ADDR, val);
 }
+
+
+
+
+
+
 
 
 extern "C" unsigned char GetEthReg(unsigned char deviceindex)
@@ -17349,7 +17122,6 @@ extern "C" void printcurtxt()
 
 #define ETH_COMMAND_PORT (0x7f)
 #define ETH_STATE_PORT   (0x7E)
-
 
 void WritePort()
 {

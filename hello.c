@@ -724,7 +724,7 @@ errors = 0;
  
  
  
- BlinkLED(20, 20);  
+// BlinkLED(20, 20);  
   
   
      _at91rm9200_pio_set(AT91RM9200_PIO_PORT_C, 13, AT91RM9200_PIO_PERIPHERAL_IO, 1);
@@ -1006,7 +1006,7 @@ delay_mcs(1000000l);
  FillConfigFileVersion();
 #endif // PROG_BMDN  
 
- BlinkLED(50, 5); 
+// BlinkLED(50, 5); 
 //___________________________ok      
 // BlinkLED(1000, 1000); 
  // for(;;);
@@ -1473,7 +1473,7 @@ if (_int_install_isr(AT91RM9200_FIQ_VECTOR,
 #ifndef  DISABLE_ETHERNET
 
 //BlinkLED(2000, 2);   //ok
- BlinkLED(200, 3); 
+// BlinkLED(200, 3); 
 
  
   Set_enet_local0((uchar*)&enet_local0[0]);
@@ -1958,7 +1958,9 @@ root_dir[1,1] = 0;
 #ifndef PROG_TUTS 
 #ifdef USE_PULT 
 #ifndef PROG_VNV1
+#ifndef PROG_MD310E16	
  m_Test_PKU();
+#endif 
 #endif 
 #endif 
 #endif
@@ -2179,10 +2181,11 @@ SetE14();
 //___________________________ 
 
 //BlinkLED(200, 3);  
-
+#ifndef PROG_MD310E16
 #ifdef YOURNAL        //not before init to have only one event to do not rewrite previons
 
   Add_Event(EV_POWER_ON, 0, NULL);
+#endif
 #endif
 
 
@@ -2237,14 +2240,14 @@ SetE14();
    
 
 #ifdef PROG_BMDN
-  printfp("\n\r go Init_BMDN();");
-OperateBuffers_usart0t();
+//  printfp("\n\r go Init_BMDN();");
+//OperateBuffers_usart0t();
 
 
   Init_BMDN();
   
-  printfp("\n\r Finish Init_BMDN();");
-OperateBuffers_usart0t();
+//  printfp("\n\r Finish Init_BMDN();");
+//OperateBuffers_usart0t();
  
   
   
@@ -2626,13 +2629,6 @@ result = bind(socklist[2], &local_sin, sizeof (sockaddr_in));
 #endif
 #endif
 
-//_____________________________________________140819
-#ifndef PROG_TUTS
-#ifndef WITHOUT_INTERRUPTS
-  EnableInterrupts();
-#endif //WITHOUT_INTERRUPTS  
-#endif //no PROG_TUTS 
-//_____________________________________________140819
 
 
  //___________________________ ok    
@@ -2648,7 +2644,7 @@ result = bind(socklist[2], &local_sin, sizeof (sockaddr_in));
  //ok  outportb(0x506, 0x55); //ok
  
 #ifdef PROG_BMDN
-  printfp("\n\r go  step1 BMDN();");
+//  printfp("\n\r go  step1 BMDN();");
   OperateBuffers_usart0t();
 #endif //PROG_BMDN 
 
@@ -2656,8 +2652,9 @@ result = bind(socklist[2], &local_sin, sizeof (sockaddr_in));
 
 //BlinkLED(100, 5); 
 
- 
- 
+  // AT91F_DataflashInitx();     //t
+
+//#ifndef  PROG_MD310E16	 
 #ifndef PROG_VNV1
  
 #ifdef XIL_FLASH
@@ -2686,6 +2683,7 @@ result = bind(socklist[2], &local_sin, sizeof (sockaddr_in));
 
 #endif 
 #endif //PROG_VNV 
+//#endif
  
 //BlinkLED(300, 2); 
  
@@ -2732,7 +2730,18 @@ result = bind(socklist[2], &local_sin, sizeof (sockaddr_in));
  // printfp("\n\r go  step2 BMDN();");
   OperateBuffers_usart0t();
 #endif //PROG_BMDN 
- BlinkLED(100, 1); 
+ //BlinkLED(100, 5); 
+//_____________________________________________140819
+#ifndef PROG_TUTS
+#ifndef WITHOUT_INTERRUPTS
+
+  EnableInterrupts();
+  
+#endif //WITHOUT_INTERRUPTS  
+#endif //no PROG_TUTS 
+//_____________________________________________140819
+ //  BlinkLED(200, 5); 
+
  
    while (TRUE) 
       {
@@ -3017,13 +3026,13 @@ if(flag_send_udp_asu)
  flag_send_udp_asu = 0;
  sockd = socklist[0]; 
 // sockd = socklist[1];  //enover port
- printfpd("\n\rTry send UDP.len :.%d", len_udpt); 
+ //printfpd("\n\rTry send UDP.len :.%d", len_udpt); 
   if(len_udpt > BUFF_SIZE_DATAG) 
 { 
 len_udpt = BUFF_SIZE_DATAG;
 //   printfp("\n\rwrong Len!!!!");
 }
- OperateBuffers_usart0t();
+// OperateBuffers_usart0t();
 
 //len_udpt = BUFF_SIZE_DATAG; //for test
 //oklen_udpt = 1480;
@@ -3210,10 +3219,12 @@ if (q_client_counter < PAKETS_LIMIT)
 
   
 #ifdef YOURNAL
+#ifndef   PROG_MD310E16	 
  //t  Add_Event(EV_POWER_OFF, 0, NULL); //power off
    Add_Event(EV_POWER_OFF, 4, "1234"); //power off
   // printfp("\n\r...");
 #endif //
+#endif
   
 //#ifdef TEST_PUMV_ERR  
 // SetTestMode(0x97);
@@ -3224,26 +3235,26 @@ if (q_client_counter < PAKETS_LIMIT)
 //ok RTCS_ping(0x9b9b9b76, 0, 1); //ok
   
   
-#ifdef PROG_PRM_PCH_N_1
-if(!use_standard_protocol)
-{
+//#ifdef PROG_PRM_PCH_N_1
+//if(!use_standard_protocol)
+//{
 //tSetLed2(0);
-SetLed2(1);   //t
-SetLed3(1);
-}
-#endif // PROG_PRM_PCH_1
+//SetLed2(1);   //t
+//SetLed3(1);
+//}
+//#endif // PROG_PRM_PCH_1
   
   //  print_signature();
   
   
-#ifdef PROG_BMDN  
+//#ifdef PROG_BMDN  
 //if(GetTestMode() != 0x7 )
 //{
 // GetVersionAPI(); //for test   
 //}
 // GetVersionAPI(); //for test  
  
-#endif //PROG_BMDN 
+//#endif //PROG_BMDN 
   
 //#ifdef USE_TCPIP_CLIENT
 //if (q_client_counter < 1000)
@@ -3804,7 +3815,7 @@ if(GetTestMode() == 0x50)
    led = 0;
   // TUTS_Output_Set(0);
   //  send485_enabled = 0;
-  //  printfp("1");
+   // printfp("1");
 
    }
   else
@@ -3814,7 +3825,7 @@ if(GetTestMode() == 0x50)
  //   send485_enabled = 1;
 
  //   TUTS_Output_Set(0xff);
-//   printfp("0");
+ //  printfp("0");
    }
      
 //#endif     
@@ -3841,7 +3852,7 @@ need_to_sended =  MESSAGE_LEN;
 
  OperateSynt(0);
 #ifndef USART0_TRY_PDC_1T 
- printf("\n\r> %ld : %02X  %02X  %02X  %02X  %02X ",ssc1_int_cnt,SSC1_BUFFER_RECEIVE[0],  SSC1_BUFFER_RECEIVE[1],SSC1_BUFFER_RECEIVE[2],SSC1_BUFFER_RECEIVE[3],SSC1_BUFFER_RECEIVE[4]); 
+// printf("\n\r> %ld : %02X  %02X  %02X  %02X  %02X ",ssc1_int_cnt,SSC1_BUFFER_RECEIVE[0],  SSC1_BUFFER_RECEIVE[1],SSC1_BUFFER_RECEIVE[2],SSC1_BUFFER_RECEIVE[3],SSC1_BUFFER_RECEIVE[4]); 
 #endif
 #endif //  TEST_PRM_PCH_1
 #endif //PROG_PRM_PCH_N_1 

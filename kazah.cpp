@@ -8812,7 +8812,7 @@ if(currenttrunk)
 			    embMsg485Request_1.SetBody(1,st);
 				embMsg485Request_1.CalcCRC();
 			//	embMsg485Request_1.SetReadyToSend();
-				   tBuffEmbMsg485Request_1.Add(embMsg485Request_1);
+				 tBuffEmbMsg485Request_1.Add(embMsg485Request_1);
 				/*
 			 if(GetTestMode() == 0x50)
 			{
@@ -8997,85 +8997,47 @@ cur_err = 0;	//clear errors!!!!
 
 extern "C" void OperateTrunks()
 {
-//   return; //for test
-//printEthLongHex(2);
-//printfp("\n\rOpTr ");
-
-#ifdef PROG_MD310	//do not use one trunk mode
-  
-#ifndef PROG_BMDN6
-  if(GetModForSS())
- {
-	SetModForSS(0);
-//printfp("\n\r________________________3");
-
- }
-  return;
-#endif
-
 #ifdef TWO_TRUNKS
   if(GetModForSS())
  {
 	SetModForSS(0);
-//printfp("\n\r________________________3");
-
  }
   return;
 #endif
 
-
-
-
-
-
-#endif
-
-
-	#ifdef PROG_BMDN6M	   //do not use one trunk mode
-
-  if(GetModForSS())
- {
-	SetModForSS(0);
-//printfp("\n\r________________________3");
-
- }
-#endif
-  
-  if(GetModForSS())
- {
-
-   if(!CheckCurrentTrunk())
- {
- // if(HaveEnoverTrunks())
-  if(HaveEnoverTrunks()  || (currenttrunk))
+  if(GetModForSS())	  //one trunk
   {
-  	ChangeCurrentTrunk();
-  }
- }
+   	if(!CheckCurrentTrunk())
+ 	{
+//wrong if do not have second trunc  if(HaveEnoverTrunks()  || (currenttrunk))
+ 		if(HaveEnoverTrunks()) 
+  			{
+  				ChangeCurrentTrunk();
+  			}
+ 	} //current trunk - wrong!!!!
 
-  if(!CheckNotCurrentTrunk())
- {
-  SetNotCurrentTrunk(0);
- }
 
- //printfp("\n\r________________________2");
- 
-  
- // return;
+ 		  if(HaveEnoverTrunks() &&  (currenttrunk))		 //priority of zero trunk
+ 	   		{
+  				ChangeCurrentTrunk();
+  			}
+
+
+
+  	if(!CheckNotCurrentTrunk())
+ 	{
+  		SetNotCurrentTrunk(0);	 //send any command
+ 	}
+
   } 
-    else
+    else   //use two trunks
   {
      if( (!trunk1.modetrunk.onpd) )
 			{
-//printEthLongHex(12);
-//printfp("\n\r________________________0");
 			    SetTrunk(0, 1);
    			}
      if( (!trunk2.modetrunk.onpd) )
 			{
-//printEthLongHex(13);
-//printfp("\n\r________________________1");
-
 			    SetTrunk(1, 1);
    			}
   }
@@ -12344,14 +12306,6 @@ static unsigned long periodcnt;
  }
   ScanErrors();	//110725 //read errors on roulette prinzip
 
-#ifndef PROG_BMDN4
-// if(protection_mode == MODE_N_PLUS_1)
- if((protection_mode == MODE_N_PLUS_1) && (ModemIsUsed(currentrezerv)))
- {
-  OperateRezerv1(); //compare noises to treshholds and set modems to rezerv
-//t110214  ParseRequestsRezervResponses();
- }
-#endif
 //bad!!!!return;
 
   PeriodicControl();	//110131
@@ -15035,10 +14989,8 @@ extern "C" void CommonResetOff(unsigned char deviceindex)
 {
 //ok printf("\n\r CommonResetOff %d", deviceindex);
 //delay_mcs(100000l);
-
   unsigned long offset;
 //   offset =  (deviceindex) << 4;
-
  //   write_xil_char((BLOCK_SWEEP + offset + RESET_ADDR), COMMON_NO_RESET);
 	  offset = BLOCK_SWEEP1 * ((deviceindex)+1);
 	write_xil_char(( offset + RESET_ADDR), COMMON_NO_RESET);
@@ -15049,15 +15001,11 @@ extern "C" void CommonResetOn(unsigned char deviceindex)
 {
 //ok printf("\n\r CommonResetOn %d", deviceindex);
 // delay_mcs(100000l);
-
-  unsigned long offset;
+    unsigned long offset;
  //  offset =  (deviceindex) << 4;
   //  write_xil_char((BLOCK_SWEEP + offset + RESET_ADDR), COMMON_RESET);
 	  offset = BLOCK_SWEEP1 * ((deviceindex)+1);
 	write_xil_char(( offset + RESET_ADDR), COMMON_RESET);
-
-
-
 }
 
 extern "C" void EnablePhone(void)
@@ -15070,8 +15018,53 @@ extern "C" unsigned char GetStmPhyReg(unsigned char deviceindex)
 {
   unsigned long offset;
   offset = BLOCK_SWEEP1 * ((deviceindex)+1);
+//  printfpd("\n\r stm phy : %02X",  read_xil_char( offset + STM_PHY_ADDR));
   return read_xil_char( offset + STM_PHY_ADDR);
 }
+
+extern "C" void SetStmFarLoop(unsigned char deviceindex)
+{
+//  printfp("\n\r SetStmFarLoop");
+  unsigned long offset;
+  offset = BLOCK_SWEEP1 * ((deviceindex)+1);
+  write_xil_char( offset + STM_PHY_ADDR, read_xil_char( offset + STM_PHY_ADDR) | FAR_LOOP);
+}
+
+extern "C" void ClearStmFarLoop(unsigned char deviceindex)
+{
+ unsigned char val;
+  unsigned long offset;
+  offset = BLOCK_SWEEP1 * ((deviceindex)+1);
+  val =  read_xil_char( offset + STM_PHY_ADDR) & (~(FAR_LOOP));
+//  printfpd("\n\r clear Far %02X", val);
+  write_xil_char( offset + STM_PHY_ADDR, val);
+}
+
+
+extern "C" void SetStmNearLoop(unsigned char deviceindex)
+{
+//printfp("\n\r SetStmNearLoop");
+  unsigned long offset;
+  offset = BLOCK_SWEEP1 * ((deviceindex)+1);
+  write_xil_char( offset + STM_PHY_ADDR, read_xil_char( offset + STM_PHY_ADDR) | NEAR_LOOP);
+}
+
+extern "C" void ClearStmNearLoop(unsigned char deviceindex)
+{
+ unsigned char val;
+  unsigned long offset;
+  offset = BLOCK_SWEEP1 * ((deviceindex)+1);
+  val =  read_xil_char( offset + STM_PHY_ADDR) & (~(NEAR_LOOP));
+//  printfpd("\n\r clear Near  %02X", val);
+  write_xil_char( offset + STM_PHY_ADDR, val);
+}
+
+
+
+
+
+
+
 
 extern "C" unsigned char GetEthReg(unsigned char deviceindex)
 {
@@ -17129,8 +17122,14 @@ extern "C" void printcurtxt()
 
 void WritePort()
 {
+//printfpd("\n\rWP %02X",embMsgRequest->Body(0));
+//printfpd(": %02X",embMsgRequest->Body(1));
+//printfpd(": %02X",embMsgRequest->Body(4));
+
+
 	if((embMsgRequest->Body(1)&0xC0)==0x80)
 	{
+//	printfp("--->1");
 		embMsg485Request_1.Init();
 		embMsg485Request_1.SetAddr(0);//0x01);
 		embMsg485Request_1.SetLength(4);//4
@@ -17146,6 +17145,8 @@ void WritePort()
 	{
 		if((embMsgRequest->Body(1)&0xC0)==0xC0)
 		{
+  //		printfp("--->2");
+
 			embMsg485Request_2.Init();
 			embMsg485Request_2.SetAddr(0);//0x02);
 			embMsg485Request_2.SetLength(4);//4
@@ -17187,7 +17188,34 @@ void WritePort()
 		  */
 		else
 		{
+   //		printfp("--->3");
+  //ok		return; //t
+ // printfpd("--> %04X ", embMsgRequest->Body(0)+(embMsgRequest->Body(1)<<8))	;
+//  printfpd(", %02X ", embMsgRequest->Body(4));
+
+			if((embMsgRequest->Body(0)+(embMsgRequest->Body(1)<<8)) != 0x525)
+			{
 			outportb(embMsgRequest->Body(0)+(embMsgRequest->Body(1)<<8), embMsgRequest->Body(4));
+			}
+			else
+			{
+			  if(embMsgRequest->Body(4) == 4)	   //local loop
+			  {
+		        ClearStmFarLoop(0);
+			    SetStmNearLoop(0);
+			  }
+			  else if(embMsgRequest->Body(4) == 8)	   //far loop
+			  {
+ 			    ClearStmNearLoop(0);
+				SetStmFarLoop(0);
+			  }
+			  else	   //no loop
+			  {
+			  ClearStmFarLoop(0);
+              ClearStmNearLoop(0);
+		   	  }
+			}
+	//   return;
 	  //		SaveParameterToNVRAM(embMsgRequest->Body(0)+(embMsgRequest->Body(1)<<8) , embMsgRequest->Body(4));
 			embMsgAns.SetType(0x0A);
 			embMsgAns.SetBody(0,embMsgRequest->Body(0));

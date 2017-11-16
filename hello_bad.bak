@@ -2005,6 +2005,12 @@ listensock = sock;
 #endif
 
 //_____________________________________________140819
+#ifndef PROG_TUTS
+#ifndef WITHOUT_INTERRUPTS
+  EnableInterrupts();
+#endif //WITHOUT_INTERRUPTS  
+#endif //no PROG_TUTS 
+//_____________________________________________140819
 
  /*
 #ifdef YOURNAL        //before init

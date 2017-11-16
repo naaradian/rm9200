@@ -1861,11 +1861,13 @@ extern "C" void SavePortsFromNVRAM()
 	 }
 
 #else
-     outportb3(0x37 , 0);
+  outportb3(0x37 , 0);
 	 for(long i = 0; i < 0x10; i++)
 	 {
 	  outportb3((0x90 + i) , 0);
 	 }
+
+
 
 #endif //PROG_PU_M_MUX
 
